@@ -1,24 +1,38 @@
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
+import { PrismaClient } from "@prisma/client";
+
 //get secret key from environment variable
 const secretKey = process.env.SECRET_KEY;
+const prisma = new PrismaClient();
 
 export async function POST(req) {
   const body = await req.json();
   const { email, password } = body;
+  console.log("email: ", email, "password: ", password);
 
-  console.log("email: ", username, "password: ", password);
+  //search user in database
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
 
-  if (!username) {
-    return NextResponse.json(
-      { message: "Username is required" },
-      { status: 400 }
-    );
+  //verify that user exists
+  if (!user) {
+    console.log("--> user not found");
+    return NextResponse.json({ invalidCredentials: true }, { status: 400 });
   }
 
-  // Genera el token con una expiración de 1 hora
-  const token = jwt.sign({ username }, secretKey, { expiresIn: "40s" });
+  if (password !== user.password) {
+    console.log("--> password incorrect");
+    return NextResponse.json({ invalidCredentials: true }, { status: 400 });
+  }
 
-  return NextResponse.json({ token });
+  const userId = user.id;
+
+  const token = jwt.sign({ userId }, secretKey, { expiresIn: "40s" });
+
+  return NextResponse.json({ access_token: token });
 }

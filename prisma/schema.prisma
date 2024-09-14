@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -17,8 +17,17 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
-  name      String?
+  control_number String @unique
+  role      EnumRole
+  fullName      String
+  location     String
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum EnumRole {
+  Admin
+  Mod
+  Viewer
 }
