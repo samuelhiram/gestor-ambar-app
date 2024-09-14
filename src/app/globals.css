@@ -3,30 +3,27 @@
 @tailwind utilities;
 
 .card {
-    @apply bg-white shadow-md rounded-lg p-4;
-
+  @apply bg-white shadow-md rounded-lg p-4;
 }
 
 a {
-    @apply text-blue-900 underline cursor-pointer font-semibold active:text-blue-500;
+  @apply text-blue-900 underline cursor-pointer font-semibold active:text-blue-300;
 }
 
 .btn {
-    @apply bg-blue-900 text-white font-bold py-2 px-4 rounded;
+  @apply bg-blue-900 text-white font-bold py-2 px-4 rounded active:bg-blue-300;
 }
 
 Button {
-    @apply bg-blue-900 text-white font-bold py-2 px-4 rounded !important;
+  @apply bg-blue-900 text-white font-bold py-2 px-4 rounded active:bg-blue-300 !important;
 }
 
-Form {
-    @apply bg-white rounded-lg p-4 border-2 md:w-96;
-}
+/* Form {
+  @apply bg-white rounded-lg p-4 border-2 md:w-96;
+} */
 
 @layer base {
-    :root {
-
-        --radius: 0.5rem
-    }
-
+  :root {
+    --radius: 0.5rem;
+  }
 }

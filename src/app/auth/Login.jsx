@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PassRecovery } from "./PassRecovery";
 
 export default function Login() {
   const formSchema = z.object({
@@ -41,7 +42,10 @@ export default function Login() {
   }
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-3 max-md:w-4/5 border-2 p-4 rounded-xl shadow-md"
+      >
         <div className="font-bold text-xl">Iniciar Sesión</div>
 
         <FormField
@@ -72,10 +76,8 @@ export default function Login() {
             </FormItem>
           )}
         />
-
-        <div className="flex flex-col gap-4">
+        <div className="w-full justify-center flex">
           <Button type="submit">Iniciar</Button>
-          <a className=" w-full flex justify-center">recuperar cuenta</a>
         </div>
       </form>
     </Form>
