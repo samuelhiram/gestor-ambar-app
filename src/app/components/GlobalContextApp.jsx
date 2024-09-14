@@ -7,7 +7,7 @@ const AppContext = createContext(null);
 
 export default function AppContextProvider({ children }) {
   const [state, setState] = useState({
-    test: 0,
+    disableFetchButton: false,
     dialogMessage: "default indication",
     showDialogAlert: false,
   });

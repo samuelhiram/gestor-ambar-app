@@ -7,9 +7,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-  DialogClose,
 } from "@/components/ui/dialog";
 
 export default function DialogMessage() {
@@ -19,9 +16,16 @@ export default function DialogMessage() {
       {state.showDialogAlert === true ? (
         <div>
           <Dialog defaultOpen={true}>
-            <DialogContent>
+            <DialogContent
+              style={{
+                width: "90vw", // Ocupa el 90% del ancho de la pantalla
+                maxWidth: "600px", // Limita el ancho máximo a 600px
+                padding: "20px",
+                margin: "0 auto", // Centra el contenido
+              }}
+            >
               <DialogHeader>
-                <div className="justify-start text-start flex gap-2">
+                <div className="flex items-center justify-start text-start gap-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -42,7 +46,7 @@ export default function DialogMessage() {
                 onClick={() => {
                   setState((prev) => ({
                     ...prev,
-                    showDialogAlert: false,
+                    showDialogAlert: !prev.showDialogAlert,
                   }));
                 }}
               >

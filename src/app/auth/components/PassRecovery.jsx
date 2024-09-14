@@ -52,7 +52,14 @@ export default function PassRecovery() {
       <DialogTrigger className="!bg-transparent !underline !text-blue-900 !p-0 !active:bg-blue-100">
         Recuperar contraseña
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent
+        style={{
+          width: "90vw", // Ocupa el 90% del ancho de la pantalla
+          maxWidth: "600px", // Limita el ancho máximo a 600px
+          padding: "20px",
+          margin: "0 auto", // Centra el contenido
+        }}
+      >
         <DialogHeader>
           <div className="justify-start text-start">
             <DialogTitle>Recuperar contraseña</DialogTitle>

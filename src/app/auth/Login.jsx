@@ -43,6 +43,11 @@ export default function Login() {
     const email = values.email;
     const password = values.password;
     try {
+      setState((prev) => ({
+        ...prev,
+        showDialogAlert: false,
+      }));
+
       const response = await axios.post("/api/auth/login", {
         email,
         password,
@@ -50,7 +55,7 @@ export default function Login() {
     } catch (error) {
       setState((prev) => ({
         ...prev,
-        showDialogAlert: true,
+        showDialogAlert: !prev.showDialogAlert,
         dialogMessage: "Credenciales inválidas",
       }));
     }
@@ -104,12 +109,16 @@ export default function Login() {
                 </FormItem>
               )}
             />
-            <div className="w-full justify-center flex">
-              <Button type="submit">Iniciar</Button>
-            </div>
           </form>
         </Form>
+        <Form>
+          <Button onClick={form.handleSubmit(onSubmit)} type="submit">
+            Iniciar
+          </Button>
+        </Form>
+        {/**/}
         <PassRecovery />
+        {/**/}
       </div>
     </div>
   );
