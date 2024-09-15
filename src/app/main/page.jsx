@@ -19,8 +19,8 @@ function Main() {
   return (
     <div className="min-h-screen w-full flex flex-row">
       <Sidebar />
-      <DropdownButton />
       <ModuleLoaded />
+      <DropdownButton />
     </div>
   );
 }

@@ -1,16 +1,23 @@
-export const appModules = [
+export var appModules = [
   {
-    id: 0,
+    id: 1,
     moduleName: "Inicio",
     icon: "material-symbols-light:team-dashboard",
     title: "Inicio",
     description: "Resumen, estadísticas y gráficas",
   },
   {
-    id: 1,
+    id: 2,
+    moduleName: "Inventario",
+    icon: "material-symbols-light:inventory-rounded",
+    title: "Inventario",
+    description: "Ver, y gestionar materiales e insumos",
+  },
+  {
+    id: 3,
     moduleName: "Usuarios",
     icon: "mdi:user",
     title: "Usuarios",
-    description: "Crear, eliminar, editar y ver usuarios",
+    description: "Gestionar usuarios",
   },
 ];
