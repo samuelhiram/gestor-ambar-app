@@ -62,24 +62,24 @@ export default function Login() {
   }
   return (
     <div className="min-h-screen w-full flex flex-col gap-8 justify-center items-center">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 w-full justify-center items-center">
         <Image src="img/logo.svg" alt="TecTijuana" width={250} height={250} />
         <div>
           <p className="font-light text-2xl w-full flex justify-center items-center">
-            Gestor Ambar - TecNM
+            CIMS - TecNM
           </p>
-          <p className="text-sm flex w-full justify-center">
-            Control e inventario de materiales
+          <p className="text-sm flex w-full justify-center ">
+            Control e Inventario de Materiales y Suplementos
           </p>
         </div>
       </div>
-      <div className="max-md:w-4/5 lg:w-2/5 xl:w-1/4 p-4 border rounded-xl flex flex-col justify-center space-y-4 shadow-xl">
+      <div className="max-md:w-4/5 md:w-2/5 lg:w-2/5 xl:w-1/4 p-4 border rounded-xl flex flex-col justify-center space-y-4 shadow-xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full space-y-3"
+            className="w-full flex flex-col space-y-3"
           >
-            <div className="font-bold text-xl">Iniciar Sesión</div>
+            <div className="font-bold text-xl w-full">Iniciar Sesión</div>
 
             <FormField
               control={form.control}
@@ -109,12 +109,8 @@ export default function Login() {
                 </FormItem>
               )}
             />
+            <Button type="submit">Iniciar</Button>
           </form>
-        </Form>
-        <Form>
-          <Button onClick={form.handleSubmit(onSubmit)} type="submit">
-            Iniciar
-          </Button>
         </Form>
         {/**/}
         <PassRecovery />

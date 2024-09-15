@@ -10,6 +10,7 @@ export default function AppContextProvider({ children }) {
     disableFetchButton: false,
     dialogMessage: "default indication",
     showDialogAlert: false,
+    showSideBar: true,
   });
 
   const value = { state, setState };
