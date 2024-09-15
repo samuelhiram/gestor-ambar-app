@@ -28,7 +28,7 @@ export default function Sidebar() {
       {Object.keys(state.modules).map((key) => {
         return (
           <SidebarMenuItem
-            key={state.modules[key].moduleName}
+            key={state.modules[key].id}
             receivedModule={state.modules[key]}
           />
         );
