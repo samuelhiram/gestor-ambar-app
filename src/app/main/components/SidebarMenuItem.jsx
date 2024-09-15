@@ -1,22 +1,37 @@
+"use client";
 import React from "react";
 import { Icon } from "@iconify/react";
+import { useMainAppContext } from "./MainAppContext";
 
-export default function SidebarMenuItem() {
+export default function SidebarMenuItem({ receivedModule }) {
+  const { state, setState } = useMainAppContext();
+  const { icon, title, description, moduleName } = receivedModule;
   return (
     <>
-      <div className="w-full flex justify-between bg-gray-50  hover:bg-gray-100 cursor-pointer active:bg-gray-200/80 p-1">
+      <div
+        onClick={() => {
+          setState({
+            ...state,
+            activeModuleName: moduleName,
+            showSideBar: false,
+          });
+        }}
+        className={`${
+          state.activeModuleName === moduleName ? "bg-blue-100" : ""
+        } w-full flex justify-between bg-gray-50  hover:bg-gray-100 cursor-pointer active:bg-gray-200/80 p-1`}
+      >
         <div className="flex items-center justify-start gap-2 w-4/5">
           <div>
             <Icon
-              icon="material-symbols:list"
+              icon={icon}
               width="38"
               height="38"
               style={{ color: "#1e3a8a" }}
             />
           </div>
           <div className="text-md">
-            <p>Inventario</p>
-            <p className="text-xs">Entradas, salidas y detalles</p>
+            <p>{title}</p>
+            <p className="text-xs">{description}</p>
           </div>
         </div>
         <div className=" flex items-center justify-center w-1/5">

@@ -1,7 +1,9 @@
+"use client";
 import React from "react";
 import { Icon } from "@iconify/react";
 
-export default function SidebarUser() {
+export default function SidebarUser({ user }) {
+  const { name, role } = user;
   return (
     <div className="w-full flex justify-between bg-gray-50  hover:bg-gray-100 cursor-pointer active:bg-gray-200/80 p-1">
       <div className="flex items-center justify-start gap-2 w-4/5">
@@ -14,8 +16,8 @@ export default function SidebarUser() {
           />
         </div>
         <div className="text-md">
-          <p>Samuel Hiram</p>
-          <p className="text-xs">Admin</p>
+          <p>{name}</p>
+          <p className="text-xs">{role}</p>
         </div>
       </div>
       <div className=" flex items-center justify-center w-1/5">

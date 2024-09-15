@@ -1,15 +1,26 @@
 "use client";
 import React from "react";
-import { useAppContext } from "../components/GlobalContextApp";
 import Sidebar from "./components/Sidebar";
-import DropdownMenu from "./components/DropdownMenu";
-
+import DropdownButton from "./components/DropdownButton";
+import MainAppContextProvider, {
+  useMainAppContext,
+} from "./components/MainAppContext";
+import ModuleLoaded from "./components/ModuleLoaded";
 export default function page() {
-  const { state } = useAppContext();
+  return (
+    <MainAppContextProvider>
+      <Main />
+    </MainAppContextProvider>
+  );
+}
+
+function Main() {
+  const { state } = useMainAppContext();
   return (
     <div className="min-h-screen w-full flex flex-row">
       {state.showSideBar ? <Sidebar /> : null}
-      <DropdownMenu />
+      <DropdownButton />
+      <ModuleLoaded />
     </div>
   );
 }
