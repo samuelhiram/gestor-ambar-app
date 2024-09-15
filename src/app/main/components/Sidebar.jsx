@@ -9,7 +9,9 @@ export default function Sidebar() {
   const { state } = useMainAppContext();
   return (
     <nav
-      className={`w-full md:w-2/5 xl:w-1/4 border-gray-200 border-r flex flex-col shadow-md`}
+      className={`${
+        !state.showSideBar ? "hidden" : "visible"
+      } w-full md:w-2/5 xl:w-1/4 border-gray-200 border-r flex flex-col shadow-md`}
     >
       <Logo />
       <div className="w-full">
@@ -17,7 +19,6 @@ export default function Sidebar() {
           <p>Usuario</p>
         </div>
       </div>
-      {/* <SidebarUser user={state.user} /> */}
       <SidebarMenuItem receivedModule={state.userModuleData} />
       <div className="w-full">
         <div className="w-full p-3">

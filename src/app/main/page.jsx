@@ -18,7 +18,7 @@ function Main() {
   const { state } = useMainAppContext();
   return (
     <div className="min-h-screen w-full flex flex-row">
-      {state.showSideBar ? <Sidebar /> : null}
+      <Sidebar />
       <DropdownButton />
       <ModuleLoaded />
     </div>

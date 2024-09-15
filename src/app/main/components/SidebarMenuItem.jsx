@@ -6,6 +6,7 @@ import { useMainAppContext } from "./MainAppContext";
 export default function SidebarMenuItem({ receivedModule }) {
   const { state, setState } = useMainAppContext();
   const { icon, title, description, moduleName } = receivedModule;
+  console.log(`ocurrs in ${moduleName}: `, state.activeModuleName, moduleName);
   return (
     <>
       <div
@@ -17,7 +18,7 @@ export default function SidebarMenuItem({ receivedModule }) {
           });
         }}
         className={`${
-          state.activeModuleName === moduleName ? "bg-blue-100" : ""
+          state.activeModuleName === moduleName ? "bg-blue-200/50" : ""
         } w-full flex justify-between bg-gray-50  hover:bg-gray-100 cursor-pointer active:bg-gray-200/80 p-1`}
       >
         <div className="flex items-center justify-start gap-2 w-4/5">
