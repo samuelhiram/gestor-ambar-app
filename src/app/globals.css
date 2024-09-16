@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  overflow-y: scroll;
+}
+
 .card {
   @apply bg-white shadow-md rounded-lg p-4;
 }

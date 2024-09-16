@@ -1,26 +1,19 @@
 import React from "react";
-import Image from "next/image";
-import SidebarUser from "./SidebarUser";
 import SidebarMenuItem from "./SidebarMenuItem";
 import Logo from "./Logo";
 import { useMainAppContext } from "./MainAppContext";
-import DropdownButton from "./DropdownButton";
+import { useEffect } from "react";
 
 export default function Sidebar() {
-  const { state } = useMainAppContext();
+  const { state, setState } = useMainAppContext();
+
   return (
     <nav
       className={`${
         !state.showSideBar ? "hidden" : "visible"
-      }  w-full md:w-2/5 xl:w-1/4 border-gray-200 md:border-r flex flex-col shadow-md`}
+      } fixed z-20 h-full w-1/4 max-sm:w-full flex flex-col flex-1 flex-grow-0 bg-gray-50 border-gray-200 md:border-r`}
     >
       <Logo />
-      {/* <div className="w-full">
-        <div className="w-full p-3">
-          <p>Usuario</p>
-        </div>
-      </div> */}
-      {/* <SidebarMenuItem receivedModule={state.userModuleData} /> */}
       <div className="w-full">
         <div className="w-full py-3 px-5">
           <p>Menú</p>

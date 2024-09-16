@@ -10,7 +10,7 @@ export default function DropdownButton() {
       onClick={() => {
         setState((prev) => ({ ...prev, showSideBar: !prev.showSideBar }));
       }}
-      className="p-2 flex flex-row-reverse gap-1 items-center justify-center rounded-md border bg-gray-50 shadow-xl absolute m-5 hover:bg-gray-100 cursor-pointer bottom-0 "
+      className="fixed z-30 p-2 flex flex-row-reverse gap-1 items-center justify-center rounded-md border bg-gray-50 shadow-xl  m-5 hover:bg-gray-100 cursor-pointer bottom-0"
     >
       <div className="font-semibold text-blue-900  text-xl flex justify-center ">
         {!state.showSideBar ? "Menú" : "Cerrar"}
