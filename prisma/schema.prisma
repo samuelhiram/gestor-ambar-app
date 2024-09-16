@@ -22,7 +22,6 @@ model User {
   fullName      String
   location     String
   password  String
-  phone    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

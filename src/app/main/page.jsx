@@ -21,14 +21,7 @@ export default function page() {
 function Main() {
   const { state, setState } = useMainAppContext();
   useEffect(() => {
-    const handleLoad = () => {
-      console.log("La página está completamente renderizada");
-    };
-    window.addEventListener("load", handleLoad);
-    return () => {
-      window.removeEventListener("load", handleLoad);
-      setState((prev) => ({ ...prev, isLoadingMainApp: false }));
-    };
+    setState((prev) => ({ ...prev, isLoadingMainApp: false }));
   }, []);
 
   return (

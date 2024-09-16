@@ -20,7 +20,7 @@ export default function ModuleLoaded() {
     <div
       className={`${
         !state.showSideBar ? "" : ""
-      } h-full flex flex-col flex-1 bg-gray-200/30`}
+      } h-full flex flex-col flex-1 bg-gray-200/30 `}
     >
       <div className="fixed z-10 w-full p-4 flex flex-row item-center gap-2 border-b shadow-sm bg-white">
         <Icon icon={icon} width="38" height="38" style={{ color: "#1e3a8a" }} />
