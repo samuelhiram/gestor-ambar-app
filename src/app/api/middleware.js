@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
+import { PrismaClient } from "@prisma/client";
 
 const secretKey = process.env.SECRET_KEY; // Cambia a tu clave secreta real
+const prisma = new PrismaClient();
 
 export async function VerifyToken(req) {
   const token = req.headers.get("authorization")?.split(" ")[1];
@@ -17,7 +19,7 @@ export async function VerifyToken(req) {
   }
 
   // select token in session model
-  const session = await prisma.session.findUnique({
+  const session = await prisma.session.findFirst({
     where: {
       token: token,
     },
@@ -45,7 +47,10 @@ export async function VerifyToken(req) {
     // Verificamos el token
     jwt.verify(token, secretKey);
     // Si el token es válido, continua
-    return NextResponse.next();
+    return new NextResponse(JSON.stringify({ message: "Token verified" }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (err) {
     // Si el token es inválido, devolvemos un error 403 y detenemos el flujo
     //delete token from database

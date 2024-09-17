@@ -55,6 +55,7 @@ export default function Login() {
       });
       console.log(response.data);
       localStorage.setItem("userId", response.data.userId);
+      localStorage.setItem("token", response.data.token);
 
       if (response.status === 200) {
         window.location.href = "/main";

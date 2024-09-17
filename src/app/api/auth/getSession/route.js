@@ -1,5 +1,6 @@
 "use server";
 import { NextResponse } from "next/server";
+import { VerifyToken } from "../../middleware";
 
 import { PrismaClient } from "@prisma/client";
 
@@ -8,6 +9,13 @@ const prisma = new PrismaClient();
 
 //get session from database
 export async function GET(req) {
+  const authResponse = VerifyToken(req);
+
+  if (authResponse?.status !== 200) {
+    // Si el token no es válido, devolvemos la respuesta de error del middleware
+    return authResponse;
+  }
+
   //get userId from req
   const userId = req.userId;
 

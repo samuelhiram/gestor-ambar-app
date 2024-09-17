@@ -68,5 +68,5 @@ export async function POST(req) {
     },
   });
 
-  return NextResponse.json({ user_id: userId });
+  return NextResponse.json({ userId: userId, token: token });
 }

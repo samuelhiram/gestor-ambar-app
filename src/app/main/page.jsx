@@ -33,7 +33,13 @@ function Main() {
       var userToken;
       const getSession = async () => {
         //make a simple fetch with js
-        const response = await fetch(`/api/auth/getSession?userId=${userId}`);
+        const response = await fetch(`/api/auth/getSession?userId=${userId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
         if (response.status === 401) {
           localStorage.clear();
@@ -43,8 +49,7 @@ function Main() {
         if (response.status === 200) {
           const data = await response.json();
           userToken = data.token;
-          localStorage.setItem("token", userToken);
-          setToken(userToken);
+          setToken(localStorage.getItem("token"));
           setState((prev) => ({ ...prev, isLoadingMainApp: false }));
         }
       };
@@ -85,7 +90,7 @@ function Main() {
             }}
             className="btn rounded-md p-2"
           >
-            log in again
+            Iniciar sesión
           </button>
         </div>
       ) : (
