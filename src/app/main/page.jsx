@@ -1,12 +1,16 @@
 "use client";
 import React from "react";
 import Sidebar from "./components/Sidebar";
+
 import DropdownButton from "./components/DropdownButton";
 import MainAppContextProvider, {
   useMainAppContext,
 } from "./components/MainAppContext";
 import ModuleLoaded from "./components/ModuleLoaded";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useInactivityHandler } from "../hooks/useInactivityHandler";
+//import axios
+import axios from "axios";
 
 import Loader from "../components/Loader/Loader";
 
@@ -20,9 +24,45 @@ export default function page() {
 
 function Main() {
   const { state, setState } = useMainAppContext();
+  //get the userId from localStorage
+  const [token, setToken] = useState();
+
   useEffect(() => {
-    setState((prev) => ({ ...prev, isLoadingMainApp: false }));
+    try {
+      const userId = localStorage.getItem("userId");
+      var userToken;
+      const getSession = async () => {
+        //make a simple fetch with js
+        const response = await fetch(`/api/auth/getSession?userId=${userId}`);
+
+        if (response.status === 401) {
+          localStorage.clear();
+          document.location.href = "/";
+        }
+
+        if (response.status === 200) {
+          const data = await response.json();
+          userToken = data.token;
+          localStorage.setItem("token", userToken);
+          setToken(userToken);
+          setState((prev) => ({ ...prev, isLoadingMainApp: false }));
+        }
+      };
+      getSession();
+    } catch (e) {
+      // localStorage.clear();
+      console.log("error: ", e);
+      // document.location.href = "/";
+    }
   }, []);
+
+  useInactivityHandler(token);
+
+  // if (state.isTokenExpired) {
+  //   console.log("token expired");
+  // } else {
+  //   console.log("token not expired");
+  // }
 
   return (
     <>
@@ -33,6 +73,21 @@ function Main() {
             <div className="text-xl">Cargando...</div>
           </div>
         </>
+      ) : state.isTokenExpired ? (
+        <div className="min-h-screen w-full h-full flex flex-col gap-3 justify-center items-center">
+          <div className=" p-4">
+            La sesión ha cadudado, inicie sesión de nuevo.
+          </div>
+          <button
+            onClick={() => {
+              localStorage.clear();
+              document.location.href = "/";
+            }}
+            className="btn rounded-md p-2"
+          >
+            log in again
+          </button>
+        </div>
       ) : (
         <>
           <div className="min-h-screen w-full flex flex-row">

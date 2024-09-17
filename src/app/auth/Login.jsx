@@ -20,9 +20,10 @@ import {
 import { Input } from "@/components/ui/input";
 import PassRecovery from "./components/PassRecovery";
 import { useAppContext } from "../components/GlobalContextApp";
-
+import Logo from "../main/components/Logo";
 export default function Login() {
-  const { setState } = useAppContext();
+  const { state, setState } = useAppContext();
+
   const formSchema = z.object({
     email: z
       .string()
@@ -52,6 +53,18 @@ export default function Login() {
         email,
         password,
       });
+      console.log(response.data);
+      localStorage.setItem("userId", response.data.userId);
+
+      if (response.status === 200) {
+        window.location.href = "/main";
+      } else {
+        setState((prev) => ({
+          ...prev,
+          showDialogAlert: !prev.showDialogAlert,
+          dialogMessage: "Credenciales inválidas",
+        }));
+      }
     } catch (error) {
       setState((prev) => ({
         ...prev,
@@ -62,8 +75,8 @@ export default function Login() {
   }
   return (
     <div className="min-h-screen w-full flex flex-col gap-8 justify-center items-center">
-      <div className="flex flex-col gap-4 w-full justify-center items-center">
-        <Image src="img/logo.svg" alt="TecTijuana" width={250} height={250} />
+      <div className="">
+        {/* <Image src="img/logo.svg" alt="TecTijuana" width={250} height={250} />
         <div>
           <p className="font-light text-2xl w-full flex justify-center items-center">
             CIMS - TecNM
@@ -71,7 +84,8 @@ export default function Login() {
           <p className="text-sm flex w-full justify-center ">
             Control e Inventario de Materiales y Suplementos
           </p>
-        </div>
+        </div> */}
+        <Logo />
       </div>
       <div className="max-md:w-4/5 md:w-2/5 lg:w-2/5 xl:w-1/4 p-4 border rounded-xl flex flex-col justify-center space-y-4 shadow-xl">
         <Form {...form}>
@@ -113,7 +127,7 @@ export default function Login() {
           </form>
         </Form>
         {/**/}
-        <PassRecovery />
+        {/* <PassRecovery /> */}
         {/**/}
       </div>
     </div>
