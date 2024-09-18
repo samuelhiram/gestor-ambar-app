@@ -60,6 +60,13 @@ export default function Users() {
       hoverColor: "hover:bg-red-700",
       icon: "ic:baseline-delete",
     },
+    {
+      action: "sumar",
+      color: "bg-orange-800",
+      textColor: "text-gray-50",
+      hoverColor: "hover:bg-orange-700",
+      icon: "ic:baseline-add",
+    },
   ];
 
   return (

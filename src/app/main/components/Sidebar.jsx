@@ -3,6 +3,7 @@ import SidebarMenuItem from "./SidebarMenuItem";
 import Logo from "./Logo";
 import { useMainAppContext } from "./MainAppContext";
 import { useEffect } from "react";
+import { Icon } from "@iconify/react";
 
 export default function Sidebar() {
   const { state, setState } = useMainAppContext();
@@ -27,6 +28,23 @@ export default function Sidebar() {
           />
         );
       })}
+      <div className="flex flex-1  items-end justify-end">
+        <div
+          onClick={() => {
+            localStorage.clear();
+            window.location.reload();
+          }}
+          className=" justify-center items-center flex gap-2 border p-2 m-5 cursor-pointer hover:bg-blue-100 text-blue-900 font-semibold active:bg-blue-200 rounded-md"
+        >
+          <Icon
+            icon="system-uicons:exit-right"
+            width="24"
+            height="24"
+            style={{ color: "#1e3a8a" }}
+          />
+          <div>Salir</div>
+        </div>
+      </div>
     </nav>
   );
 }

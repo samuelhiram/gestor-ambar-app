@@ -56,8 +56,8 @@ function Main() {
       getSession();
     } catch (e) {
       // localStorage.clear();
-      console.log("error: ", e);
-      // document.location.href = "/";
+      // console.log("error: ", e);
+      document.location.href = "/";
     }
   }, []);
 

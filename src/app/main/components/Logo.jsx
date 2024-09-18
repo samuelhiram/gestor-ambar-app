@@ -16,8 +16,8 @@ export default function Logo() {
                   height={60}
                 /> */}
                 <div>
-                  <p className="text-sm font-light text-left">Sistema</p>
-                  <p className="font-light text-2xl text-left">CIMS</p>
+                  <p className="font-extralight text-sm  text-left">Sistema</p>
+                  <p className="font-bold text-2xl text-left">CIMS</p>
                 </div>
               </div>
               <div className="w-3/5 flex justify-center">

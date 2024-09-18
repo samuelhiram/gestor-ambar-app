@@ -36,12 +36,12 @@ export async function POST(req) {
   console.log("--api--> user found, login success");
   const userId = user.id;
 
-  const token = jwt.sign({ userId }, secretKey, { expiresIn: "40s" });
+  const token = jwt.sign({ userId }, secretKey, { expiresIn: "3h" });
 
   //get actual date
   const date = new Date();
   //add 40 seconds to the actual date
-  const expires = new Date(date.getTime() + 40 * 1000);
+  const expires = new Date(date.getTime() + 3 * 60 * 60 * 1000);
 
   ///delete all sessions of the user
   await prisma.session.deleteMany({

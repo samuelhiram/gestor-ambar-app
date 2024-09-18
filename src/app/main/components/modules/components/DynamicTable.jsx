@@ -74,7 +74,6 @@ const DynamicTable = ({ headers, data, actions }) => {
                         );
                       }}
                     >
-                      <div>{action.action}</div>
                       <div>
                         <Icon icon={action.icon} width={16} height={16} />
                       </div>
