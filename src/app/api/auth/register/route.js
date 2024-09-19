@@ -13,7 +13,12 @@ const prisma = new PrismaClient();
 
 export async function POST(req) {
   console.log("--api--> register");
-  const authResponse = VerifyToken(req);
+  const authResponse = await VerifyToken(req);
+
+  if (authResponse?.status !== 200) {
+    // Si el token no es válido, devolvemos la respuesta de error del middleware
+    return authResponse;
+  }
 
   const body = await req.json();
   const { email, control_number, role, fullName, location, password } = body;

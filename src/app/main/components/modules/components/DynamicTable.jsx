@@ -3,14 +3,14 @@ import { useMainAppContext } from "../../MainAppContext";
 import { Icon } from "@iconify/react";
 import EditItem from "./EditItem";
 
-const DynamicTable = ({ headers, data, actions }) => {
+const DynamicTable = ({ headers, dataHeaders, data, actions }) => {
   const { state } = useMainAppContext();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRowIndex, setSelectedRowIndex] = useState(null);
-
+  const [internalData, setInternalData] = useState(data);
   const [isEmptyData, setIsEmptyData] = useState(false);
   // Filtrar los datos según el término de búsqueda.
-  const filteredData = data.filter((row) =>
+  const filteredData = Array(internalData).filter((row) =>
     Object.values(row).some((val) =>
       val.toString().toLowerCase().includes(searchTerm.toLowerCase())
     )
@@ -67,12 +67,12 @@ const DynamicTable = ({ headers, data, actions }) => {
               key={rowIndex}
               onClick={() => handleRowClick(row)}
             >
-              {headers.map((header, colIndex) => (
+              {dataHeaders.map((dataHeader, colIndex) => (
                 <td
                   className="text-sm p-2 max-sm:p-1 max-sm:flex max-sm:flex-col max-sm:first:bg-blue-900 max-sm:first:text-gray-50 max-sm: text-center  border"
                   key={colIndex}
                 >
-                  {row[header]}
+                  {row[dataHeader]}
                 </td>
               ))}
               {actions && (

@@ -87,6 +87,23 @@ export default function CreateUser() {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
 
+      const users = await fetch("api/getUsers", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Asegúrate que 'token' esté definido
+        },
+      });
+
+      const users_Data = await users.json();
+
+      // console.log(usersData);
+
+      setState((prevStates) => ({
+        ...prevStates,
+        usersData: users_Data,
+      }));
+
       const data = await response.json(); // Convierte la respuesta a JSON
       console.log(data); // Muestra la respuesta correcta
     } catch (err) {

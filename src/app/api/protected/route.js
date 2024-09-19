@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { VerifyToken } from "../middleware";
 
 export async function GET(req) {
-  const authResponse = VerifyToken(req);
+  const authResponse = await VerifyToken(req);
 
   if (authResponse?.status !== 200) {
     // Si el token no es válido, devolvemos la respuesta de error del middleware
