@@ -1,28 +1,26 @@
+"use client";
+import { use } from "bcrypt/promises";
 import Login from "./auth/Login";
-import Image from "next/image";
-import PassRecovery from "./auth/PassRecovery";
+import DialogMessage from "./components/DialogMessage";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [hasSession, setHasSession] = useState(true);
+  var token;
+  var userId;
+  useEffect(() => {
+    userId = localStorage.getItem("userId");
+    token = localStorage.getItem("token");
+    if (token && userId) {
+      document.location.href = "/main";
+    } else {
+      setHasSession(false);
+    }
+  }, []);
   return (
     <>
-      <div className="min-h-screen w-full flex flex-col gap-8 justify-center items-center">
-        <div className="flex flex-col gap-4">
-          <Image src="img/logo.svg" alt="TecTijuana" width={250} height={250} />
-          <div>
-            <p className="font-light text-2xl w-full flex justify-center items-center">
-              Gestor Ambar - TecNM
-            </p>
-            <p className="text-sm flex w-full justify-center">
-              Control e inventario de materiales
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-4 justify-center items-center ">
-          <Login />
-          <PassRecovery />
-        </div>
-      </div>
+      {hasSession ? null : <Login />}
+      <DialogMessage />
     </>
   );
 }

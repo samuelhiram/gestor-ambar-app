@@ -6,5 +6,6 @@
     "*.embeddedhtml": "html",
     "*.php": "php",
     "plyconfig.json": "jsonc"
-  }
+  },
+  "WillLuke.nextjs.hasPrompted": true
 }

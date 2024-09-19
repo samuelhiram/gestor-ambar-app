@@ -17,8 +17,36 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
-  name      String?
+  control_number String @unique
+  role      String
+  fullName  String
+  location  String
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  //relation
+  session   Session[]
+  log       Log[]
+
+}
+
+//session of user
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  //relation
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+//log history
+model Log {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  createdAt DateTime @default(now())
+  //relation
+  user      User     @relation(fields: [userId], references: [id])
 }

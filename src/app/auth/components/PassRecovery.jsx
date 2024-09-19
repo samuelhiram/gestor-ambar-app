@@ -44,27 +44,37 @@ export default function PassRecovery() {
     },
   });
   function onSubmit(values) {
-    // console.log(values);
-    console.log("login");
+    console.log(values);
+    // console.log("login");
   }
   return (
     <Dialog>
       <DialogTrigger className="!bg-transparent !underline !text-blue-900 !p-0 !active:bg-blue-100">
         Recuperar contraseña
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent
+        style={{
+          width: "90vw", // Ocupa el 90% del ancho de la pantalla
+          maxWidth: "600px", // Limita el ancho máximo a 600px
+          padding: "20px",
+          margin: "0 auto", // Centra el contenido
+        }}
+      >
+        <DialogHeader>
+          <div className="justify-start text-start">
+            <DialogTitle>Recuperar contraseña</DialogTitle>
+            <DialogDescription>
+              Escribe el correo de la cuenta
+            </DialogDescription>
+          </div>
+        </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-3 max-md:w-4/5 "
-          >
-            <div className="font-bold text-xl">Recuperar contraseña</div>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Escriba el correo de la cuenta</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
