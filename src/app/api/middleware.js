@@ -35,7 +35,7 @@ export async function VerifyToken(req) {
     //si la sesion existe pero expiro
     if (new Date() > session.expires) {
       //delete token from database
-      await prisma.session.delete({ where: { token: token } });
+      await prisma.session.delete({ where: { id: session.id } });
       return new NextResponse(JSON.stringify({ message: "Token expired" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },
@@ -54,7 +54,7 @@ export async function VerifyToken(req) {
   } catch (err) {
     // Si el token es inválido, devolvemos un error 403 y detenemos el flujo
     //delete token from database
-    await prisma.session.delete({ where: { token: token } });
+    await prisma.session.delete({ where: { id: session.id } });
 
     return new NextResponse(JSON.stringify({ message: "Invalid token" }), {
       status: 403,

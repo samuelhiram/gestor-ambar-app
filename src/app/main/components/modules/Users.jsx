@@ -10,31 +10,32 @@ export default function Users() {
     "Ubicación",
     "Fecha_de_Ingreso",
   ];
+
   const data = [
-    {
-      id: "osdj9thththf",
-      Nombre: "Samuel Hiram",
-      Número_de_control: "20212390",
-      Ubicación: "Unidad Tomas Aquino",
-      Rol: "Admin",
-      Fecha_de_Ingreso: "2021-09-01",
-    },
-    {
-      id: "osdj9sdfdsfdfaf",
-      Nombre: "Anna Belen ",
-      Número_de_control: "20195674",
-      Ubicación: "Unidad Otay",
-      Rol: "Mod",
-      Fecha_de_Ingreso: "2021-09-01",
-    },
-    {
-      id: "osdjasdsad3osaf",
-      Nombre: "Juan Pedro",
-      Número_de_control: "39492843",
-      Ubicación: "Unidad Tomas Aquino",
-      Rol: "Viewer",
-      Fecha_de_Ingreso: "2021-09-01",
-    },
+    // {
+    //   id: "osdj9thththf",
+    //   Nombre: "Samuel Hiram",
+    //   Número_de_control: "20212390",
+    //   Ubicación: "Unidad Tomas Aquino",
+    //   Rol: "Admin",
+    //   Fecha_de_Ingreso: "2021-09-01",
+    // },
+    // {
+    //   id: "osdj9sdfdsfdfaf",
+    //   Nombre: "Anna Belen ",
+    //   Número_de_control: "20195674",
+    //   Ubicación: "Unidad Otay",
+    //   Rol: "Mod",
+    //   Fecha_de_Ingreso: "2021-09-01",
+    // },
+    // {
+    //   id: "osdjasdsad3osaf",
+    //   Nombre: "Juan Pedro",
+    //   Número_de_control: "39492843",
+    //   Ubicación: "Unidad Tomas Aquino",
+    //   Rol: "Viewer",
+    //   Fecha_de_Ingreso: "2021-09-01",
+    // },
   ];
 
   // const actions = ["editar", "detalles", "eliminar"]; // Acciones que deseas mostrar.

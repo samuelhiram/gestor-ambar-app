@@ -24,6 +24,9 @@ export default function MainAppContextProvider({ children }) {
     showModule: true,
     modules: appModules,
     userModuleData: userModuleData,
+
+    //Users module
+    usersData: [],
   });
 
   const value = { state, setState };

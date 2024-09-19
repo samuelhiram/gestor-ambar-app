@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useMainAppContext } from "../../MainAppContext";
 import { Icon } from "@iconify/react";
 import EditItem from "./EditItem";
@@ -8,6 +8,7 @@ const DynamicTable = ({ headers, data, actions }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRowIndex, setSelectedRowIndex] = useState(null);
 
+  const [isEmptyData, setIsEmptyData] = useState(false);
   // Filtrar los datos según el término de búsqueda.
   const filteredData = data.filter((row) =>
     Object.values(row).some((val) =>
@@ -21,7 +22,9 @@ const DynamicTable = ({ headers, data, actions }) => {
   };
 
   return (
-    <div className="border p-2  rounded-xl flex flex-col gap-2">
+    <div
+      className={` border p-2 min-w-full w-full max-w-full  rounded-xl flex flex-col gap-2`}
+    >
       <input
         type="text"
         placeholder="Buscar en la tabla..."
@@ -29,7 +32,18 @@ const DynamicTable = ({ headers, data, actions }) => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="search-input text-sm rounded-md border-2 p-2 md:w-2/4 shadow"
       />
-      <table className="w-full  overflow-hidden rounded-xl bg-gray-50 shadow-md">
+      <div
+        className={`${
+          filteredData.length === 0 ? "visible" : "hidden"
+        } min-w-full w-full flex justify-center items-center p-2`}
+      >
+        Aún no hay datos en este módulo.
+      </div>
+      <table
+        className={`${
+          filteredData.length === 0 ? "hidden" : "visible"
+        } w-full overflow-hidden rounded-xl bg-gray-50 shadow-md`}
+      >
         <thead className="bg-blue-900 text-gray-50 max-sm:hidden">
           <tr>
             {headers.map((header, index) => (
@@ -42,6 +56,7 @@ const DynamicTable = ({ headers, data, actions }) => {
             )}
           </tr>
         </thead>
+
         <tbody>
           {filteredData.map((row, rowIndex) => (
             <tr
@@ -61,25 +76,27 @@ const DynamicTable = ({ headers, data, actions }) => {
                 </td>
               ))}
               {actions && (
-                <td className="p-1 flex flex-grow border text-sm gap-2 justify-center !m-0 max-xl:flex-col">
-                  {actions.map((action, actionIndex) => (
-                    <span
-                      className={`${action.color} ${action.textColor} flex justify-center items-center gap-1  px-2 py-1 rounded-md cursor-pointer ${action.hoverColor}`}
-                      key={actionIndex}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        console.log(
-                          `${action.action} ${state.activeModuleName} clicked for row`,
-                          row
-                        );
-                      }}
-                    >
-                      <div>
-                        <Icon icon={action.icon} width={16} height={16} />
-                      </div>
-                    </span>
-                  ))}
-                </td>
+                <>
+                  <td className="p-1 flex flex-grow border text-sm gap-2 justify-center !m-0 max-xl:flex-col">
+                    {actions.map((action, actionIndex) => (
+                      <span
+                        className={`${action.color} ${action.textColor} flex justify-center items-center gap-1 max-w-[2rem] px-2 py-1 rounded-md cursor-pointer ${action.hoverColor}`}
+                        key={actionIndex}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          console.log(
+                            `${action.action} ${state.activeModuleName} clicked for row`,
+                            row
+                          );
+                        }}
+                      >
+                        <div>
+                          <Icon icon={action.icon} width={20} height={20} />
+                        </div>
+                      </span>
+                    ))}
+                  </td>
+                </>
               )}
             </tr>
           ))}
