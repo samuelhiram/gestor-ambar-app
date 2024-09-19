@@ -71,18 +71,26 @@ export default function CreateUser() {
 
     console.log(values);
 
+    const token = localStorage.getItem("token");
+
     try {
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`, // Asegúrate que 'token' esté definido
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(values), // 'values' debe ser un objeto serializable
       });
-      console.log(response.body);
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json(); // Convierte la respuesta a JSON
+      console.log(data); // Muestra la respuesta correcta
     } catch (err) {
-      console.log(err);
+      console.log("Error en la petición:", err.message);
     }
   }
   return (

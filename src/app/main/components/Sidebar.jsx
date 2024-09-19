@@ -2,13 +2,11 @@ import React from "react";
 import SidebarMenuItem from "./SidebarMenuItem";
 import Logo from "./Logo";
 import { useMainAppContext } from "./MainAppContext";
-import { Icon } from "@iconify/react";
 import { useEffect } from "react";
 import { Icon } from "@iconify/react";
 
 export default function Sidebar() {
   const { state, setState } = useMainAppContext();
-
   return (
     <nav
       className={`${

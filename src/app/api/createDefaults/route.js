@@ -32,5 +32,5 @@ export async function GET() {
     console.log("default user: ", user.email);
   }
 
-  return NextResponse.res.json({ message: "Default user created" });
+  return NextResponse.json({ message: "Default user created" });
 }

@@ -12,36 +12,36 @@ export async function VerifyToken(req) {
 
   if (!token) {
     // Si no hay token, devolvemos un error 401 y detenemos el flujo
-    return new NextResponse(
+    return NextResponse(
       JSON.stringify({ message: "No token provided, access denied" }),
       { status: 401, headers: { "Content-Type": "application/json" } }
     );
   }
 
   // select token in session model
-  const session = await prisma.session.findFirst({
-    where: {
-      token: token,
-    },
-  });
+  // const session = await prisma.session.findFirst({
+  //   where: {
+  //     token: token,
+  //   },
+  // });
 
-  if (!session) {
-    // Si no hay token, devolvemos un error 401 y detenemos el flujo
-    return new NextResponse(
-      JSON.stringify({ message: "No token provided, access denied" }),
-      { status: 401, headers: { "Content-Type": "application/json" } }
-    );
-  } else {
-    //si la sesion existe pero expiro
-    if (new Date() > session.expires) {
-      //delete token from database
-      await prisma.session.delete({ where: { id: session.id } });
-      return new NextResponse(JSON.stringify({ message: "Token expired" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-  }
+  // if (!session) {
+  //   // Si no hay token, devolvemos un error 401 y detenemos el flujo
+  //   return new NextResponse(
+  //     JSON.stringify({ message: "No token provided, access denied" }),
+  //     { status: 401, headers: { "Content-Type": "application/json" } }
+  //   );
+  // } else {
+  //   //si la sesion existe pero expiro
+  //   if (new Date() > session.expires) {
+  //     //delete token from database
+  //     await prisma.session.delete({ where: { id: session.id } });
+  //     return new NextResponse(JSON.stringify({ message: "Token expired" }), {
+  //       status: 401,
+  //       headers: { "Content-Type": "application/json" },
+  //     });
+  //   }
+  // }
 
   try {
     // Verificamos el token
@@ -54,9 +54,9 @@ export async function VerifyToken(req) {
   } catch (err) {
     // Si el token es inválido, devolvemos un error 403 y detenemos el flujo
     //delete token from database
-    await prisma.session.delete({ where: { id: session.id } });
+    // await prisma.session.delete({ where: { id: session.id } });
 
-    return new NextResponse(JSON.stringify({ message: "Invalid token" }), {
+    return NextResponse(JSON.stringify({ message: "Invalid token" }), {
       status: 403,
       headers: { "Content-Type": "application/json" },
     });
