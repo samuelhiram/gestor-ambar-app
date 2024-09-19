@@ -11,9 +11,10 @@ const secretKey = process.env.SECRET_KEY;
 const prisma = new PrismaClient();
 
 export async function POST(req) {
+  console.log("--api--> register");
   const body = await req.json();
   const { email, control_number, role, fullName, location, password } = body;
-
+  const hashedpassword = await bcrypt.hash(password, 10);
   //create user in database
   const user = await prisma.user.create({
     data: {
@@ -22,7 +23,7 @@ export async function POST(req) {
       role: role,
       fullName: fullName,
       location: location,
-      password: bcrypt.hash(password),
+      password: hashedpassword,
     },
   });
 

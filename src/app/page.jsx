@@ -9,6 +9,11 @@ export default function Home() {
   var token;
   var userId;
   useEffect(() => {
+    //fetch create defaultUser
+    fetch("/api/createDefaults")
+      .then((res) => res.json())
+      .then((data) => console.log(data));
+
     userId = localStorage.getItem("userId");
     token = localStorage.getItem("token");
     if (token && userId) {
