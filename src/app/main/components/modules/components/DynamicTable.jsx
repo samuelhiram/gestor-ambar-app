@@ -37,7 +37,7 @@ const DynamicTable = ({ headers, data, actions }) => {
           filteredData.length === 0 ? "visible" : "hidden"
         } min-w-full w-full flex justify-center items-center p-2`}
       >
-        Aún no hay datos en este modulo.
+        Aún no hay datos en este módulo.
       </div>
       <table
         className={`${

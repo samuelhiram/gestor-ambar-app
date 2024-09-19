@@ -35,28 +35,30 @@ import {
 } from "@/components/ui/accordion";
 
 import { Input } from "@/components/ui/input";
+import { useMainAppContext } from "../../MainAppContext";
 export default function CreateUser() {
+  const { state, setState } = useMainAppContext();
   const formSchema = z.object({
     email: z
       .string()
       .email({ message: "Formato inválido" })
       .min(2, { message: "Obligatorio" })
       .max(50),
-    name: z.string().min(2, { message: "Obligatorio" }).max(50),
+    fullName: z.string().min(2, { message: "Obligatorio" }).max(50),
     control_number: z.string().min(6, { message: "Obligatorio" }).max(50),
     location: z.string().min(2, { message: "Obligatorio" }).max(50),
     //make with zod required
-    rol: z.string().min(2, { message: "Obligatorio" }).max(50),
+    role: z.string().min(2, { message: "Obligatorio" }).max(50),
   });
   // 1. Define your form.
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      name: "",
+      fullName: "",
       control_number: "",
       location: "",
-      rol: "",
+      role: "",
     },
   });
   async function onSubmit(values) {
@@ -68,6 +70,20 @@ export default function CreateUser() {
     values.password = password;
 
     console.log(values);
+
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(values),
+      });
+      console.log(response.body);
+    } catch (err) {
+      console.log(err);
+    }
   }
   return (
     <div className="w-full p-2 border rounded-xl">
@@ -96,7 +112,7 @@ export default function CreateUser() {
               >
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="fullName"
                   render={({ field }) => (
                     <FormItem className="w-full flex-grow">
                       <FormLabel>Nombre completo</FormLabel>
@@ -141,7 +157,7 @@ export default function CreateUser() {
 
                 <FormField
                   control={form.control}
-                  name="rol"
+                  name="role"
                   render={({ field }) => (
                     <FormItem className="w-full flex-grow">
                       <FormLabel>Rol</FormLabel>

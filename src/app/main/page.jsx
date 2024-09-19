@@ -43,7 +43,7 @@ function Main() {
 
         if (response.status === 401) {
           localStorage.clear();
-          document.location.href = "/";
+          // document.location.href = "/";
         }
 
         if (response.status === 200) {

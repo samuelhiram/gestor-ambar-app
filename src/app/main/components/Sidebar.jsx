@@ -2,6 +2,7 @@ import React from "react";
 import SidebarMenuItem from "./SidebarMenuItem";
 import Logo from "./Logo";
 import { useMainAppContext } from "./MainAppContext";
+import { Icon } from "@iconify/react";
 import { useEffect } from "react";
 
 export default function Sidebar() {
