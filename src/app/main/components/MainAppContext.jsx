@@ -19,6 +19,7 @@ appModules.push(userModuleData);
 export default function MainAppContextProvider({ children }) {
   const [state, setState] = useState({
     isLoadingMainApp: true,
+    isLoadingModule: true,
     activeModuleName: "Inicio",
     showSideBar: true,
     showModule: true,

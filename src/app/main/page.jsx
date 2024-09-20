@@ -9,9 +9,6 @@ import MainAppContextProvider, {
 import ModuleLoaded from "./components/ModuleLoaded";
 import { useEffect, useState } from "react";
 import { useInactivityHandler } from "../hooks/useInactivityHandler";
-//import axios
-import axios from "axios";
-
 import Loader from "../components/Loader/Loader";
 
 export default function page() {
@@ -43,7 +40,12 @@ function Main() {
 
         if (response.status === 401) {
           localStorage.clear();
-          // document.location.href = "/";
+          document.location.href = "/";
+        }
+
+        if (response.status === 403) {
+          localStorage.clear();
+          document.location.href = "/";
         }
 
         if (response.status === 200) {

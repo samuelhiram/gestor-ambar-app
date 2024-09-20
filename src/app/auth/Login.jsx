@@ -1,5 +1,4 @@
 "use client";
-import axios from "axios";
 import React from "react";
 import Image from "next/image";
 
@@ -49,15 +48,20 @@ export default function Login() {
         showDialogAlert: false,
       }));
 
-      const response = await axios.post("/api/auth/login", {
-        email,
-        password,
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       });
-      console.log(response.data);
-      localStorage.setItem("userId", response.data.userId);
-      localStorage.setItem("token", response.data.token);
 
       if (response.status === 200) {
+        const data = await response.json();
+
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("token", data.token);
+
         window.location.href = "/main";
       } else {
         setState((prev) => ({

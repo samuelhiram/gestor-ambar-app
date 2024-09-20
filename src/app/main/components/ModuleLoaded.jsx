@@ -7,6 +7,7 @@ import Inventory from "./modules/Inventory";
 import Start from "./modules/Start";
 import User from "./modules/User";
 import Users from "./modules/Users";
+import Loader from "../../components/Loader/Loader";
 
 export default function ModuleLoaded() {
   const { state } = useMainAppContext();
@@ -37,6 +38,21 @@ export default function ModuleLoaded() {
           <div className="text-sm">{description}</div>
         </div>
       </div>
+
+      {state.isLoadingModule ? (
+        <>
+          <div
+            className={`${
+              state.showSideBar
+                ? "w-3/4 bg-gray-50 absolute z-50 flex flex-row gap-4 justify-center items-center"
+                : "w-full flex flex-row gap-4 justify-center items-center"
+            }`}
+          >
+            <Loader />
+            <div className="text-xl">Cargando... {state.activeModuleName}</div>
+          </div>
+        </>
+      ) : null}
 
       <div className={`p-4`}>
         {state.activeModuleName === "Inicio" && <Start />}

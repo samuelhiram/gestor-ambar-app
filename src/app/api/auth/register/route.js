@@ -23,6 +23,32 @@ export async function POST(req) {
   const body = await req.json();
   const { email, control_number, role, fullName, location, password } = body;
   const hashedpassword = await bcrypt.hash(password, 10);
+
+  //search if user already exists by email or control number
+  const emailRepeated = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+
+  const controlNumberRepeated = await prisma.user.findUnique({
+    where: {
+      control_number: control_number,
+    },
+  });
+
+  if (emailRepeated) {
+    return new Response(JSON.stringify({ emailAlreadyExists: true }), {
+      status: 400,
+    });
+  }
+
+  if (controlNumberRepeated) {
+    return new Response(JSON.stringify({ controlNumberAlreadyExists: true }), {
+      status: 400,
+    });
+  }
+
   //create user in database
   const user = await prisma.user.create({
     data: {
@@ -39,5 +65,7 @@ export async function POST(req) {
     console.log("user: ", user);
   }
 
-  return NextResponse.json({ message: "creating..." });
+  return new NextResponse(
+    JSON.stringify({ message: "creating..." }, { status: 200 })
+  );
 }

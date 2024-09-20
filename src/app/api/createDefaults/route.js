@@ -9,7 +9,9 @@ export async function GET() {
   //get user by env email
 
   if (!process.env.DATABASE_URL) {
-    return NextResponse.json({ message: "No DATABASE_URL env variable" });
+    return new NextResponse(
+      JSON.stringify({ message: "No DATABASE_URL env variable" })
+    );
   }
 
   const user = await prisma.user.findUnique({
@@ -38,5 +40,7 @@ export async function GET() {
     console.log("default user: ", user.email);
   }
 
-  return NextResponse.json({ message: "Default user created" });
+  return new NextResponse(JSON.stringify({ message: "Default user created" }), {
+    status: 200,
+  });
 }

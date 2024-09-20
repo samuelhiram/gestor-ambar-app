@@ -12,7 +12,7 @@ export async function VerifyToken(req) {
 
   if (!token) {
     // Si no hay token, devolvemos un error 401 y detenemos el flujo
-    return NextResponse(
+    return new NextResponse(
       JSON.stringify({ message: "No token provided, access denied" }),
       { status: 401, headers: { "Content-Type": "application/json" } }
     );
@@ -56,7 +56,7 @@ export async function VerifyToken(req) {
     //delete token from database
     // await prisma.session.delete({ where: { id: session.id } });
 
-    return NextResponse(JSON.stringify({ message: "Invalid token" }), {
+    return new NextResponse(JSON.stringify({ message: "Invalid token" }), {
       status: 403,
       headers: { "Content-Type": "application/json" },
     });

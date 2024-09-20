@@ -23,14 +23,18 @@ export async function POST(req) {
   //verify that user exists
   if (!user) {
     console.log("--api--> user not found");
-    return NextResponse.json({ invalidCredentials: true }, { status: 400 });
+    return new NextResponse(
+      JSON.stringify({ invalidCredentials: true }, { status: 400 })
+    );
   }
 
   //verify password with bcrypt
 
   if (!(await bcrypt.compare(password, user.password))) {
     console.log("--api--> password incorrect");
-    return NextResponse.json({ invalidCredentials: true }, { status: 400 });
+    return new NextResponse(
+      JSON.stringify({ invalidCredentials: true }, { status: 400 })
+    );
   }
 
   console.log("--api--> user found, login success");
@@ -68,5 +72,5 @@ export async function POST(req) {
     },
   });
 
-  return NextResponse.json({ userId: userId, token: token });
+  return new NextResponse(JSON.stringify({ userId: userId, token: token }));
 }

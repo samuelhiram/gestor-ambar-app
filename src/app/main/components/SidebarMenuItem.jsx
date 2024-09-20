@@ -21,7 +21,7 @@ export default function SidebarMenuItem({ receivedModule }) {
         className={`${
           state.activeModuleName === moduleName
             ? "bg-blue-100"
-            : "bg-gray-50 hover:bg-gray-100"
+            : " hover:bg-gray-100"
         } sm:hidden w-full flex justify-between p-4 cursor-pointer active:bg-gray-200/80`}
       >
         <div className="flex items-center justify-start gap-2 w-4/5">
@@ -60,7 +60,7 @@ export default function SidebarMenuItem({ receivedModule }) {
         className={`${
           state.activeModuleName === moduleName
             ? "bg-blue-100"
-            : "bg-gray-50 hover:bg-gray-100"
+            : " hover:bg-gray-100"
         } max-sm:hidden w-full flex justify-between p-2 cursor-pointer active:bg-gray-200/80`}
       >
         <div className="flex items-center justify-start gap-2 w-4/5">

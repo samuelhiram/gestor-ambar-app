@@ -62,9 +62,6 @@ export default function CreateUser() {
     },
   });
   async function onSubmit(values) {
-    //clear form
-    form.reset();
-
     const password = Math.random().toString(36).slice(-8);
 
     values.password = password;
@@ -83,8 +80,14 @@ export default function CreateUser() {
         body: JSON.stringify(values), // 'values' debe ser un objeto serializable
       });
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      if (response.status !== 200) {
+        var error = await response.json();
+        console.log("email already exists?", error.emailAlreadyExists);
+        console.log(
+          "number control already exists?",
+          error.controlNumberAlreadyExists
+        );
+        return;
       }
 
       const users = await fetch("api/getUsers", {
@@ -106,6 +109,9 @@ export default function CreateUser() {
 
       const data = await response.json(); // Convierte la respuesta a JSON
       console.log(data); // Muestra la respuesta correcta
+
+      //clear form
+      form.reset();
     } catch (err) {
       console.log("Error en la petición:", err.message);
     }

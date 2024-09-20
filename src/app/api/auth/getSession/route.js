@@ -47,7 +47,7 @@ export async function GET(req) {
       });
     }
 
-    return NextResponse.json({ token: session.token });
+    return new NextResponse(JSON.stringify({ token: session.token }));
   } else {
     //stop the flow
     return new NextResponse(JSON.stringify({ message: "No session found" }), {
