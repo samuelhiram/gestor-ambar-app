@@ -30,7 +30,7 @@ export default function Logo() {
                 />
               </div>
             </div>
-            <div className="text-md w-full flex p-2 justify-center gap-4 items-center bg-blue-900 text-gray-50/90 font-light">
+            <div className="text-md w-full flex px-4 py-2 justify-center gap-4 items-center bg-blue-900 text-gray-50/90 font-light">
               <p className="text-center">
                 Control e Inventario de Materiales y Suplementos
               </p>
