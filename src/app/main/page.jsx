@@ -10,6 +10,7 @@ import ModuleLoaded from "./components/ModuleLoaded";
 import { useEffect, useState } from "react";
 import { useInactivityHandler } from "../hooks/useInactivityHandler";
 import Loader from "../components/Loader/Loader";
+import DialogAlert from "./components/DialogAlert";
 
 export default function page() {
   return (
@@ -65,12 +66,6 @@ function Main() {
 
   useInactivityHandler(token);
 
-  // if (state.isTokenExpired) {
-  //   console.log("token expired");
-  // } else {
-  //   console.log("token not expired");
-  // }
-
   return (
     <>
       {state.isLoadingMainApp ? (
@@ -106,6 +101,7 @@ function Main() {
             </div>
           </div>
           <DropdownButton />
+          <DialogAlert />
         </>
       )}
     </>

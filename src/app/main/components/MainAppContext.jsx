@@ -26,6 +26,9 @@ export default function MainAppContextProvider({ children }) {
     modules: appModules,
     userModuleData: userModuleData,
 
+    //dialog alert
+    showDialogAlert: false,
+    dialogMessage: "default message",
     //Users module
     usersData: [],
   });

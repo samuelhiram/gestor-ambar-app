@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
@@ -38,6 +39,7 @@ import { Input } from "@/components/ui/input";
 import { useMainAppContext } from "../../MainAppContext";
 export default function CreateUser() {
   const { state, setState } = useMainAppContext();
+
   const formSchema = z.object({
     email: z
       .string()
@@ -71,49 +73,74 @@ export default function CreateUser() {
     const token = localStorage.getItem("token");
 
     try {
+      // Ocultar alerta de diálogo al iniciar el proceso
+      setState((prev) => ({
+        ...prev,
+        showDialogAlert: false,
+      }));
+
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Asegúrate que 'token' esté definido
+          Authorization: `Bearer ${token}`, // Asegúrate de que 'token' esté definido correctamente
         },
-        body: JSON.stringify(values), // 'values' debe ser un objeto serializable
+        body: JSON.stringify(values), // 'values' es el objeto que contiene los datos del formulario
       });
 
-      if (response.status !== 200) {
-        var error = await response.json();
-        console.log("email already exists?", error.emailAlreadyExists);
+      // Verificar si la respuesta no fue exitosa
+      if (!response.ok) {
+        const error = await response.json(); // Obtener el mensaje de error del servidor
         console.log(
-          "number control already exists?",
-          error.controlNumberAlreadyExists
+          "email already exists?",
+          error.error === "Email already exists"
         );
-        return;
+        console.log(
+          "control number already exists?",
+          error.error === "Control number already exists"
+        );
+
+        setState((prevState) => ({
+          ...prevState,
+          showDialogAlert: true,
+          dialogMessage:
+            error.error === "Email already exists"
+              ? "El correo ya está registrado"
+              : "El número de control ya está registrado",
+        }));
+
+        return; // Salir si ocurre un error
       }
 
-      const users = await fetch("api/getUsers", {
+      // Obtener datos del usuario si la solicitud fue exitosa
+      const data = await response.json();
+      console.log("User registered successfully:", data); // Muestra los datos devueltos por el backend
+
+      // Obtener la lista de usuarios actualizada
+      const usersResponse = await fetch("/api/getUsers", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Asegúrate que 'token' esté definido
+          Authorization: `Bearer ${token}`, // Asegúrate de que 'token' esté definido correctamente
         },
       });
 
-      const users_Data = await users.json();
+      if (!usersResponse.ok) {
+        throw new Error("Failed to fetch users");
+      }
 
-      // console.log(usersData);
+      const usersData = await usersResponse.json();
 
-      setState((prevStates) => ({
-        ...prevStates,
-        usersData: users_Data,
+      // Actualizar el estado con los datos de los usuarios
+      setState((prevState) => ({
+        ...prevState,
+        usersData: usersData,
       }));
 
-      const data = await response.json(); // Convierte la respuesta a JSON
-      console.log(data); // Muestra la respuesta correcta
-
-      //clear form
+      // Limpiar el formulario
       form.reset();
     } catch (err) {
-      console.log("Error en la petición:", err.message);
+      console.error("Error en la petición:", err.message);
     }
   }
   return (
