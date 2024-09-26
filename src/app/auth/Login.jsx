@@ -1,5 +1,4 @@
 "use client";
-import axios from "axios";
 import React from "react";
 import Image from "next/image";
 
@@ -44,48 +43,55 @@ export default function Login() {
     const email = values.email;
     const password = values.password;
     try {
+      // Ocultar alerta de diálogo al iniciar el proceso
       setState((prev) => ({
         ...prev,
         showDialogAlert: false,
       }));
 
-      const response = await axios.post("/api/auth/login", {
-        email,
-        password,
+      // Hacer la solicitud de autenticación
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       });
-      console.log(response.data);
-      localStorage.setItem("userId", response.data.userId);
-      localStorage.setItem("token", response.data.token);
 
-      if (response.status === 200) {
+      // Parsear la respuesta
+      const jsonResponse = await response.json();
+      console.log(jsonResponse);
+
+      // Comprobar si la respuesta es exitosa
+      if (response.ok) {
+        // Almacenar los datos en localStorage
+        localStorage.setItem("userId", jsonResponse.userId);
+        localStorage.setItem("token", jsonResponse.token);
+
+        // Redirigir al usuario a la página principal
         window.location.href = "/main";
       } else {
+        // Mostrar alerta si las credenciales no son válidas
         setState((prev) => ({
           ...prev,
-          showDialogAlert: !prev.showDialogAlert,
+          showDialogAlert: true,
           dialogMessage: "Credenciales inválidas",
         }));
       }
     } catch (error) {
+      console.error("Error during login:", error);
+
+      // Mostrar alerta si ocurre un error durante el proceso
       setState((prev) => ({
         ...prev,
-        showDialogAlert: !prev.showDialogAlert,
-        dialogMessage: "Credenciales inválidas",
+        showDialogAlert: true,
+        dialogMessage: "Ha ocurrido un error. Por favor, intenta de nuevo.",
       }));
     }
   }
   return (
     <div className="min-h-screen w-full flex flex-col gap-8 justify-center items-center">
       <div className="">
-        {/* <Image src="img/logo.svg" alt="TecTijuana" width={250} height={250} />
-        <div>
-          <p className="font-light text-2xl w-full flex justify-center items-center">
-            CIMS - TecNM
-          </p>
-          <p className="text-sm flex w-full justify-center ">
-            Control e Inventario de Materiales y Suplementos
-          </p>
-        </div> */}
         <Logo />
       </div>
       <div className="max-md:w-4/5 md:w-2/5 lg:w-2/5 xl:w-1/4 p-4 border rounded-xl flex flex-col justify-center space-y-4 shadow-xl">

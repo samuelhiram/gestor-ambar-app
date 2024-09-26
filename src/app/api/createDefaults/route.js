@@ -7,11 +7,19 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   //get user by env email
+
+  if (!process.env.DATABASE_URL) {
+    return new NextResponse(
+      JSON.stringify({ message: "No DATABASE_URL env variable" })
+    );
+  }
+
   const user = await prisma.user.findUnique({
     where: {
       email: process.env.DEFAULT_USER_EMAIL,
     },
   });
+
   if (!user) {
     const hashedpassword = await bcrypt.hash(
       process.env.DEFAULT_USER_PASSWORD,
@@ -32,5 +40,7 @@ export async function GET() {
     console.log("default user: ", user.email);
   }
 
-  return NextResponse.next();
+  return new NextResponse(JSON.stringify({ message: "Default user created" }), {
+    status: 200,
+  });
 }

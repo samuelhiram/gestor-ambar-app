@@ -19,11 +19,18 @@ appModules.push(userModuleData);
 export default function MainAppContextProvider({ children }) {
   const [state, setState] = useState({
     isLoadingMainApp: true,
+    isLoadingModule: true,
     activeModuleName: "Inicio",
     showSideBar: true,
     showModule: true,
     modules: appModules,
     userModuleData: userModuleData,
+
+    //dialog alert
+    showDialogAlert: false,
+    dialogMessage: "default message",
+    //Users module
+    usersData: [],
   });
 
   const value = { state, setState };

@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
@@ -35,39 +36,112 @@ import {
 } from "@/components/ui/accordion";
 
 import { Input } from "@/components/ui/input";
+import { useMainAppContext } from "../../MainAppContext";
 export default function CreateUser() {
+  const { state, setState } = useMainAppContext();
+
   const formSchema = z.object({
     email: z
       .string()
       .email({ message: "Formato inválido" })
       .min(2, { message: "Obligatorio" })
       .max(50),
-    name: z.string().min(2, { message: "Obligatorio" }).max(50),
+    fullName: z.string().min(2, { message: "Obligatorio" }).max(50),
     control_number: z.string().min(6, { message: "Obligatorio" }).max(50),
     location: z.string().min(2, { message: "Obligatorio" }).max(50),
     //make with zod required
-    rol: z.string().min(2, { message: "Obligatorio" }).max(50),
+    role: z.string().min(2, { message: "Obligatorio" }).max(50),
   });
   // 1. Define your form.
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      name: "",
+      fullName: "",
       control_number: "",
       location: "",
-      rol: "",
+      role: "",
     },
   });
   async function onSubmit(values) {
-    //clear form
-    form.reset();
-
     const password = Math.random().toString(36).slice(-8);
 
     values.password = password;
 
     console.log(values);
+
+    const token = localStorage.getItem("token");
+
+    try {
+      // Ocultar alerta de diálogo al iniciar el proceso
+      setState((prev) => ({
+        ...prev,
+        showDialogAlert: false,
+      }));
+
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Asegúrate de que 'token' esté definido correctamente
+        },
+        body: JSON.stringify(values), // 'values' es el objeto que contiene los datos del formulario
+      });
+
+      // Verificar si la respuesta no fue exitosa
+      if (!response.ok) {
+        const error = await response.json(); // Obtener el mensaje de error del servidor
+        console.log(
+          "email already exists?",
+          error.error === "Email already exists"
+        );
+        console.log(
+          "control number already exists?",
+          error.error === "Control number already exists"
+        );
+
+        setState((prevState) => ({
+          ...prevState,
+          showDialogAlert: true,
+          dialogMessage:
+            error.error === "Email already exists"
+              ? "El correo ya está registrado"
+              : "El número de control ya está registrado",
+        }));
+
+        return; // Salir si ocurre un error
+      }
+
+      // Obtener datos del usuario si la solicitud fue exitosa
+      const data = await response.json();
+      console.log("User registered successfully:", data); // Muestra los datos devueltos por el backend
+
+      // Obtener la lista de usuarios actualizada
+      const usersResponse = await fetch("/api/getUsers", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Asegúrate de que 'token' esté definido correctamente
+        },
+      });
+
+      if (!usersResponse.ok) {
+        throw new Error("Failed to fetch users");
+      }
+
+      const usersData = await usersResponse.json();
+
+      // Actualizar el estado con los datos de los usuarios
+      setState((prevState) => ({
+        ...prevState,
+        usersData: usersData,
+      }));
+
+      // Limpiar el formulario
+      form.reset();
+    } catch (err) {
+      console.error("Error en la petición:", err.message);
+    }
   }
   return (
     <div className="w-full p-2 border rounded-xl">
@@ -96,7 +170,7 @@ export default function CreateUser() {
               >
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="fullName"
                   render={({ field }) => (
                     <FormItem className="w-full flex-grow">
                       <FormLabel>Nombre completo</FormLabel>
@@ -141,7 +215,7 @@ export default function CreateUser() {
 
                 <FormField
                   control={form.control}
-                  name="rol"
+                  name="role"
                   render={({ field }) => (
                     <FormItem className="w-full flex-grow">
                       <FormLabel>Rol</FormLabel>

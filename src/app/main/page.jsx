@@ -9,10 +9,8 @@ import MainAppContextProvider, {
 import ModuleLoaded from "./components/ModuleLoaded";
 import { useEffect, useState } from "react";
 import { useInactivityHandler } from "../hooks/useInactivityHandler";
-//import axios
-import axios from "axios";
-
 import Loader from "../components/Loader/Loader";
+import DialogAlert from "./components/DialogAlert";
 
 export default function page() {
   return (
@@ -46,6 +44,11 @@ function Main() {
           document.location.href = "/";
         }
 
+        if (response.status === 403) {
+          localStorage.clear();
+          document.location.href = "/";
+        }
+
         if (response.status === 200) {
           const data = await response.json();
           userToken = data.token;
@@ -56,18 +59,12 @@ function Main() {
       getSession();
     } catch (e) {
       // localStorage.clear();
-      console.log("error: ", e);
-      // document.location.href = "/";
+      // console.log("error: ", e);
+      document.location.href = "/";
     }
   }, []);
 
   useInactivityHandler(token);
-
-  // if (state.isTokenExpired) {
-  //   console.log("token expired");
-  // } else {
-  //   console.log("token not expired");
-  // }
 
   return (
     <>
@@ -104,6 +101,7 @@ function Main() {
             </div>
           </div>
           <DropdownButton />
+          <DialogAlert />
         </>
       )}
     </>

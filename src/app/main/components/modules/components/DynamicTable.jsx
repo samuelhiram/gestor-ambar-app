@@ -3,13 +3,18 @@ import { useMainAppContext } from "../../MainAppContext";
 import { Icon } from "@iconify/react";
 import EditItem from "./EditItem";
 
-const DynamicTable = ({ headers, data, actions }) => {
+const DynamicTable = ({ headers, dataHeaders, data, actions }) => {
   const { state } = useMainAppContext();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRowIndex, setSelectedRowIndex] = useState(null);
-
-  const [isEmptyData, setIsEmptyData] = useState(false);
   // Filtrar los datos según el término de búsqueda.
+
+  console.log("data in dynamic table", data);
+
+  if (data === undefined) {
+    return <>todavia no hay datos</>;
+  }
+
   const filteredData = data.filter((row) =>
     Object.values(row).some((val) =>
       val.toString().toLowerCase().includes(searchTerm.toLowerCase())
@@ -30,14 +35,14 @@ const DynamicTable = ({ headers, data, actions }) => {
         placeholder="Buscar en la tabla..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="search-input text-sm rounded-md border-2 p-2 md:w-2/4 shadow"
+        className="search-input  rounded-md border-2 p-2 md:w-2/4 shadow text-color-black"
       />
       <div
         className={`${
           filteredData.length === 0 ? "visible" : "hidden"
         } min-w-full w-full flex justify-center items-center p-2`}
       >
-        Aún no hay datos en este modulo.
+        Sin información para mostrar.
       </div>
       <table
         className={`${
@@ -47,12 +52,12 @@ const DynamicTable = ({ headers, data, actions }) => {
         <thead className="bg-blue-900 text-gray-50 max-sm:hidden">
           <tr>
             {headers.map((header, index) => (
-              <th className="p-1 border !font-light !text-sm" key={index}>
+              <th className="p-1 border !font-light !text-md" key={index}>
                 {header.replace(/_/g, " ")}
               </th>
             ))}
             {actions && (
-              <th className="p-1 border !font-light !text-sm">Acciones</th>
+              <th className="p-1 border !font-light !text-md">Acciones</th>
             )}
           </tr>
         </thead>
@@ -62,22 +67,22 @@ const DynamicTable = ({ headers, data, actions }) => {
             <tr
               className={`${
                 // row.id === selectedRowIndex
-                false ? "bg-green-200" : "hover:bg-gray-200/40"
-              } cursor-pointer`}
+                false ? "bg-green-200" : "  "
+              } cursor-pointer bg-white  hover:bg-gray-200`}
               key={rowIndex}
               onClick={() => handleRowClick(row)}
             >
-              {headers.map((header, colIndex) => (
+              {dataHeaders.map((dataHeader, colIndex) => (
                 <td
-                  className="text-sm p-2 max-sm:p-1 max-sm:flex max-sm:flex-col max-sm:first:bg-blue-900 max-sm:first:text-gray-50 max-sm: text-center  border"
+                  className=" text-sm  p-2 max-sm:p-1 max-sm:flex max-sm:flex-col max-sm:first:bg-blue-900 max-sm:first:text-gray-50 max-sm: text-center  border"
                   key={colIndex}
                 >
-                  {row[header]}
+                  {row[dataHeader]}
                 </td>
               ))}
               {actions && (
                 <>
-                  <td className="p-1 flex flex-grow border text-sm gap-2 justify-center !m-0 max-xl:flex-col">
+                  <td className="bg-white p-1 flex flex-grow flex-wrap  border text-sm gap-2 justify-center !m-0">
                     {actions.map((action, actionIndex) => (
                       <span
                         className={`${action.color} ${action.textColor} flex justify-center items-center gap-1 max-w-[2rem] px-2 py-1 rounded-md cursor-pointer ${action.hoverColor}`}

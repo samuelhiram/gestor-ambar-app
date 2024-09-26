@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "path": "../../.."
+    }
+  ],
+  "settings": {
+    "files.associations": {
+      "*.embeddedhtml": "html",
+      "*.php": "php",
+      "plyconfig.json": "jsonc"
+    },
+    "WillLuke.nextjs.hasPrompted": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  }
+}
