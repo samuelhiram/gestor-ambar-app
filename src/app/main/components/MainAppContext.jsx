@@ -9,15 +9,16 @@ const MainAppContext = createContext(null);
 var userModuleData = {
   id: 0,
   icon: "lets-icons:user-cicrle-duotone",
-  moduleName: "Usuario",
-  title: "Samuel Hiram",
-  description: "Admin",
+  moduleName: "No user",
+  title: "No name",
+  description: "No role",
 };
 
 appModules.push(userModuleData);
 
 export default function MainAppContextProvider({ children }) {
   const [state, setState] = useState({
+    user: null,
     isLoadingMainApp: true,
     isLoadingModule: true,
     activeModuleName: "Inicio",
@@ -25,7 +26,8 @@ export default function MainAppContextProvider({ children }) {
     showModule: true,
     modules: appModules,
     userModuleData: userModuleData,
-
+    //
+    selectedRows: [],
     //dialog alert
     showDialogAlert: false,
     dialogMessage: "default message",

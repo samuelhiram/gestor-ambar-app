@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
-import { VerifyToken } from "../../middleware";
 import bcrypt from "bcrypt";
 
 const secretKey = process.env.SECRET_KEY;

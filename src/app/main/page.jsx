@@ -51,7 +51,7 @@ function Main() {
 
         if (response.status === 200) {
           const data = await response.json();
-          userToken = data.token;
+          console.log(data);
           setToken(localStorage.getItem("token"));
           setState((prev) => ({ ...prev, isLoadingMainApp: false }));
         }

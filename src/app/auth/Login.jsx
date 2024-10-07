@@ -22,6 +22,7 @@ import { useAppContext } from "../components/GlobalContextApp";
 import Logo from "../main/components/Logo";
 export default function Login() {
   const { state, setState } = useAppContext();
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const formSchema = z.object({
     email: z
@@ -40,6 +41,8 @@ export default function Login() {
     },
   });
   async function onSubmit(values) {
+    //preven default
+
     const email = values.email;
     const password = values.password;
     try {
@@ -48,6 +51,7 @@ export default function Login() {
         ...prev,
         showDialogAlert: false,
       }));
+      setIsLoading(true);
 
       // Hacer la solicitud de autenticación
       const response = await fetch("/api/auth/login", {
@@ -77,6 +81,7 @@ export default function Login() {
           showDialogAlert: true,
           dialogMessage: "Credenciales inválidas",
         }));
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Error during login:", error);
@@ -130,7 +135,13 @@ export default function Login() {
                 </FormItem>
               )}
             />
-            <Button type="submit">Iniciar</Button>
+            <Button
+              disabled={isLoading}
+              type="submit"
+              className={`${isLoading ? "!bg-gray-500" : ""}`}
+            >
+              {isLoading ? "Cargando..." : "Iniciar"}
+            </Button>
           </form>
         </Form>
         {/**/}

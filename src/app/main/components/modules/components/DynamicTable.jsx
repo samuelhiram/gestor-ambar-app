@@ -4,12 +4,13 @@ import { Icon } from "@iconify/react";
 import EditItem from "./EditItem";
 
 const DynamicTable = ({ headers, dataHeaders, data, actions }) => {
-  const { state } = useMainAppContext();
+  const { state, setState } = useMainAppContext();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRowIndex, setSelectedRowIndex] = useState(null);
-  // Filtrar los datos según el término de búsqueda.
 
-  console.log("data in dynamic table", data);
+  const [selectedRowsData, setSelectedRowsData] = useState([]);
+
+  var rows = [];
 
   if (data === undefined) {
     return <>todavia no hay datos</>;
@@ -22,21 +23,57 @@ const DynamicTable = ({ headers, dataHeaders, data, actions }) => {
   );
 
   const handleRowClick = (row) => {
+    //if row is already selected, remove it from selectedRows
+    if (state.selectedRows.some((r) => r.id === row.id)) {
+      rows = state.selectedRows.filter((r) => r.id !== row.id);
+      setState((prev) => ({ ...prev, selectedRows: rows }));
+      console.log("state:", state.selectedRows);
+      return;
+    }
     setSelectedRowIndex(row.id);
-    console.log(row); // Imprime toda la información de la fila.
+    rows = [...state.selectedRows, row];
+    console.log("rows: ", rows);
+    setState((prev) => ({ ...prev, selectedRows: rows }));
+    console.log("state:", state.selectedRows);
   };
 
   return (
     <div
       className={` border p-2 min-w-full w-full max-w-full  rounded-xl flex flex-col gap-2`}
     >
-      <input
-        type="text"
-        placeholder="Buscar en la tabla..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="search-input  rounded-md border-2 p-2 md:w-2/4 shadow text-color-black"
-      />
+      <div className="flex gap-1 w-full">
+        <div className="flex items-center">
+          <Icon icon="material-symbols:search" width={"24"} height={"24"} />
+        </div>
+        <div className="w-full">
+          <input
+            type="text"
+            placeholder="Buscar en la tabla..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full p-2 border rounded-md"
+          />
+        </div>
+        <div className="w-full bg-white p-1 flex flex-grow flex-wrap  border text-sm gap-2  !m-0">
+          {actions.map((action, actionIndex) => (
+            <span
+              className={`${action.color} ${action.textColor} flex justify-center items-center gap-1 max-w-[2rem] px-2 py-1 rounded-md cursor-pointer ${action.hoverColor}`}
+              key={actionIndex}
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log(
+                  `${action.action} ${state.activeModuleName} clicked for row`,
+                  state.selectedRows
+                );
+              }}
+            >
+              <div>
+                <Icon icon={action.icon} width={20} height={20} />
+              </div>
+            </span>
+          ))}
+        </div>
+      </div>
       <div
         className={`${
           filteredData.length === 0 ? "visible" : "hidden"
@@ -56,9 +93,9 @@ const DynamicTable = ({ headers, dataHeaders, data, actions }) => {
                 {header.replace(/_/g, " ")}
               </th>
             ))}
-            {actions && (
+            {/* {actions && (
               <th className="p-1 border !font-light !text-md">Acciones</th>
-            )}
+            )} */}
           </tr>
         </thead>
 
@@ -74,13 +111,18 @@ const DynamicTable = ({ headers, dataHeaders, data, actions }) => {
             >
               {dataHeaders.map((dataHeader, colIndex) => (
                 <td
-                  className=" text-sm  p-2 max-sm:p-1 max-sm:flex max-sm:flex-col max-sm:first:bg-blue-900 max-sm:first:text-gray-50 max-sm: text-center  border"
+                  className={` ${
+                    //if the row is selected, change the background color
+                    state.selectedRows.some((r) => r.id === row.id)
+                      ? "bg-green-200"
+                      : "  "
+                  } text-sm  p-2 max-sm:p-1 max-sm:flex max-sm:flex-col max-sm:first:bg-blue-900 max-sm:first:text-gray-50 max-sm: text-center  border`}
                   key={colIndex}
                 >
                   {row[dataHeader]}
                 </td>
               ))}
-              {actions && (
+              {/* {actions && (
                 <>
                   <td className="bg-white p-1 flex flex-grow flex-wrap  border text-sm gap-2 justify-center !m-0">
                     {actions.map((action, actionIndex) => (
@@ -102,7 +144,7 @@ const DynamicTable = ({ headers, dataHeaders, data, actions }) => {
                     ))}
                   </td>
                 </>
-              )}
+              )} */}
             </tr>
           ))}
         </tbody>

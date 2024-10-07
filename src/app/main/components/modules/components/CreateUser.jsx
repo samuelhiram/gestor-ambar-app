@@ -79,7 +79,7 @@ export default function CreateUser() {
         showDialogAlert: false,
       }));
 
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("/api/users/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -117,7 +117,7 @@ export default function CreateUser() {
       console.log("User registered successfully:", data); // Muestra los datos devueltos por el backend
 
       // Obtener la lista de usuarios actualizada
-      const usersResponse = await fetch("/api/getUsers", {
+      const usersResponse = await fetch("/api/users/get", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

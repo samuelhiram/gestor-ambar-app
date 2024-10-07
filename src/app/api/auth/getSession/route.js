@@ -1,6 +1,5 @@
 "use server";
 import { NextResponse } from "next/server";
-import { VerifyToken } from "../../middleware";
 
 import { PrismaClient } from "@prisma/client";
 
@@ -9,15 +8,17 @@ const prisma = new PrismaClient();
 
 //get session from database
 export async function GET(req) {
-  const authResponse = VerifyToken(req);
-
-  if (authResponse?.status !== 200) {
-    // Si el token no es válido, devolvemos la respuesta de error del middleware
-    return authResponse;
-  }
-
   //get userId from req
+  // console.log(req);
+
   const userId = req.userId;
+
+  //get user from database
+  const user = await prisma.user.findFirst({
+    where: {
+      id: userId,
+    },
+  });
 
   //search session in database
   const session = await prisma.session.findFirst({
@@ -47,7 +48,7 @@ export async function GET(req) {
       });
     }
 
-    return new NextResponse(JSON.stringify({ token: session.token }));
+    return new NextResponse(JSON.stringify({ user }));
   } else {
     //stop the flow
     return new NextResponse(JSON.stringify({ message: "No session found" }), {

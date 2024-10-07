@@ -30,7 +30,7 @@ export default function Users() {
       isLoadingModule: true,
     }));
     //fetch users
-    fetch("/api/getUsers", {
+    fetch("/api/users/get", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -68,13 +68,6 @@ export default function Users() {
       hoverColor: "hover:bg-red-700",
       icon: "ic:baseline-delete",
     },
-    // {
-    //   action: "sumar",
-    //   color: "bg-orange-800",
-    //   textColor: "text-gray-50",
-    //   hoverColor: "hover:bg-orange-700",
-    //   icon: "ic:baseline-add",
-    // },
   ];
 
   return (
