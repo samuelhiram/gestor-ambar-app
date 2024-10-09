@@ -48,21 +48,21 @@ export default function Users() {
   }, []);
   const actions = [
     {
-      action: "editar",
+      action: "edit",
       color: "bg-blue-900",
       textColor: "text-gray-50",
       hoverColor: "hover:bg-blue-700",
       icon: "material-symbols-light:edit-sharp",
     },
     {
-      action: "detalles",
+      action: "details",
       color: "bg-green-900",
       textColor: "text-gray-50",
       hoverColor: "hover:bg-green-700",
       icon: "mdi:eye",
     },
     {
-      action: "eliminar",
+      action: "delete",
       color: "bg-red-800",
       textColor: "text-gray-50",
       hoverColor: "hover:bg-red-700",

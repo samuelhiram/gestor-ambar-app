@@ -29,5 +29,16 @@ export const GET = withAuth(async (req) => {
 
   users = users.filter((user) => user.id !== userId);
 
+  //reformat createdAt date
+  users = users.map((user) => {
+    return {
+      ...user,
+      createdAt: new Date(user.createdAt).toString().split("GMT")[0],
+    };
+  });
+
+  //reorder from newest to oldest
+  users = users.reverse();
+
   return new NextResponse(JSON.stringify({ users }));
 });

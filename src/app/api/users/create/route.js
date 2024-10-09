@@ -1,21 +1,15 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import { withAuth } from "@/lib/withAuth"; // Usa la ruta correcta para importar
 
 const secretKey = process.env.SECRET_KEY;
 const prisma = new PrismaClient();
 
-export async function POST(req) {
+export const POST = withAuth(async (req) => {
   console.log("--api--> register");
 
   try {
-    // Verificación del token
-    const authResponse = await VerifyToken(req);
-    if (authResponse?.status !== 200) {
-      return authResponse; // Devolver el error del middleware si el token no es válido
-    }
-
-    // Obtener datos del cuerpo de la solicitud
     const body = await req.json();
     const { email, control_number, role, fullName, location, password } = body;
 
@@ -72,4 +66,4 @@ export async function POST(req) {
       { status: 500 }
     );
   }
-}
+});

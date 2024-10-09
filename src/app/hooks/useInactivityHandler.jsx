@@ -26,6 +26,7 @@ export function useInactivityHandler(token) {
 
       //clear localSo
       localStorage.clear();
+      window.location.reload();
       //   onLogout(); // Cerrar sesión si el token ha caducado
     } else if (token !== "") {
       setState((prevState) => ({ ...prevState, isTokenExpired: false }));
