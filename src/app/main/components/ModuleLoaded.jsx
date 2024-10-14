@@ -15,7 +15,7 @@ export default function ModuleLoaded() {
     (module) => module.moduleName === state.activeModuleName
   );
   const { icon, description, moduleName } = module;
-  // console.log(state.activeModuleName);
+  // console.log("activeModuleName-> ", state.activeModuleName);
 
   return (
     <div

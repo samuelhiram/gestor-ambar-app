@@ -7,5 +7,6 @@
     "*.php": "php",
     "plyconfig.json": "jsonc"
   },
-  "WillLuke.nextjs.hasPrompted": true
+  "WillLuke.nextjs.hasPrompted": true,
+  "workbench.colorTheme": "Default Dark+"
 }

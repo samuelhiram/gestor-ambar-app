@@ -43,10 +43,10 @@ export async function POST(req) {
 
     // Generar token JWT
     const userId = user.id;
-    const token = jwt.sign({ userId }, secretKey, { expiresIn: "3h" });
+    const token = jwt.sign({ userId }, secretKey, { expiresIn: "12h" });
 
     // Obtener fecha actual y sumar 3 horas
-    const expires = new Date(Date.now() + 3 * 60 * 60 * 1000);
+    const expires = new Date(Date.now() + 12 * 60 * 60 * 1000);
 
     // Borrar todas las sesiones anteriores del usuario
     await prisma.session.deleteMany({
@@ -68,11 +68,11 @@ export async function POST(req) {
     await prisma.log.create({
       data: {
         userId: userId,
-        action: "login",
+        action: "inicio de sesión",
       },
     });
 
-    return new NextResponse(JSON.stringify({ userId: userId, token: token }), {
+    return new NextResponse(JSON.stringify({ userId, token }), {
       status: 200,
     });
   } catch (error) {

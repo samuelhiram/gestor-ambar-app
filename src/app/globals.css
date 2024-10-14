@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.search {
+  @apply bg-white shadow-none rounded-md p-2 text-sm !important;
+}
+
 body {
   @apply !min-w-full;
 }
@@ -27,11 +31,15 @@ Button {
 }
 
 input {
-  @apply bg-white min-w-full w-full !important;
+  @apply bg-white  !important;
 }
 
 Input {
-  @apply bg-white min-w-full w-full !important;
+  @apply bg-white  !important;
+}
+
+input {
+  @apply bg-white  border rounded-md p-1 shadow  text-black !important;
 }
 
 /* Form {

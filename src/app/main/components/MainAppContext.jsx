@@ -6,26 +6,19 @@ import { appModules } from "../utils/appModules";
 
 const MainAppContext = createContext(null);
 
-var userModuleData = {
-  id: 0,
-  icon: "lets-icons:user-cicrle-duotone",
-  moduleName: "No user",
-  title: "No name",
-  description: "No role",
-};
-
-appModules.push(userModuleData);
-
 export default function MainAppContextProvider({ children }) {
   const [state, setState] = useState({
     user: null,
+    token: null,
     isLoadingMainApp: true,
     isLoadingModule: true,
     activeModuleName: "Inicio",
     showSideBar: true,
     showModule: true,
     modules: appModules,
-    userModuleData: userModuleData,
+    //
+    //show actionRouter
+    showActionsDialog: false,
     //
     selectedRows: [],
     //dialog alert

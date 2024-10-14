@@ -9,20 +9,20 @@ export default function Users() {
   const { state, setState } = useMainAppContext();
   const headers = [
     "Nombre",
+    "Correo",
     "Número_de_control",
     "Rol",
-    "Ubicación",
+    "Lugar",
     "Fecha_de_Ingreso",
   ];
-
   const dataHeaders = [
     "fullName",
+    "email",
     "control_number",
     "role",
     "location",
     "createdAt",
   ];
-
   //  const actions = ["editar", "detalles", "eliminar"]; // Acciones que deseas mostrar.
   useEffect(() => {
     setState((prev) => ({
@@ -41,35 +41,40 @@ export default function Users() {
       .then((data) => {
         setState((prev) => ({
           ...prev,
-          usersData: data,
+          usersData: data.users,
           isLoadingModule: false,
         }));
       });
   }, []);
   const actions = [
     {
-      action: "edit",
-      color: "bg-blue-900",
-      textColor: "text-gray-50",
-      hoverColor: "hover:bg-blue-700",
-      icon: "material-symbols-light:edit-sharp",
-    },
-    {
       action: "details",
+      actionTitle: "Detalles de Usuarios",
       color: "bg-green-900",
       textColor: "text-gray-50",
       hoverColor: "hover:bg-green-700",
-      icon: "mdi:eye",
+      icon: "mingcute:user-search-fill",
+      description: "Detalles",
     },
     {
-      action: "delete",
-      color: "bg-red-800",
+      action: "edit",
+      color: "bg-blue-900",
+      actionTitle: "Editar Usuarios",
       textColor: "text-gray-50",
-      hoverColor: "hover:bg-red-700",
-      icon: "ic:baseline-delete",
+      hoverColor: "hover:bg-blue-700",
+      icon: "fa6-solid:user-pen",
+      description: "Editar",
     },
+    // {
+    //   action: "delete",
+    //   color: "bg-red-800",
+    //   actionTitle: "Eliminar Usuarios",
+    //   textColor: "text-gray-50",
+    //   hoverColor: "hover:bg-red-700",
+    //   icon: "mdi:user-minus",
+    //   description: "Eliminar",
+    // },
   ];
-
   return (
     //rename the received data
     <div className="flex flex-col gap-3">
@@ -78,7 +83,7 @@ export default function Users() {
         <DynamicTable
           headers={headers}
           dataHeaders={dataHeaders}
-          data={state.usersData.users}
+          data={state.usersData}
           actions={actions}
         />
       </div>

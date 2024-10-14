@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import SidebarMenuItem from "./SidebarMenuItem";
 import Logo from "./Logo";
@@ -7,6 +8,27 @@ import { Icon } from "@iconify/react";
 
 export default function Sidebar() {
   const { state, setState } = useMainAppContext();
+  var AdminModules = ["Usuarios"];
+  const logOut = async () => {
+    try {
+      const res = await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${state.token}`,
+        },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.clear();
+        window.location.reload();
+      } else {
+        console.error("Error in POST /api/auth/logout:", res);
+      }
+    } catch (error) {
+      console.error("Error in POST /api/auth/logout:", error);
+    }
+  };
   return (
     <nav
       className={`${
@@ -20,18 +42,24 @@ export default function Sidebar() {
         </div>
       </div>
       {Object.keys(state.modules).map((key) => {
-        return (
-          <SidebarMenuItem
-            key={state.modules[key].moduleName}
-            receivedModule={state.modules[key]}
-          />
-        );
+        if (
+          state.user.role !== "Admin" &&
+          AdminModules.includes(state.modules[key].moduleName)
+        ) {
+          return null;
+        } else {
+          return (
+            <SidebarMenuItem
+              key={state.modules[key].moduleName}
+              receivedModule={state.modules[key]}
+            />
+          );
+        }
       })}
       <div className="flex flex-1  items-end justify-end">
         <div
           onClick={() => {
-            localStorage.clear();
-            window.location.reload();
+            logOut();
           }}
           className="text-xl justify-center items-center flex gap-2 border p-2 m-5 cursor-pointer hover:bg-blue-100 text-blue-900 font-semibold active:bg-blue-200 rounded-md"
         >

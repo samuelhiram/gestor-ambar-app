@@ -1,11 +1,20 @@
-/*
-  Warnings:
+-- CreateTable
+CREATE TABLE `User` (
+    `id` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `control_number` VARCHAR(191) NOT NULL,
+    `role` VARCHAR(191) NOT NULL,
+    `fullName` VARCHAR(191) NOT NULL,
+    `location` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+    `isVisible` BOOLEAN NOT NULL DEFAULT true,
 
-  - You are about to alter the column `role` on the `user` table. The data in that column could be lost. The data in that column will be cast from `Enum(EnumId(0))` to `VarChar(191)`.
-
-*/
--- AlterTable
-ALTER TABLE `user` MODIFY `role` VARCHAR(191) NOT NULL;
+    UNIQUE INDEX `User_email_key`(`email`),
+    UNIQUE INDEX `User_control_number_key`(`control_number`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `Session` (

@@ -12,16 +12,14 @@ export const POST = withAuth(async (req) => {
   try {
     const body = await req.json();
     const { email, control_number, role, fullName, location, password } = body;
-
     // Hashear la contraseña
-    const hashedPassword = await bcrypt.hash(password, 10);
 
+    const hashedPassword = await bcrypt.hash(password, 10);
     // Buscar si el email o el número de control ya existen
     const [emailRepeated, controlNumberRepeated] = await Promise.all([
       prisma.user.findUnique({ where: { email } }),
       prisma.user.findUnique({ where: { control_number } }),
     ]);
-
     // Verificar si el correo ya está registrado
     if (emailRepeated) {
       return new NextResponse(
@@ -29,7 +27,6 @@ export const POST = withAuth(async (req) => {
         { status: 400 }
       );
     }
-
     // Verificar si el número de control ya está registrado
     if (controlNumberRepeated) {
       return new NextResponse(
@@ -37,7 +34,6 @@ export const POST = withAuth(async (req) => {
         { status: 400 }
       );
     }
-
     // Crear usuario en la base de datos
     const user = await prisma.user.create({
       data: {
@@ -49,7 +45,6 @@ export const POST = withAuth(async (req) => {
         password: hashedPassword,
       },
     });
-
     console.log("User created:", user);
 
     // Devolver respuesta exitosa
@@ -59,7 +54,6 @@ export const POST = withAuth(async (req) => {
     );
   } catch (error) {
     console.error("Error creating user:", error);
-
     // Devolver error de servidor si algo falla inesperadamente
     return new NextResponse(
       JSON.stringify({ error: "Internal server error" }),

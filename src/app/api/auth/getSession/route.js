@@ -1,33 +1,28 @@
 "use server";
 import { NextResponse } from "next/server";
-
 import { PrismaClient } from "@prisma/client";
+import { withAuth } from "@/lib/withAuth"; // Usa la ruta correcta para importar
+import jwt from "jsonwebtoken";
 
 //get secret key from environment variable
 const prisma = new PrismaClient();
 
 //get session from database
-export async function GET(req) {
-  //get userId from req
-  // console.log(req);
-
-  const userId = req.userId;
-
-  //get user from database
-  const user = await prisma.user.findFirst({
+export const GET = withAuth(async (req) => {
+  const { searchParams } = new URL(req.url); // Obtén los parámetros de búsqueda
+  const userId = searchParams.get("userId");
+  const user = await prisma.user.findUnique({
     where: {
       id: userId,
     },
   });
-
-  //search session in database
+  console.log("-----------------> user", user);
   const session = await prisma.session.findFirst({
     where: {
       userId: userId,
     },
   });
 
-  //if hass session return the token session
   if (session) {
     //get the actual date
     const now = new Date();
@@ -56,4 +51,4 @@ export async function GET(req) {
       headers: { "Content-Type": "application/json" },
     });
   }
-}
+});

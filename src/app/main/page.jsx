@@ -28,9 +28,8 @@ function Main() {
   useEffect(() => {
     try {
       const userId = localStorage.getItem("userId");
-      var userToken;
+
       const getSession = async () => {
-        //make a simple fetch with js
         const response = await fetch(`/api/auth/getSession?userId=${userId}`, {
           method: "GET",
           headers: {
@@ -52,15 +51,32 @@ function Main() {
         if (response.status === 200) {
           const data = await response.json();
           console.log(data);
+
           setToken(localStorage.getItem("token"));
-          setState((prev) => ({ ...prev, isLoadingMainApp: false }));
+          setState((prev) => ({
+            ...prev,
+            token: localStorage.getItem("token"),
+            user: data.user,
+            isLoadingMainApp: false,
+            //adding the user module to front end
+            modules: [
+              ...state.modules,
+              {
+                id: 0,
+                icon: "lets-icons:user-cicrle-duotone",
+                moduleName: "Usuario",
+                title: data.user.fullName,
+                description: data.user.role,
+              },
+            ],
+          }));
         }
       };
       getSession();
     } catch (e) {
       // localStorage.clear();
       // console.log("error: ", e);
-      document.location.href = "/";
+      window.location.href = "/";
     }
   }, []);
 

@@ -2,10 +2,11 @@
 import React from "react";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
-
+import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { set, useForm } from "react-hook-form";
+import emailjs from "@emailjs/browser";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -38,8 +39,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { useMainAppContext } from "../../MainAppContext";
 export default function CreateUser() {
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const { state, setState } = useMainAppContext();
-
+  const { toast } = useToast();
   const formSchema = z.object({
     email: z
       .string()
@@ -59,11 +61,36 @@ export default function CreateUser() {
       email: "",
       fullName: "",
       control_number: "",
-      location: "",
       role: "",
+      location: "",
     },
   });
+
+  const sendPasswordEmail = async (email, password) => {
+    // Inicializar EmailJS con tu clave pública
+    emailjs.init({
+      publicKey: "vGvH9vq_aIaVCEh1D",
+    }); // Asegúrate de reemplazar "TU_CLAVE_PUBLICA" por tu clave real
+
+    const templateParams = {
+      email: email,
+      password: password,
+    };
+
+    try {
+      console.log("Enviando email con los parámetros:", templateParams);
+
+      // Enviar el correo usando async/await
+      await emailjs.send("asiscan", "template_mei0db8", templateParams);
+
+      console.log("Correo enviado correctamente ----- SUCCESS!");
+    } catch (error) {
+      console.error("Error al enviar el correo ----- FAILED...", error);
+    }
+  };
+
   async function onSubmit(values) {
+    setIsSubmitting(true);
     const password = Math.random().toString(36).slice(-8);
 
     values.password = password;
@@ -91,14 +118,14 @@ export default function CreateUser() {
       // Verificar si la respuesta no fue exitosa
       if (!response.ok) {
         const error = await response.json(); // Obtener el mensaje de error del servidor
-        console.log(
-          "email already exists?",
-          error.error === "Email already exists"
-        );
-        console.log(
-          "control number already exists?",
-          error.error === "Control number already exists"
-        );
+        // console.log(
+        //   "email already exists?",
+        //   error.error === "Email already exists"
+        // );
+        // console.log(
+        //   "control number already exists?",
+        //   error.error === "Control number already exists"
+        // );
 
         setState((prevState) => ({
           ...prevState,
@@ -108,6 +135,7 @@ export default function CreateUser() {
               ? "El correo ya está registrado"
               : "El número de control ya está registrado",
         }));
+        setIsSubmitting(false);
 
         return; // Salir si ocurre un error
       }
@@ -115,6 +143,16 @@ export default function CreateUser() {
       // Obtener datos del usuario si la solicitud fue exitosa
       const data = await response.json();
       console.log("User registered successfully:", data); // Muestra los datos devueltos por el backend
+
+      sendPasswordEmail(values.email, password);
+
+      toast({
+        className:
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-2 md:right-2",
+        position: "top-right",
+        variant: "success",
+        title: "Usuario creado...",
+      });
 
       // Obtener la lista de usuarios actualizada
       const usersResponse = await fetch("/api/users/get", {
@@ -134,13 +172,22 @@ export default function CreateUser() {
       // Actualizar el estado con los datos de los usuarios
       setState((prevState) => ({
         ...prevState,
-        usersData: usersData,
+        usersData: usersData.users,
       }));
 
       // Limpiar el formulario
       form.reset();
+      setIsSubmitting(false);
     } catch (err) {
       console.error("Error en la petición:", err.message);
+      toast({
+        className:
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-2 md:right-2",
+        position: "top-right",
+        variant: "destructive",
+        title: "Error al crear usuario...",
+      });
+      setIsSubmitting(false);
     }
   }
   return (
@@ -212,7 +259,6 @@ export default function CreateUser() {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="role"
@@ -220,10 +266,7 @@ export default function CreateUser() {
                     <FormItem className="w-full flex-grow">
                       <FormLabel>Rol</FormLabel>
                       <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
+                        <Select onValueChange={field.onChange}>
                           <SelectTrigger className="!bg-white !rounded-md !text-gray-600">
                             <SelectValue placeholder="Seleccione Rol" />
                           </SelectTrigger>
@@ -240,18 +283,14 @@ export default function CreateUser() {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="location"
                   render={({ field }) => (
                     <FormItem className="w-full flex-grow">
-                      <FormLabel>Unidad</FormLabel>
+                      <FormLabel>Lugar</FormLabel>
                       <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
+                        <Select onValueChange={field.onChange}>
                           <SelectTrigger className="w-full !bg-white !rounded-md !text-gray-600">
                             <SelectValue placeholder="Seleccione plantel" />
                           </SelectTrigger>
@@ -271,8 +310,7 @@ export default function CreateUser() {
                     </FormItem>
                   )}
                 />
-
-                <Button className="" type="submit">
+                <Button disabled={isSubmitting} type="submit">
                   Crear
                 </Button>
               </form>

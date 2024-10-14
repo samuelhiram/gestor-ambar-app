@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-
+import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { set, useForm } from "react-hook-form";
@@ -20,7 +20,13 @@ import { Input } from "@/components/ui/input";
 import PassRecovery from "./components/PassRecovery";
 import { useAppContext } from "../components/GlobalContextApp";
 import Logo from "../main/components/Logo";
+import { use } from "bcrypt/promises";
 export default function Login() {
+  useEffect(() => {
+    //preven default
+    localStorage.removeItem("userId");
+    localStorage.removeItem("token");
+  }, []);
   const { state, setState } = useAppContext();
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -42,7 +48,8 @@ export default function Login() {
   });
   async function onSubmit(values) {
     //preven default
-
+    localStorage.removeItem("userId");
+    localStorage.removeItem("token");
     const email = values.email;
     const password = values.password;
     try {

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { withAuth } from "@/lib/withAuth"; // Usa la ruta correcta para importar
+import { withAuth } from "@/lib/withAuth";
 import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
@@ -14,20 +14,18 @@ export const GET = withAuth(async (req) => {
 
   const userId = decoded.userId;
 
-  var users = await prisma.user.findMany({
-    select: {
-      id: true,
-      fullName: true,
-      control_number: true,
-      role: true,
-      location: true,
-      createdAt: true,
+  //get users that only has isVisible === true
+  let users = await prisma.user.findMany({
+    where: {
+      isVisible: true,
     },
   });
 
   //filtered users by userId
-
-  users = users.filter((user) => user.id !== userId);
+  users = users.filter(
+    (user) =>
+      user.id !== userId && user.email !== process.env.DEFAULT_USER_EMAIL
+  );
 
   //reformat createdAt date
   users = users.map((user) => {
