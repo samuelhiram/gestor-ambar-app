@@ -65,15 +65,15 @@ export default function Users() {
       icon: "fa6-solid:user-pen",
       description: "Editar",
     },
-    // {
-    //   action: "delete",
-    //   color: "bg-red-800",
-    //   actionTitle: "Eliminar Usuarios",
-    //   textColor: "text-gray-50",
-    //   hoverColor: "hover:bg-red-700",
-    //   icon: "mdi:user-minus",
-    //   description: "Eliminar",
-    // },
+    {
+      action: "delete",
+      color: "bg-red-800",
+      actionTitle: "Eliminar Usuarios",
+      textColor: "text-gray-50",
+      hoverColor: "hover:bg-red-700",
+      icon: "mdi:user-minus",
+      description: "Eliminar",
+    },
   ];
   return (
     //rename the received data

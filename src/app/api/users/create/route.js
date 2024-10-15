@@ -2,18 +2,33 @@ import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { withAuth } from "@/lib/withAuth"; // Usa la ruta correcta para importar
+import { getIdByReqHeaders } from "../../getId";
 
 const secretKey = process.env.SECRET_KEY;
 const prisma = new PrismaClient();
 
 export const POST = withAuth(async (req) => {
   console.log("--api--> register");
-
+  const userId = getIdByReqHeaders(req);
   try {
     const body = await req.json();
-    const { email, control_number, role, fullName, location, password } = body;
-    // Hashear la contraseña
+    var { email, control_number, role, fullName, location, password } = body;
+    //trim all the values
+    email = email.trim();
+    control_number = control_number.trim();
+    role = role.trim();
+    fullName = fullName.trim();
+    location = location.trim();
+    password = password.trim();
 
+    //capitalize the full name
+    fullName = fullName.toLowerCase();
+    fullName = fullName.replace(/\b\w/g, (l) => l.toUpperCase());
+
+    //email to lowercase
+    email = email.toLowerCase();
+
+    // Hashear la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
     // Buscar si el email o el número de control ya existen
     const [emailRepeated, controlNumberRepeated] = await Promise.all([
@@ -45,7 +60,14 @@ export const POST = withAuth(async (req) => {
         password: hashedPassword,
       },
     });
-    console.log("User created:", user);
+
+    // Registrar la acción en el log
+    await prisma.log.create({
+      data: {
+        userId: userId,
+        action: `registro de usuario: ${user.fullName}`,
+      },
+    });
 
     // Devolver respuesta exitosa
     return new NextResponse(

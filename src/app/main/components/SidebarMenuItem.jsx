@@ -9,7 +9,6 @@ export default function SidebarMenuItem({ receivedModule }) {
   return (
     <>
       {/*WHEN IS IN A SMALL SCREEN SHOW THIS STYLE AND FUNCTIONS*/}
-
       <div
         onClick={() => {
           setState({
@@ -47,7 +46,6 @@ export default function SidebarMenuItem({ receivedModule }) {
           />
         </div>
       </div>
-
       {/*WHEN IS IN A XL SCREEN SHOW THIS STYLE AND FUNCTIONS*/}
       <div
         onClick={() => {

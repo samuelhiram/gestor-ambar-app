@@ -10,17 +10,18 @@ export const POST = withAuth(async (req) => {
     const body = await req.json();
     const { users } = body;
 
-    // Eliminar (lógicamente) cada usuario de la base de datos
-    const deletedUsers = await Promise.all(
+    // borrar los logs por cada usuario
+    const deletedLogs = await Promise.all(
       users.map(async (user) => {
         const { id } = user;
-        return prisma.user.update({
-          where: { id },
-          data: { isVisible: false },
-        });
+        return prisma.log.deleteMany({ where: { userId: id } });
       })
     );
 
+    // borrar los usuarios
+    const deletedUsers = await prisma.user.deleteMany({
+      where: { id: { in: users.map((user) => user.id) } },
+    });
     return new NextResponse(JSON.stringify({ deletedUsers }), { status: 200 });
   } catch (error) {
     return new NextResponse(JSON.stringify({ error: error.message }), {

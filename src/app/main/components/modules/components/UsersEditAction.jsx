@@ -123,9 +123,9 @@ export default function UserEditAction({ users }) {
                   defaultValue={user.role}
                   className="border lg:w-1/6 p-1 rounded-md shadow text-black"
                 >
-                  <option value="Admin">Admin</option>
-                  <option value="Viewer">Viewer</option>
-                  <option value="Mod">Mod</option>
+                  <option value="admin">Admin</option>
+                  <option value="viewer">Viewer</option>
+                  <option value="mod">Mod</option>
                 </select>
                 <select
                   name={index + "location"}

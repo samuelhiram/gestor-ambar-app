@@ -43,7 +43,7 @@ export default function Sidebar() {
       </div>
       {Object.keys(state.modules).map((key) => {
         if (
-          state.user.role !== "Admin" &&
+          state.user.role !== "admin" &&
           AdminModules.includes(state.modules[key].moduleName)
         ) {
           return null;

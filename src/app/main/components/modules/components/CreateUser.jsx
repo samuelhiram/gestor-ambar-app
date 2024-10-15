@@ -5,7 +5,7 @@ import { Icon } from "@iconify/react";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import emailjs from "@emailjs/browser";
 
 import { Button } from "@/components/ui/button";
@@ -55,6 +55,7 @@ export default function CreateUser() {
     role: z.string().min(2, { message: "Obligatorio" }).max(50),
   });
   // 1. Define your form.
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -118,14 +119,6 @@ export default function CreateUser() {
       // Verificar si la respuesta no fue exitosa
       if (!response.ok) {
         const error = await response.json(); // Obtener el mensaje de error del servidor
-        // console.log(
-        //   "email already exists?",
-        //   error.error === "Email already exists"
-        // );
-        // console.log(
-        //   "control number already exists?",
-        //   error.error === "Control number already exists"
-        // );
 
         setState((prevState) => ({
           ...prevState,
@@ -176,7 +169,14 @@ export default function CreateUser() {
       }));
 
       // Limpiar el formulario
-      form.reset();
+      form.reset({
+        email: "",
+        fullName: "",
+        control_number: "",
+        role: "",
+        location: "",
+      });
+
       setIsSubmitting(false);
     } catch (err) {
       console.error("Error en la petición:", err.message);
@@ -266,16 +266,21 @@ export default function CreateUser() {
                     <FormItem className="w-full flex-grow">
                       <FormLabel>Rol</FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange}>
+                        <Select
+                          onValueChange={(value) => {
+                            field.onChange(value); // Actualiza el valor en el estado del formulario
+                          }}
+                          value={field.value || ""} // Asegúrate de que el valor sea un string vacío si no hay valor
+                        >
                           <SelectTrigger className="!bg-white !rounded-md !text-gray-600">
                             <SelectValue placeholder="Seleccione Rol" />
                           </SelectTrigger>
                           <SelectContent className="!m-0 !p-0 !w-auto">
                             <SelectGroup>
                               <SelectLabel>Rol</SelectLabel>
-                              <SelectItem value="Admin">Admin</SelectItem>
-                              <SelectItem value="Viewer">Viewer</SelectItem>
-                              <SelectItem value="Mod">Mod</SelectItem>
+                              <SelectItem value="admin">Admin</SelectItem>
+                              <SelectItem value="viewer">Viewer</SelectItem>
+                              <SelectItem value="mod">Mod</SelectItem>
                             </SelectGroup>
                           </SelectContent>
                         </Select>
@@ -290,7 +295,12 @@ export default function CreateUser() {
                     <FormItem className="w-full flex-grow">
                       <FormLabel>Lugar</FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange}>
+                        <Select
+                          onValueChange={(value) => {
+                            field.onChange(value); // Actualiza el valor en el estado del formulario
+                          }}
+                          value={field.value || ""} // Asegúrate de que el valor sea un string vacío si no hay valor
+                        >
                           <SelectTrigger className="w-full !bg-white !rounded-md !text-gray-600">
                             <SelectValue placeholder="Seleccione plantel" />
                           </SelectTrigger>
