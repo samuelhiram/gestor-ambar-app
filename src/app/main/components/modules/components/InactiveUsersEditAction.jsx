@@ -4,7 +4,7 @@ import { useMainAppContext } from "../../MainAppContext";
 import { useToast } from "@/hooks/use-toast";
 
 //////
-export default function UserEditAction({
+export default function InactiveUsersEditAction({
   closeThisModal,
   users,
   setSelectedRows,
@@ -69,15 +69,20 @@ export default function UserEditAction({
   };
 
   const refreshUsers = () => {
-    fetch("/api/users/get", {
+    //fetch inactive users
+    fetch("/api/users/get-inactive", {
+      method: "GET",
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${state.token}`,
       },
     })
       .then((res) => res.json())
       .then((data) => {
-        // console.log("Usuarios actualizados:", data.users);
-        setState((prev) => ({ ...prev, usersData: data.users }));
+        setState((prev) => ({
+          ...prev,
+          inactiveUsersData: data.users,
+        }));
       });
   };
 

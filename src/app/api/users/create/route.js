@@ -12,13 +12,20 @@ export const POST = withAuth(async (req) => {
   const userId = getIdByReqHeaders(req);
   try {
     const body = await req.json();
-    var { email, control_number, role, fullName, location, password } = body;
+    var {
+      email,
+      control_number,
+      role,
+      fullName,
+      location: location_id,
+      password,
+    } = body;
     //trim all the values
     email = email.trim();
     control_number = control_number.trim();
     role = role.trim();
     fullName = fullName.trim();
-    location = location.trim();
+    location_id = location_id.trim();
     password = password.trim();
 
     //capitalize the full name
@@ -56,7 +63,11 @@ export const POST = withAuth(async (req) => {
         control_number,
         role,
         fullName,
-        location,
+        location: {
+          connect: {
+            id: location_id, // Reemplaza 'location-id' con el ID de la ubicación
+          },
+        },
         password: hashedPassword,
       },
     });

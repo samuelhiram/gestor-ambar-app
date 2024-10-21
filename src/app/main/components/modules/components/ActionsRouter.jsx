@@ -1,29 +1,35 @@
 "use client";
 import React, { useEffect } from "react";
-import UsersActions from "./UsersActions";
 import { Icon } from "@iconify/react";
 import { useMainAppContext } from "../../MainAppContext";
+
+////////////////// **** ACTIONS ROUTER **** //////////////////
+import InactiveUsersActions from "./InactiveUsersActions";
+import UsersActions from "./UsersActions";
+
 export default function ActionsRouter({
-  activeModule,
+  activeModule: tableName,
   action,
   rows,
+  setSelectedRows,
   actiontitle,
   actionicon,
+  showActions,
 }) {
   const { state, setState } = useMainAppContext();
   useEffect(() => {
     // console.log("Loading router actions...");
-    console.log("ActionsRouter: ", actiontitle, activeModule, action, rows);
+    console.log("ActionsRouter: ", actiontitle, tableName, action, rows);
   }, []);
 
   // close this modal
-  const closeThisModal = () => {
-    setState((prev) => ({ ...prev, showActionsDialog: false }));
+  let closeThisModal = () => {
+    showActions();
   };
 
   return (
     <div className="w-full z-40 fixed right-0 left-0 top-0 bottom-0 bg-black/50 flex justify-center item-center align-middle">
-      <div className="bg-white z-50 p-4 w-4/5 m-auto rounded-lg shadow flex flex-col gap-4">
+      <div className="bg-white z-50 p-4 w-4/5 lg:w-2/4 m-auto rounded-lg shadow flex flex-col gap-4">
         <div className="HEADER flex items-center justify-between">
           <div className="flex items-center gap-1 px-2">
             <Icon
@@ -48,10 +54,22 @@ export default function ActionsRouter({
             </div>
           </div>
         </div>
-        {/* {activeModule === "Usuarios" &&
-            `activeModule -> Usuarios, receives: ${action}`} */}
-        {activeModule === "Usuarios" && (
-          <UsersActions action={action} rows={rows} />
+        {/* ACTIONS ROUTER COMPONENTS */}
+        {tableName === "Usuarios" && (
+          <UsersActions
+            closeThisModal={closeThisModal}
+            action={action}
+            rows={rows}
+            setSelectedRows={setSelectedRows}
+          />
+        )}
+        {tableName === "Usuarios desactivados" && (
+          <InactiveUsersActions
+            closeThisModal={closeThisModal}
+            action={action}
+            rows={rows}
+            setSelectedRows={setSelectedRows}
+          />
         )}
       </div>
     </div>

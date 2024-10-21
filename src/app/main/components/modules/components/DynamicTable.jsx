@@ -1,29 +1,48 @@
-import React, { useState, useEffect } from "react";
+"use client";
+import React, { useState, useEffect, useRef } from "react";
 import { useMainAppContext } from "../../MainAppContext";
 import { Icon } from "@iconify/react";
 import ActionsRouter from "./ActionsRouter";
+//
+//
+const DynamicTable = ({
+  tableIcon = "fluent:table-48-filled",
+  tableName = "table",
+  headers,
+  dataHeaders,
+  data,
+  actions,
+}) => {
+  const tableRef = useRef(null); // Referencia para la tabla
+  // Detectar clics fuera de la tabla
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (tableRef.current && !tableRef.current.contains(event.target)) {
+        setSelectedRows([]); // Deselecciona las filas
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
 
-const DynamicTable = ({ headers, dataHeaders, data, actions }) => {
-  const { state, setState } = useMainAppContext();
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+  //
+  //
+  const [showActions, setShowActions] = useState(false);
+  //
+  const [hideActions, setHideActions] = useState(false);
+  //
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedRowIndex, setSelectedRowIndex] = useState(null);
+  const [selectedRows, setSelectedRows] = useState([]);
   /////
-  ////
   ////
   const [actionSelected, setActionSelected] = useState("");
   const [actionTitleSelected, setActionTitleSelected] = useState("");
   const [actionIconSelected, setActionIconSelected] = useState("");
   ////
-  ///
   //
   var rows = [];
-  if (data === undefined || data.length === 0) {
-    return (
-      <div className="w-full rounded-md border p-2 flex justify-center items-center">
-        <>Todavía no hay datos...</>
-      </div>
-    );
-  }
 
   const filteredData = data.filter((row) =>
     Object.values(row).some((val) =>
@@ -32,28 +51,31 @@ const DynamicTable = ({ headers, dataHeaders, data, actions }) => {
   );
 
   const handleRowClick = (row) => {
-    if (state.selectedRows.some((r) => r.id === row.id)) {
-      rows = state.selectedRows.filter((r) => r.id !== row.id);
-      setState((prev) => ({ ...prev, selectedRows: rows }));
-      // console.log("state:", state.selectedRows);
-      // console.log("rows ---> deleted... : ", rows);
+    if (selectedRows.some((r) => r.id === row.id)) {
+      rows = selectedRows.filter((r) => r.id !== row.id);
+      setSelectedRows(rows);
       return;
     }
-    setSelectedRowIndex(row.id);
-    rows = [...state.selectedRows, row];
-    // console.log("rows: ", rows);
-    setState((prev) => ({ ...prev, selectedRows: rows }));
+    rows = [...selectedRows, row];
+
+    setSelectedRows(rows);
+  };
+
+  const handleShowActions = () => {
+    setShowActions(false);
   };
 
   return (
-    <div>
-      {state.showActionsDialog && (
+    <div ref={tableRef}>
+      {showActions && (
         <ActionsRouter
           action={actionSelected}
-          activeModule={state.activeModuleName}
-          rows={state.selectedRows}
+          activeModule={tableName}
+          rows={selectedRows}
+          setSelectedRows={setSelectedRows}
           actiontitle={actionTitleSelected}
           actionicon={actionIconSelected}
+          showActions={handleShowActions}
         />
       )}
       <div
@@ -62,107 +84,162 @@ const DynamicTable = ({ headers, dataHeaders, data, actions }) => {
         <div className="flex flex-row-reverse justify-between items-center gap-2 w-full flex-wrap">
           <div
             className={` ${
-              state.selectedRows.length === 0 ? "hidden" : "visible"
-            }  fixed bottom-0 bg-white border p-2 flex flex-col flex-grow flex-wrap justify-start max-md:justify-center rounded-md text-sm gap-2 !m-0`}
+              selectedRows.length === 0 ? "hidden" : "visible"
+            } select-none fixed bottom-0 bg-white border  flex flex-col flex-grow flex-wrap justify-start max-md:justify-center rounded-t-lg overflow-hidden text-sm  !m-0`}
           >
-            <div className="p-1 text-sm font-semibold">Opciones</div>
-
-            {state.selectedRows.length
-              ? actions.map((action, actionIndex) => (
-                  <div
-                    className={`${action.color} ${action.textColor} flex items-center gap-1  px-2 py-1 rounded-md cursor-pointer ${action.hoverColor}`}
-                    key={actionIndex}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // console.log(
-                      //   `${action.action} ${state.activeModuleName} clicked for row`,
-                      //   state.selectedRows
-                      // );
-                      setActionSelected(action.action);
-                      setActionTitleSelected(action.actionTitle);
-                      setActionIconSelected(action.icon);
-                      setState((prev) => ({
-                        ...prev,
-                        showActionsDialog: true,
-                      }));
-                    }}
-                  >
-                    <div className="flex flex-row-reverse gap-2 items-center w-full justify-between">
-                      <div>
-                        {action.description} ({state.selectedRows.length})
-                      </div>
-                      <div>
-                        <Icon icon={action.icon} width={32} height={32} />
-                      </div>
-                    </div>
-                  </div>
-                ))
-              : null}
-          </div>
-          <div className="flex items-center justify-start w-full gap-3 flex-wrap">
-            <div className="w-1/2 max-md:w-full">
-              <input
-                type="text"
-                placeholder="Buscar en la tabla..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search w-full"
-              />
+            <div
+              onClick={() => {
+                setHideActions(!hideActions);
+              }}
+              className="p-2 font-semibold cursor-pointer min-w-36 flex justify-between items-center hover:bg-gray-100"
+            >
+              <div className="flex items-center gap-2">
+                <div className="text-xs border border-1 rounded-md bg-gray-100 p-1">
+                  {tableName}
+                </div>
+                <div>Opciones {hideActions && "..."} </div>
+              </div>
+              <div className="flex gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                >
+                  <rect width="24" height="24" fill="none" />
+                  {!hideActions && (
+                    <path
+                      fill="gray"
+                      d="m12 13.171l4.95-4.95l1.414 1.415L12 16L5.636 9.636L7.05 8.222z"
+                    />
+                  )}
+                  {hideActions && (
+                    <path
+                      fill="gray"
+                      d="m12 10.8l-4.6 4.6L6 14l6-6l6 6l-1.4 1.4z"
+                    />
+                  )}
+                </svg>
+              </div>
             </div>
             <div
-              className={`${
-                state.selectedRows.length === 0 ? "bg-white" : "bg-green-100"
-              } border p-2 rounded-md  flex max-md:w-full justify-center text-sm items-center`}
+              className={`${!hideActions ? "p-2 gap-2 flex flex-col" : ""} `}
             >
-              <div>Registros seleccionado(s): {state.selectedRows.length}</div>
+              {selectedRows.length && !hideActions
+                ? actions.map((action, actionIndex) => (
+                    <div
+                      className={`${action.color} ${action.textColor} flex items-center gap-1 p-2 rounded-md cursor-pointer ${action.hoverColor}`}
+                      key={actionIndex}
+                      onClick={() => {
+                        setActionSelected(action.action);
+                        setActionTitleSelected(action.actionTitle);
+                        setActionIconSelected(action.icon);
+
+                        setShowActions(true);
+                      }}
+                    >
+                      <div className="flex flex-row-reverse gap-2 items-center w-full justify-between">
+                        <div className="text-lg">
+                          {action.description} ({selectedRows.length})
+                        </div>
+                        <div>
+                          <Icon icon={action.icon} width={32} height={32} />
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                : null}
+            </div>
+          </div>
+          <div className="flex items-center max-md:items-start max-md:flex-col justify-between w-full gap-2 flex-wrap">
+            <div className="flex px-2 font-semibold items-center">
+              <Icon
+                icon={tableIcon}
+                width="32"
+                height="32"
+                style={{ color: "#1e3a8a" }}
+              />
+              <div>{tableName}</div>
+            </div>
+
+            <div className="flex max-md:flex-col max-md:w-full flex-grow justify-end gap-3">
+              <div
+                className={`max-md:w-full w-56 rounded-md flex items-center bg-white`}
+              >
+                <input
+                  type="text"
+                  placeholder="Buscar en la tabla..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full search"
+                />
+              </div>
+              <div
+                className={`${
+                  selectedRows.length === 0
+                    ? "bg-white"
+                    : "bg-green-100 font-semibold text-green-700"
+                }  w-56 border text-center p-2 rounded-md flex max-md:w-full justify-center text-sm items-center `}
+              >
+                Registros seleccionado(s): {selectedRows.length}
+              </div>
             </div>
           </div>
         </div>
-        <div
-          className={`${
-            filteredData.length === 0 ? "visible" : "hidden"
-          } min-w-full w-full flex justify-center items-center p-2`}
-        >
-          Sin información para mostrar.
-        </div>
-        <table
-          className={`${
-            filteredData.length === 0 ? "hidden" : "visible"
-          } w-full overflow-hidden rounded-xl bg-gray-50 shadow-md`}
-        >
-          <thead className="bg-blue-900 text-gray-50 max-sm:hidden">
-            <tr>
-              {headers.map((header, index) => (
-                <th className="p-1 border !font-light !text-md" key={index}>
-                  {header.replace(/_/g, " ")}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filteredData.map((row, rowIndex) => (
-              <tr
-                className={`cursor-pointer bg-white hover:bg-gray-100`}
-                key={rowIndex}
-                onClick={() => handleRowClick(row)}
-              >
-                {dataHeaders.map((dataHeader, colIndex) => (
-                  <td
-                    className={`${
-                      //if the row is selected, change the background color
-                      state.selectedRows.some((r) => r.id === row.id)
-                        ? "bg-green-100"
-                        : ""
-                    } text-sm p-2 max-sm:p-1 max-sm:flex max-sm:flex-col max-sm:first:bg-blue-900 max-sm:first:text-gray-50 max-sm: text-center border`}
-                    key={colIndex}
+
+        {(data === undefined || data.length === 0) && (
+          <div className="w-full rounded-md border p-2 flex justify-center items-center">
+            Todavía no hay datos...
+          </div>
+        )}
+
+        {!(data === undefined || data.length === 0) && (
+          <>
+            {filteredData.length === 0 && (
+              <div className="w-full rounded-md border p-2 flex justify-center items-center">
+                Sin resultados para mostrar.
+              </div>
+            )}
+            <table
+              className={`${
+                filteredData.length === 0 ? "hidden" : "visible"
+              } w-full overflow-hidden rounded-xl bg-gray-50 shadow-md`}
+            >
+              <thead className="bg-blue-900 text-gray-50 max-sm:hidden">
+                <tr>
+                  {headers.map((header, index) => (
+                    <th className="p-1 border !font-light !text-sm" key={index}>
+                      {header.replace(/_/g, " ")}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filteredData.map((row, rowIndex) => (
+                  <tr
+                    className={`cursor-pointer bg-white  hover:bg-green-50 border-2`}
+                    key={rowIndex}
+                    onClick={() => handleRowClick(row)}
                   >
-                    <div className="">{row[dataHeader]}</div>
-                  </td>
+                    {dataHeaders.map((dataHeader, colIndex) => (
+                      <td
+                        className={`${
+                          //if the row is selected, change the background color
+                          selectedRows.some((r) => r.id === row.id)
+                            ? "bg-green-100 text-green-600"
+                            : ""
+                        } text-sm p-2 max-sm:p-1 max-sm:flex max-sm:flex-col max-sm:first:bg-blue-900 max-sm:first:text-gray-50 max-sm: text-center border`}
+                        key={colIndex}
+                      >
+                        <div className="break-all">{row[dataHeader]}</div>
+                      </td>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+              </tbody>
+            </table>
+          </>
+        )}
       </div>
     </div>
   );

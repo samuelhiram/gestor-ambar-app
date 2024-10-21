@@ -14,12 +14,12 @@ export const POST = withAuth(async (req) => {
     // Recorrer cada usuario y realizar el update en la base de datos
     const updatedUsers = await Promise.all(
       users.map(async (user) => {
-        var { id, fullName, control_number, role, location, email } = user;
+        var { id, fullName, control_number, role, location_id, email } = user;
         //trim all the values
         fullName = fullName.trim();
         control_number = control_number.trim();
         role = role.trim();
-        location = location.trim();
+        location_id = location_id.trim();
         email = email.trim();
         //capitalizar nombre
         fullName = fullName.toLowerCase();
@@ -33,7 +33,11 @@ export const POST = withAuth(async (req) => {
             fullName,
             control_number,
             role,
-            location,
+            location: {
+              connect: {
+                id: location_id,
+              },
+            },
             email,
           },
         });

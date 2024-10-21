@@ -8,5 +8,8 @@
     "plyconfig.json": "jsonc"
   },
   "WillLuke.nextjs.hasPrompted": true,
-  "workbench.colorTheme": "Default Dark+"
+  "workbench.colorTheme": "Default Dark+",
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  }
 }

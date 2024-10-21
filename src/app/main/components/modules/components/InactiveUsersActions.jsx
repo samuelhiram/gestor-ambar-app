@@ -1,35 +1,35 @@
 import React from "react";
-import UsersEditAction from "./UsersEditAction";
+import InactiveUsersActivateAction from "./InactiveUsersActivateAction";
+import InactiveUsersEditAction from "./InactiveUsersEditAction";
 import UsersDetailsAction from "./UsersDetailsAction";
-import UsersDeleteAction from "./UsersDeleteAction";
-export default function UsersActions({
+export default function InactiveUsersActions({
   closeThisModal,
   action,
   rows,
   setSelectedRows,
 }) {
   switch (action) {
+    case "details":
+      return (
+        <UsersDetailsAction closeThisModal={closeThisModal} users={rows} />
+      );
     case "edit":
       return (
-        <UsersEditAction
+        <InactiveUsersEditAction
           closeThisModal={closeThisModal}
           users={rows}
           setSelectedRows={setSelectedRows}
         />
       );
-    case "details":
+    case "activate":
       return (
-        <UsersDetailsAction closeThisModal={closeThisModal} users={rows} />
-      );
-    case "delete":
-      return (
-        <UsersDeleteAction
+        <InactiveUsersActivateAction
           closeThisModal={closeThisModal}
           users={rows}
           setSelectedRows={setSelectedRows}
         />
       );
     default:
-      return null;
+      return <div>Acción no encontrada</div>;
   }
 }

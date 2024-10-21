@@ -8,6 +8,8 @@ const MainAppContext = createContext(null);
 
 export default function MainAppContextProvider({ children }) {
   const [state, setState] = useState({
+    //this state executes any function that receives
+    //a function as a parameter
     user: null,
     token: null,
     isLoadingMainApp: true,
@@ -20,12 +22,14 @@ export default function MainAppContextProvider({ children }) {
     //show actionRouter
     showActionsDialog: false,
     //
-    selectedRows: [],
     //dialog alert
     showDialogAlert: false,
     dialogMessage: "default message",
     //Users module
     usersData: [],
+    inactiveUsersData: [],
+    //locations
+    locations: [],
   });
 
   const value = { state, setState };

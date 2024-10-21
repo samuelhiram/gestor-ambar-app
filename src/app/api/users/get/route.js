@@ -17,8 +17,23 @@ export const GET = withAuth(async (req) => {
   //get users that only has isVisible === true
   let users = await prisma.user.findMany({
     where: {
-      isVisible: true,
+      status: "active",
     },
+    include: {
+      location: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+
+  //set location field direct in user, location is equals to user.location.name
+  users = users.map((user) => {
+    return {
+      ...user,
+      location: user.location.name,
+    };
   });
 
   //filtered users by userId

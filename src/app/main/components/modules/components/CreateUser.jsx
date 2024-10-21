@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import Image from "next/image";
+import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,8 +37,14 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { useMainAppContext } from "../../MainAppContext";
+import { use } from "bcrypt/promises";
+
+/////////////////
+/////////////////
+/////////////////
 export default function CreateUser() {
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [locations, setLocations] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { state, setState } = useMainAppContext();
   const { toast } = useToast();
   const formSchema = z.object({
@@ -54,8 +59,8 @@ export default function CreateUser() {
     //make with zod required
     role: z.string().min(2, { message: "Obligatorio" }).max(50),
   });
-  // 1. Define your form.
 
+  // 1. Define your form.
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -66,11 +71,10 @@ export default function CreateUser() {
       location: "",
     },
   });
-
   const sendPasswordEmail = async (email, password) => {
     // Inicializar EmailJS con tu clave pública
     emailjs.init({
-      publicKey: "vGvH9vq_aIaVCEh1D",
+      publicKey: process.env.EMAIL_PUBLIC_KEY,
     }); // Asegúrate de reemplazar "TU_CLAVE_PUBLICA" por tu clave real
 
     const templateParams = {
@@ -80,10 +84,12 @@ export default function CreateUser() {
 
     try {
       console.log("Enviando email con los parámetros:", templateParams);
-
       // Enviar el correo usando async/await
-      await emailjs.send("asiscan", "template_mei0db8", templateParams);
-
+      await emailjs.send(
+        "asiscan",
+        process.env.EMAIL_TEMPLATE_ID,
+        templateParams
+      );
       console.log("Correo enviado correctamente ----- SUCCESS!");
     } catch (error) {
       console.error("Error al enviar el correo ----- FAILED...", error);
@@ -98,8 +104,6 @@ export default function CreateUser() {
 
     console.log(values);
 
-    const token = localStorage.getItem("token");
-
     try {
       // Ocultar alerta de diálogo al iniciar el proceso
       setState((prev) => ({
@@ -111,7 +115,7 @@ export default function CreateUser() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Asegúrate de que 'token' esté definido correctamente
+          Authorization: `Bearer ${state.token}`, // Asegúrate de que 'token' esté definido correctamente
         },
         body: JSON.stringify(values), // 'values' es el objeto que contiene los datos del formulario
       });
@@ -193,12 +197,12 @@ export default function CreateUser() {
   return (
     <div className="w-full p-2 border rounded-xl">
       <Accordion
-        className="w-full !border-0 !border-b-0"
+        className="w-full !border-0 !border-b-0 "
         type="single"
         collapsible
       >
         <AccordionItem className="!border-0 !border-b-0" value="item-1">
-          <AccordionTrigger className="!bg-white !rounded-xl !border !p-2 !text-gray-600">
+          <AccordionTrigger className="!bg-white hover:!bg-blue-50 hover:border-blue-500 !rounded-xl !border !p-2 !text-gray-600">
             <div className="flex items-center gap-1">
               <Icon
                 icon="iconoir:add-user"
@@ -307,12 +311,20 @@ export default function CreateUser() {
                           <SelectContent className="!m-0 !p-0 !w-auto">
                             <SelectGroup>
                               <SelectLabel>Unidad</SelectLabel>
-                              <SelectItem value="Unidad Tomas Aquino">
+                              {/* <SelectItem value="Unidad Tomas Aquino">
                                 Unidad Tomas Aquino
                               </SelectItem>
                               <SelectItem value="Unidad Otay">
                                 Unidad Otay
-                              </SelectItem>
+                              </SelectItem> */}
+                              {state.locations.map((location) => (
+                                <SelectItem
+                                  key={location.id}
+                                  value={location.id}
+                                >
+                                  {location.name}
+                                </SelectItem>
+                              ))}
                             </SelectGroup>
                           </SelectContent>
                         </Select>

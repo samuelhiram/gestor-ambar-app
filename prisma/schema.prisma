@@ -15,20 +15,34 @@ datasource db {
 
 //basic user model
 model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  control_number String    @unique
+  role           String
+  fullName       String
+  // location  String
+  password       String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  status         String    @default("active") //for soft delete
+  //relation
+  session        Session[]
+  log            Log[]
+  locationId     String //locationId
+  location       Location  @relation(fields: [locationId], references: [id])
+  item           Item[]
+  entry          Entryes[]
+  outs           Outs[]
+}
+
+model Responsible {
   id        String   @id @default(cuid())
-  email     String   @unique
-  control_number String @unique
-  role      String
   fullName  String
-  location  String
-  password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  isVisible Boolean @default(true) //for soft delete
-  //relation
-  session   Session[]
-  log       Log[]
+  status    String   @default("active") //for soft delete
 
+  //relation
 }
 
 //session of user
@@ -50,4 +64,126 @@ model Log {
   createdAt DateTime @default(now())
   //relation
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model Location {
+  id        String      @id @default(cuid())
+  name      String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  status    String      @default("active")
+  user      User[]
+  Item      Item[]
+  Ubication Ubication[]
+}
+
+model Category {
+  id            String   @id @default(cuid())
+  partidaNumber String
+  name          String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  status        String   @default("active")
+  item          Item[]
+}
+
+model Unit {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status    String   @default("active")
+  item      Item[]
+}
+
+model Measure {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status    String   @default("active")
+  item      Item[]
+}
+
+model ItemType {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status    String   @default("active")
+  item      Item[]
+}
+
+model Item {
+  id          String @id @default(cuid())
+  barCode     String @unique
+  name        String
+  description String
+  quantity    Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status    String   @default("active")
+
+  //relations
+  measureId   String
+  measure     Measure   @relation(fields: [measureId], references: [id])
+  unitId      String //foreign key
+  unit        Unit      @relation(fields: [unitId], references: [id])
+  typeId      String //foreign key
+  type        ItemType  @relation(fields: [typeId], references: [id])
+  categoryId  String //foreign key
+  category    Category  @relation(fields: [categoryId], references: [id])
+  locationId  String //foreign key
+  location    Location  @relation(fields: [locationId], references: [id])
+  userId      String //foreign key
+  user        User      @relation(fields: [userId], references: [id])
+  ubicationId String //foreign key
+  ubication   Ubication @relation(fields: [ubicationId], references: [id])
+
+  /// Relación uno a muchos con las entradas
+  entry Entryes[] // Relación uno a muchos con las entradas
+  /// Relación uno a muchos con las salidas
+  outs  Outs[] // Relación uno a muchos con las salidas
+}
+
+model Ubication {
+  id         String    @id @default(cuid())
+  name       String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  status     String    @default("active")
+  locationId String // Clave foránea
+  location   Location  @relation(fields: [locationId], references: [id])
+  items      Item[] // Relación uno a muchos con los ítems
+  entry      Entryes[] // Relación uno a muchos con las entradas
+  outs       Outs[] // Relación uno a muchos con las salidas
+}
+
+model Entryes {
+  id          String    @id @default(cuid())
+  quantity    Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  status      String    @default("active")
+  itemId      String
+  item        Item      @relation(fields: [itemId], references: [id])
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  ubicationId String
+  ubication   Ubication @relation(fields: [ubicationId], references: [id])
+}
+
+model Outs {
+  id          String    @id @default(cuid())
+  quantity    Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  status      String    @default("active")
+  itemId      String
+  item        Item      @relation(fields: [itemId], references: [id])
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  ubicationId String
+  ubication   Ubication @relation(fields: [ubicationId], references: [id])
 }

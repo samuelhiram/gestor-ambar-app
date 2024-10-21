@@ -39,13 +39,32 @@ export async function POST(req) {
       });
     }
 
+    //if user has status like "inactive" or "blocked" return error
+    if (user.status !== "active") {
+      console.log("--api--> user status is not active");
+      return new NextResponse(
+        JSON.stringify({ error: "User status is not active" }),
+        {
+          status: 403,
+        }
+      );
+    }
+
     console.log("--api--> user found, login success");
 
     // Generar token JWT
     const userId = user.id;
-    const token = jwt.sign({ userId }, secretKey, { expiresIn: "12h" });
 
-    // Obtener fecha actual y sumar 3 horas
+    //omitir password en el token
+    delete user.password;
+
+    const token = jwt.sign(user, secretKey, { expiresIn: "12h" });
+
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+    console.log("decoded: ", decoded);
+
+    // Obtener fecha actual y sumar 12 horas
     const expires = new Date(Date.now() + 12 * 60 * 60 * 1000);
 
     // Borrar todas las sesiones anteriores del usuario

@@ -2,7 +2,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { withAuth } from "@/lib/withAuth"; // Usa la ruta correcta para importar
-import jwt from "jsonwebtoken";
 
 //get secret key from environment variable
 const prisma = new PrismaClient();
@@ -42,7 +41,8 @@ export const GET = withAuth(async (req) => {
         headers: { "Content-Type": "application/json" },
       });
     }
-
+    //delete password from user
+    delete user.password;
     return new NextResponse(JSON.stringify({ user }));
   } else {
     //stop the flow

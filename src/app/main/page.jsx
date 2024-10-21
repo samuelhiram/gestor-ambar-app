@@ -24,7 +24,6 @@ function Main() {
   const { state, setState } = useMainAppContext();
   //get the userId from localStorage
   const [token, setToken] = useState();
-
   useEffect(() => {
     try {
       const userId = localStorage.getItem("userId");
@@ -73,6 +72,31 @@ function Main() {
         }
       };
       getSession();
+
+      //get locations and set in mainappcontext
+      const fetchLocations = async () => {
+        try {
+          const response = await fetch("/api/locations/get", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          if (!response.ok) {
+            throw new Error("Failed to fetch locations");
+          }
+          const data = await response.json();
+          setState((prev) => ({
+            ...prev,
+            locations: data.locations,
+          }));
+        } catch (err) {
+          console.error("Error fetching locations:", err.message);
+        }
+      };
+
+      fetchLocations();
     } catch (e) {
       // localStorage.clear();
       // console.log("error: ", e);
