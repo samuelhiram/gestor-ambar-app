@@ -13,6 +13,7 @@ const DynamicTable = ({
   data,
   actions,
 }) => {
+  const { state } = useMainAppContext();
   const tableRef = useRef(null); // Referencia para la tabla
   // Detectar clics fuera de la tabla
   useEffect(() => {
@@ -94,10 +95,10 @@ const DynamicTable = ({
               className="p-2 font-semibold cursor-pointer min-w-36 flex justify-between items-center hover:bg-gray-100"
             >
               <div className="flex items-center gap-2">
-                <div className="text-xs border border-1 rounded-md bg-gray-100 p-1">
-                  {tableName}
+                <div className="text-xs border border-1 border-blue-200 rounded-md bg-blue-50 text-blue-500 p-1">
+                  {state.activeModuleName}
                 </div>
-                <div>Opciones {hideActions && "..."} </div>
+                <div className="text-md">Opciones {hideActions && "..."} </div>
               </div>
               <div className="flex gap-2">
                 <svg
@@ -128,18 +129,17 @@ const DynamicTable = ({
               {selectedRows.length && !hideActions
                 ? actions.map((action, actionIndex) => (
                     <div
-                      className={`${action.color} ${action.textColor} flex items-center gap-1 p-2 rounded-md cursor-pointer ${action.hoverColor}`}
+                      className={`${action.color} ${action.textColor} flex items-center gap-1 p-1 rounded-md cursor-pointer ${action.hoverColor}`}
                       key={actionIndex}
                       onClick={() => {
                         setActionSelected(action.action);
                         setActionTitleSelected(action.actionTitle);
                         setActionIconSelected(action.icon);
-
                         setShowActions(true);
                       }}
                     >
                       <div className="flex flex-row-reverse gap-2 items-center w-full justify-between">
-                        <div className="text-lg">
+                        <div className="text-md">
                           {action.description} ({selectedRows.length})
                         </div>
                         <div>

@@ -74,7 +74,7 @@ export default function CreateUser() {
   const sendPasswordEmail = async (email, password) => {
     // Inicializar EmailJS con tu clave pública
     emailjs.init({
-      publicKey: process.env.EMAIL_PUBLIC_KEY,
+      publicKey: "vGvH9vq_aIaVCEh1D",
     }); // Asegúrate de reemplazar "TU_CLAVE_PUBLICA" por tu clave real
 
     const templateParams = {
@@ -83,14 +83,10 @@ export default function CreateUser() {
     };
 
     try {
-      console.log("Enviando email con los parámetros:", templateParams);
+      // console.log("Enviando email con los parámetros:", templateParams);
       // Enviar el correo usando async/await
-      await emailjs.send(
-        "asiscan",
-        process.env.EMAIL_TEMPLATE_ID,
-        templateParams
-      );
-      console.log("Correo enviado correctamente ----- SUCCESS!");
+      await emailjs.send("asiscan", "template_mei0db8", templateParams);
+      // console.log("Correo enviado correctamente ----- SUCCESS!");
     } catch (error) {
       console.error("Error al enviar el correo ----- FAILED...", error);
     }
@@ -156,7 +152,7 @@ export default function CreateUser() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Asegúrate de que 'token' esté definido correctamente
+          Authorization: `Bearer ${state.token}`, // Asegúrate de que 'token' esté definido correctamente
         },
       });
 

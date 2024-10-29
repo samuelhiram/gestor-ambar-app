@@ -14,8 +14,12 @@ export const GET = withAuth(async (req) => {
     where: {
       id: userId,
     },
+    include: {
+      session: true,
+      location: true,
+    },
   });
-  console.log("-----------------> user", user);
+  // console.log("-----------------> user", user);
   const session = await prisma.session.findFirst({
     where: {
       userId: userId,

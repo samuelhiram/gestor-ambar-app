@@ -112,7 +112,7 @@ export default function InactiveUsersActivateAction({
           ))}
         </div>
       </div>
-      {loading && "Borrando usuarios..."}
+      {loading && "Activando usuarios..."}
       {!loading && (
         <div className="flex justify-between">
           <button
