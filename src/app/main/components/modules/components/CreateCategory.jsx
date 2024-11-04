@@ -228,8 +228,8 @@ export default function CreateCategory() {
             </Form>
             <div className="w-full py-2">
               <div className="font-semibold">Categorías existentes</div>
-              <div className="w-full border-b border-gray-200 py-2 flex flex-col gap-1 justify-between items-center ">
-                <CategoryList state={state} />
+              <div className="w-full h-52 overflow-auto border-b border-gray-200 py-2  gap-1 justify-between items-center ">
+                <CategoryList state={state} setState={setState} />
               </div>
             </div>
           </AccordionContent>
@@ -239,54 +239,252 @@ export default function CreateCategory() {
   );
 }
 
-export function CategoryList({ state }) {
+//delete category
+export async function deleteCategory(values, state, setState) {
+  console.log("Deleting category:", values);
+  try {
+    const response = await fetch("/api/category/delete", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${state.token}`,
+      },
+      body: JSON.stringify(values),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error("Error deleting category:", error.error);
+      return;
+    }
+
+    const data = await response.json();
+    console.log("Category deleted successfully:", data);
+
+    //fetch categories
+    const categoriesResponse = await fetch("/api/category/get", {
+      headers: {
+        Authorization: `Bearer ${state.token}`,
+      },
+    });
+
+    if (!categoriesResponse.ok) {
+      const error = await categoriesResponse.json();
+      setState((prevState) => ({
+        ...prevState,
+        showDialogAlert: true,
+        dialogMessage: error.error || "Error desconocido",
+      }));
+      return;
+    }
+
+    const fetchcategories = await categoriesResponse.json();
+
+    console.log("Categories fetched successfully:", fetchcategories);
+
+    setState((prevState) => ({
+      ...prevState,
+      categories: fetchcategories.categories,
+    }));
+
+    return data;
+  } catch (error) {
+    console.error("Request error:", error);
+  }
+}
+
+async function updateCategory(values, state, setState) {
+  console.log("Updating category:", values);
+  try {
+    const response = await fetch("/api/category/put", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${state.token}`,
+      },
+      body: JSON.stringify(values), // Corregido a `values`
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error("Error updating category:", error.error);
+      return;
+    }
+
+    const data = await response.json();
+    console.log("Category updated successfully:", data);
+
+    //fetch categories
+    const categoriesResponse = await fetch("/api/category/get", {
+      headers: {
+        Authorization: `Bearer ${state.token}`,
+      },
+    });
+
+    if (!categoriesResponse.ok) {
+      const error = await categoriesResponse.json();
+      setState((prevState) => ({
+        ...prevState,
+        showDialogAlert: true,
+        dialogMessage: error.error || "Error desconocido",
+      }));
+      return;
+    }
+
+    const fetchcategories = await categoriesResponse.json();
+
+    // console.log("Categories fetched successfully:", fetchcategories);
+
+    setState((prevState) => ({
+      ...prevState,
+      categories: fetchcategories.categories,
+    }));
+
+    return data;
+  } catch (error) {
+    console.error("Request error:", error);
+  }
+}
+
+export function CategoryList({ state, setState }) {
   const [editCategoryId, setEditCategoryId] = useState(null);
+  const [editedValues, setEditedValues] = useState({});
+
+  const handleEditChange = (field, value) => {
+    //get input values by id
+    const name = document.getElementById("categoryName").value;
+    const partidaNumber = document.getElementById("partidaNumber").value;
+
+    setEditedValues({
+      name,
+      partidaNumber,
+    });
+  };
+
+  const handleSave = async (categoryId) => {
+    const updatedData = {
+      id: categoryId,
+      ...editedValues,
+    };
+    await updateCategory(updatedData, state, setState);
+    setEditCategoryId(null);
+  };
+
+  const handleDelete = async (categoryId) => {
+    const deletedData = {
+      id: categoryId,
+    };
+    await deleteCategory(deletedData, state, setState);
+  };
 
   return (
     <>
+      {state.categories.length === 0 && (
+        <div>No hay categorías registradas</div>
+      )}
       {state.categories.map((category) => {
         const isEditing = editCategoryId === category.id;
-
         return (
-          <div key={category.id} className="flex w-full space-x-2">
+          <div
+            key={category.id}
+            className="flex flex-row max-md:flex-col w-full gap-2 items-center bg-white border-b p-2"
+          >
             {isEditing ? (
               <input
+                id="categoryName"
                 defaultValue={category.name}
-                className="w-full text-center"
+                className="w-full"
+                onChange={(e) => handleEditChange("name", e.target.value)}
               />
             ) : (
-              <input
-                value={category.name}
-                readOnly
-                className="pointer-events-none select-none w-full bg-transparent text-center"
-              />
+              <div className="w-full">{category.name}</div>
             )}
             {isEditing ? (
               <input
+                id="partidaNumber"
                 pattern="[0-9]*"
                 defaultValue={category.partidaNumber}
-                className="w-full text-center"
+                className="w-full"
+                onChange={(e) => {
+                  //filter just numbers
+                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                  handleEditChange("partidaNumber", e.target.value);
+                }}
               />
             ) : (
-              <input
-                value={category.partidaNumber}
-                readOnly
-                className="pointer-events-none select-none w-full bg-transparent text-center"
-              />
+              <div className="w-full">{category.partidaNumber}</div>
             )}
-
-            <div className="flex space-x-4">
+            <div className="flex justify-between max-md:w-full">
               <div
                 className="text-blue-900 cursor-pointer underline"
                 onClick={() =>
                   setEditCategoryId(isEditing ? null : category.id)
                 }
               >
-                {isEditing ? "guardar" : "editar"}
+                {isEditing ? (
+                  <div className="flex gap-2 max-md:gap-6">
+                    <svg
+                      onClick={() => handleSave(category.id)}
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                    >
+                      <rect width="24" height="24" fill="none" />
+                      <path
+                        fill="#737373"
+                        d="m9.55 18l-5.7-5.7l1.425-1.425L9.55 15.15l9.175-9.175L20.15 7.4z"
+                      />
+                    </svg>
+                    <svg
+                      onClick={() => setEditCategoryId(null)}
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                    >
+                      <rect width="24" height="24" fill="none" />
+                      <path
+                        fill="#737373"
+                        d="m8.4 17l3.6-3.6l3.6 3.6l1.4-1.4l-3.6-3.6L17 8.4L15.6 7L12 10.6L8.4 7L7 8.4l3.6 3.6L7 15.6zm3.6 5q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22"
+                      />
+                    </svg>
+                  </div>
+                ) : (
+                  <svg
+                    className="hover:bg-gray-200 rounded-full p-1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="32"
+                    height="32"
+                    viewBox="0 0 24 24"
+                  >
+                    <rect width="24" height="24" fill="none" />
+                    <path
+                      fill="#737373"
+                      d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z"
+                    />
+                  </svg>
+                )}
               </div>
-              <div className="text-red-600 cursor-pointer">eliminar</div>
+              {!category.item && (
+                <svg
+                  onClick={() => {
+                    handleDelete(category.id);
+                  }}
+                  className="hover:bg-gray-200 rounded-full p-1 cursor-pointer flex items-center"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                >
+                  <rect width="24" height="24" fill="none" />
+                  <path
+                    fill="#fa0a0a"
+                    d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"
+                  />
+                </svg>
+              )}
             </div>
-            <hr />
           </div>
         );
       })}
