@@ -5,10 +5,12 @@ import DialogMessage from "./components/DialogMessage";
 import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [loading, setLoading] = useState(true);
   const [hasSession, setHasSession] = useState(true);
   var token;
   var userId;
   useEffect(() => {
+    setLoading(true);
     // fetch create defaultUser
     const fetchDefaults = async () => {
       const response = await fetch("/api/createDefaults");
@@ -22,10 +24,12 @@ export default function Home() {
     } else {
       setHasSession(false);
     }
+    setLoading(false);
   }, []);
   return (
     <>
-      {hasSession ? null : <Login />}
+      {loading && <div>Loading...</div>}
+      {!hasSession && !loading && <Login />}
       <DialogMessage />
     </>
   );

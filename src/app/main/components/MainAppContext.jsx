@@ -30,6 +30,8 @@ export default function MainAppContextProvider({ children }) {
     inactiveUsersData: [],
     //locations
     locations: [],
+    //categories
+    categories: [],
   });
 
   const value = { state, setState };

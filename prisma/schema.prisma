@@ -77,6 +77,19 @@ model Location {
   Ubication Ubication[]
 }
 
+model Ubication {
+  id         String    @id @default(cuid())
+  name       String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  status     String    @default("active")
+  locationId String // Clave foránea
+  location   Location  @relation(fields: [locationId], references: [id])
+  items      Item[] // Relación uno a muchos con los ítems
+  entry      Entryes[] // Relación uno a muchos con las entradas
+  outs       Outs[] // Relación uno a muchos con las salidas
+}
+
 model Category {
   id            String   @id @default(cuid())
   partidaNumber String
@@ -145,19 +158,6 @@ model Item {
   entry Entryes[] // Relación uno a muchos con las entradas
   /// Relación uno a muchos con las salidas
   outs  Outs[] // Relación uno a muchos con las salidas
-}
-
-model Ubication {
-  id         String    @id @default(cuid())
-  name       String
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  status     String    @default("active")
-  locationId String // Clave foránea
-  location   Location  @relation(fields: [locationId], references: [id])
-  items      Item[] // Relación uno a muchos con los ítems
-  entry      Entryes[] // Relación uno a muchos con las entradas
-  outs       Outs[] // Relación uno a muchos con las salidas
 }
 
 model Entryes {
