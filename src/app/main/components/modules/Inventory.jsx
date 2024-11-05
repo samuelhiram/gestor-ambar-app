@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import CreateCategory from "./components/CreateCategory";
+import CreateUnit from "./components/CreateUnit";
 export default function Inventory() {
   return (
     <div className="flex flex-col gap-3">
@@ -9,7 +10,7 @@ export default function Inventory() {
           <CreateCategory />
         </div>
         <div className="w-full">
-          <CreateCategory />
+          <CreateUnit />
         </div>
       </div>
     </div>
