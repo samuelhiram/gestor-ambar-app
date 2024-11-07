@@ -31,26 +31,37 @@ export default function CreateUnit() {
   const { state, setState } = useMainAppContext();
   const { toast } = useToast();
   const formSchema = z.object({
-    partidaNumber: z
-      .string()
-      .regex(/^\d+$/, { message: "Debe contener solo números" }),
     name: z.string().min(2, { message: "Obligatorio" }).max(50),
   });
-  // 1. Define your form.
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      partidaNumber: "",
       name: "",
     },
   });
 
   useEffect(() => {
-    async function fetchCategories() {
-      const response = await fetch("/api/category/get", {
+    const asyncFetch = async () => {
+      await fetchUnits(state, setState);
+    };
+    asyncFetch();
+  }, []);
+
+  async function onSubmit(values) {
+    setIsSubmitting(true);
+    try {
+      setState((prev) => ({
+        ...prev,
+        showDialogAlert: false,
+      }));
+
+      const response = await fetch("/api/unit/post", {
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${state.token}`,
         },
+        body: JSON.stringify(values),
       });
 
       if (!response.ok) {
@@ -60,71 +71,30 @@ export default function CreateUnit() {
           showDialogAlert: true,
           dialogMessage: error.error || "Error desconocido",
         }));
+        setIsSubmitting(false);
         return;
       }
 
       const data = await response.json();
-      console.log("Categories fetched successfully:", data);
-
-      setState((prevState) => ({
-        ...prevState,
-        categories: data.categories,
-      }));
-    }
-
-    fetchCategories();
-  }, []);
-
-  async function onSubmit(values) {
-    setIsSubmitting(true);
-    try {
-      // Ocultar alerta de diálogo al iniciar el proceso
-      setState((prev) => ({
-        ...prev,
-        showDialogAlert: false,
-      }));
-
-      const response = await fetch("/api/category/post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${state.token}`, // Asegúrate de que 'token' esté definido correctamente
-        },
-        body: JSON.stringify(values), // Convertir 'values' en JSON
-      });
-
-      // Verificar si la respuesta no fue exitosa
-      if (!response.ok) {
-        const error = await response.json(); // Obtener el mensaje de error del servidor
-        setState((prevState) => ({
-          ...prevState,
-          showDialogAlert: true,
-          dialogMessage: error.error || "Error desconocido",
-        }));
-        setIsSubmitting(false);
-        return; // Salir si ocurre un error
-      }
-
-      const data = await response.json();
-      console.log("Category registered successfully:", data); // Muestra los datos devueltos por el backend
+      console.log("Unit registered successfully:", data);
 
       toast({
         className:
           "top-0 right-0 flex fixed md:max-w-[420px] md:top-2 md:right-2",
         position: "top-right",
         variant: "success",
-        title: "Categoría creada...",
+        duration: 800,
+        title: "Unidad creada...",
       });
 
-      //obtener lista de categorias
-      const categoriesResponse = await fetch("/api/category/get", {
+      const unitsResponse = await fetch("/api/unit/get", {
         headers: {
           Authorization: `Bearer ${state.token}`,
         },
       });
 
-      if (!categoriesResponse.ok) {
-        const error = await categoriesResponse.json();
+      if (!unitsResponse.ok) {
+        const error = await unitsResponse.json();
         setState((prevState) => ({
           ...prevState,
           showDialogAlert: true,
@@ -134,13 +104,13 @@ export default function CreateUnit() {
         return;
       }
 
-      const fetchcategories = await categoriesResponse.json();
+      const fetchUnits = await unitsResponse.json();
 
-      console.log("Categories fetched successfully:", fetchcategories);
+      console.log("UnitS fetched successfully:", fetchUnits);
 
       setState((prevState) => ({
         ...prevState,
-        categories: fetchcategories.categories,
+        units: fetchUnits.units,
       }));
 
       form.reset({
@@ -156,7 +126,8 @@ export default function CreateUnit() {
           "top-0 right-0 flex fixed md:max-w-[420px] md:top-2 md:right-2",
         position: "top-right",
         variant: "destructive",
-        title: "Error al crear categoría...",
+        duration: 800,
+        title: "Error al crear unidad...",
       });
       setIsSubmitting(false);
     }
@@ -174,7 +145,7 @@ export default function CreateUnit() {
             <div className="flex items-center gap-1">
               <svg
                 width="45"
-                height="32"
+                height="24"
                 viewBox="0 0 45 32"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -220,45 +191,41 @@ export default function CreateUnit() {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="w-full flex gap-2 items-end max-xl:flex-col"
+                className="w-full flex gap-2 items-end flex-col"
               >
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem className="w-full flex-grow">
-                      <FormLabel>Nombre de la categoría</FormLabel>
+                      <FormLabel>Nombre de la unidad de medida</FormLabel>
                       <FormControl>
                         <Input
                           type="text"
-                          placeholder="Mi categoría..."
+                          placeholder="Mi unidad..."
                           {...field}
                         />
                       </FormControl>
+                      <FormDescription>
+                        Ejemplos: CAJA, PIEZA, BOLSA, BOTE, etc.
+                      </FormDescription>
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="partidaNumber"
-                  render={({ field }) => (
-                    <FormItem className="w-full flex-grow">
-                      <FormLabel>Número de partida</FormLabel>
-                      <FormControl>
-                        <Input placeholder="00000..." {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+
                 <Button disabled={isSubmitting} type="submit">
                   Crear
                 </Button>
               </form>
             </Form>
             <div className="w-full py-2">
-              <div className="font-semibold">Categorías existentes</div>
-              <div className="w-full h-52 overflow-auto border-b border-gray-200 py-2  gap-1 justify-between items-center ">
-                <CategoryList state={state} setState={setState} />
+              <div className="font-semibold">Unidades existentes</div>
+              <div
+                className={`w-full ${
+                  state.units.length < 2 ? "h-auto" : "h-40"
+                }  overflow-auto  border-gray-200 py-2  gap-1 justify-between items-center`}
+              >
+                <UnitList state={state} setState={setState} />
               </div>
             </div>
           </AccordionContent>
@@ -268,11 +235,38 @@ export default function CreateUnit() {
   );
 }
 
-//delete category
-export async function deleteCategory(values, state, setState) {
-  console.log("Deleting category:", values);
+export async function fetchUnits(state, setState) {
   try {
-    const response = await fetch("/api/category/delete", {
+    const response = await fetch("/api/unit/get", {
+      headers: {
+        Authorization: `Bearer ${state.token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      setState((prevState) => ({
+        ...prevState,
+        showDialogAlert: true,
+        dialogMessage: error.error || "Error desconocido",
+      }));
+      return;
+    }
+    const data = await response.json();
+    console.log("UnitS fetched successfully:", data);
+    setState((prevState) => ({
+      ...prevState,
+      units: data.units,
+    }));
+  } catch (error) {
+    console.error("Request error:", error);
+  }
+}
+
+export async function deleteUnit(values, state, setState) {
+  console.log("Deleting unit:", values);
+  try {
+    const response = await fetch("/api/unit/delete", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -283,38 +277,14 @@ export async function deleteCategory(values, state, setState) {
 
     if (!response.ok) {
       const error = await response.json();
-      console.error("Error deleting category:", error.error);
+      console.error("Error deleting unit:", error.error);
       return;
     }
 
     const data = await response.json();
-    console.log("Category deleted successfully:", data);
+    console.log("Unit deleted successfully:", data);
 
-    //fetch categories
-    const categoriesResponse = await fetch("/api/category/get", {
-      headers: {
-        Authorization: `Bearer ${state.token}`,
-      },
-    });
-
-    if (!categoriesResponse.ok) {
-      const error = await categoriesResponse.json();
-      setState((prevState) => ({
-        ...prevState,
-        showDialogAlert: true,
-        dialogMessage: error.error || "Error desconocido",
-      }));
-      return;
-    }
-
-    const fetchcategories = await categoriesResponse.json();
-
-    console.log("Categories fetched successfully:", fetchcategories);
-
-    setState((prevState) => ({
-      ...prevState,
-      categories: fetchcategories.categories,
-    }));
+    await fetchUnits(state, setState);
 
     return data;
   } catch (error) {
@@ -322,52 +292,28 @@ export async function deleteCategory(values, state, setState) {
   }
 }
 
-async function updateCategory(values, state, setState) {
-  console.log("Updating category:", values);
+async function updateUnit(values, state, setState) {
+  console.log("Updating unit:", values);
   try {
-    const response = await fetch("/api/category/put", {
+    const response = await fetch("/api/unit/put", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${state.token}`,
       },
-      body: JSON.stringify(values), // Corregido a `values`
+      body: JSON.stringify(values),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      console.error("Error updating category:", error.error);
+      console.error("Error updating unit:", error.error);
       return;
     }
 
     const data = await response.json();
-    console.log("Category updated successfully:", data);
+    console.log("Unit updated successfully:", data);
 
-    //fetch categories
-    const categoriesResponse = await fetch("/api/category/get", {
-      headers: {
-        Authorization: `Bearer ${state.token}`,
-      },
-    });
-
-    if (!categoriesResponse.ok) {
-      const error = await categoriesResponse.json();
-      setState((prevState) => ({
-        ...prevState,
-        showDialogAlert: true,
-        dialogMessage: error.error || "Error desconocido",
-      }));
-      return;
-    }
-
-    const fetchcategories = await categoriesResponse.json();
-
-    // console.log("Categories fetched successfully:", fetchcategories);
-
-    setState((prevState) => ({
-      ...prevState,
-      categories: fetchcategories.categories,
-    }));
+    await fetchUnits(state, setState);
 
     return data;
   } catch (error) {
@@ -375,85 +321,107 @@ async function updateCategory(values, state, setState) {
   }
 }
 
-export function CategoryList({ state, setState }) {
-  const [editCategoryId, setEditCategoryId] = useState(null);
+export function UnitList({ state, setState }) {
+  const { toast } = useToast();
+  const [editUnitId, setEditUnitId] = useState(null);
   const [editedValues, setEditedValues] = useState({});
 
   const handleEditChange = (field, value) => {
-    //get input values by id
-    const name = document.getElementById("categoryName").value;
-    const partidaNumber = document.getElementById("partidaNumber").value;
+    const name = document.getElementById("UnitName").value;
 
     setEditedValues({
       name,
-      partidaNumber,
     });
   };
 
-  const handleSave = async (categoryId) => {
+  const handleSave = async (UnitId) => {
     const updatedData = {
-      id: categoryId,
+      id: UnitId,
       ...editedValues,
     };
-    await updateCategory(updatedData, state, setState);
-    setEditCategoryId(null);
+
+    try {
+      await updateUnit(updatedData, state, setState);
+      toast({
+        className:
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-2 md:right-2",
+        position: "top-right",
+        variant: "success",
+        duration: 800,
+        title: "Unidad actualizada...",
+      });
+    } catch (error) {
+      toast({
+        className:
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-2 md:right-2",
+        position: "top-right",
+        variant: "destructive",
+        duration: 800,
+        title: "Error al eliminar unidad...",
+      });
+    }
+    setEditUnitId(null);
   };
 
-  const handleDelete = async (categoryId) => {
+  const handleDelete = async (UnitId) => {
     const deletedData = {
-      id: categoryId,
+      id: UnitId,
     };
-    await deleteCategory(deletedData, state, setState);
+
+    //try catch
+
+    try {
+      await deleteUnit(deletedData, state, setState);
+      toast({
+        className:
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-2 md:right-2",
+        position: "top-right",
+        variant: "warning",
+        duration: 800,
+        title: "Unidad eliminada...",
+      });
+    } catch (error) {
+      toast({
+        className:
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-2 md:right-2",
+        position: "top-right",
+        variant: "destructive",
+        duration: 800,
+        title: "Error al eliminar unidad...",
+      });
+    }
   };
 
   return (
     <>
-      {state.categories.length === 0 && (
-        <div>No hay categorías registradas</div>
-      )}
-      {state.categories.map((category) => {
-        const isEditing = editCategoryId === category.id;
+      {state.units.length === 0 && <div>No hay unidades registradas</div>}
+      {state.units.map((unit) => {
+        const isEditing = editUnitId === unit.id;
         return (
           <div
-            key={category.id}
+            key={unit.id}
             className="flex flex-row max-md:flex-col w-full gap-2 items-center bg-white border-b p-2"
           >
             {isEditing ? (
               <input
-                id="categoryName"
-                defaultValue={category.name}
+                id="UnitName"
+                defaultValue={unit.name}
                 className="w-full"
                 onChange={(e) => handleEditChange("name", e.target.value)}
               />
             ) : (
-              <div className="w-full">{category.name}</div>
+              <div className="w-full">{unit.name}</div>
             )}
-            {isEditing ? (
-              <input
-                id="partidaNumber"
-                pattern="[0-9]*"
-                defaultValue={category.partidaNumber}
-                className="w-full"
-                onChange={(e) => {
-                  //filter just numbers
-                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                  handleEditChange("partidaNumber", e.target.value);
-                }}
-              />
-            ) : (
-              <div className="w-full">{category.partidaNumber}</div>
-            )}
+
             <div className="flex justify-between max-md:w-full">
               <div
                 className="text-blue-900 cursor-pointer underline"
-                onClick={() =>
-                  setEditCategoryId(isEditing ? null : category.id)
-                }
+                onClick={() => setEditUnitId(isEditing ? null : unit.id)}
               >
                 {isEditing ? (
                   <div className="flex gap-2 max-md:gap-6">
                     <svg
-                      onClick={() => handleSave(category.id)}
+                      onClick={() => handleSave(unit.id)}
                       xmlns="http://www.w3.org/2000/svg"
                       width="32"
                       height="32"
@@ -466,7 +434,7 @@ export function CategoryList({ state, setState }) {
                       />
                     </svg>
                     <svg
-                      onClick={() => setEditCategoryId(null)}
+                      onClick={() => setEditUnitId(null)}
                       xmlns="http://www.w3.org/2000/svg"
                       width="32"
                       height="32"
@@ -495,10 +463,10 @@ export function CategoryList({ state, setState }) {
                   </svg>
                 )}
               </div>
-              {!category.item && (
+              {unit.item.length === 0 && (
                 <svg
                   onClick={() => {
-                    handleDelete(category.id);
+                    handleDelete(unit.id);
                   }}
                   className="hover:bg-gray-200 rounded-full p-1 cursor-pointer flex items-center"
                   xmlns="http://www.w3.org/2000/svg"

@@ -22,7 +22,6 @@ export default function page() {
 
 function Main() {
   const { state, setState } = useMainAppContext();
-  //get the userId from localStorage
   const [token, setToken] = useState();
   useEffect(() => {
     try {
@@ -136,7 +135,7 @@ function Main() {
             <div className={`${state.showSideBar ? "w-1/4" : ""}`}>
               <Sidebar />
             </div>
-            <div className={`${state.showSideBar ? "w-3/4" : "w-full"}`}>
+            <div className={`${state.showSideBar ? "w-3/4 " : "w-full"}`}>
               <ModuleLoaded />
             </div>
           </div>

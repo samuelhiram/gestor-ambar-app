@@ -32,6 +32,10 @@ export default function MainAppContextProvider({ children }) {
     locations: [],
     //categories
     categories: [],
+    //units
+    units: [],
+    //ubications
+    ubication: [],
   });
 
   const value = { state, setState };

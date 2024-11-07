@@ -41,8 +41,21 @@ model Responsible {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   status    String   @default("active") //for soft delete
-
   //relation
+  Loans     Loans[]
+}
+
+model Loans {
+  id String @id @default(cuid())
+
+  responsibleId String
+  responsible   Responsible @relation(fields: [responsibleId], references: [id])
+  //
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  status        String      @default("active") //for soft delete
+
+  item Item[]
 }
 
 //session of user
@@ -85,9 +98,9 @@ model Ubication {
   status     String    @default("active")
   locationId String // Clave foránea
   location   Location  @relation(fields: [locationId], references: [id])
-  items      Item[] // Relación uno a muchos con los ítems
-  entry      Entryes[] // Relación uno a muchos con las entradas
-  outs       Outs[] // Relación uno a muchos con las salidas
+  items      Item[]
+  entry      Entryes[]
+  outs       Outs[]
 }
 
 model Category {
@@ -101,15 +114,6 @@ model Category {
 }
 
 model Unit {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  status    String   @default("active")
-  item      Item[]
-}
-
-model Measure {
   id        String   @id @default(cuid())
   name      String
   createdAt DateTime @default(now())
@@ -138,9 +142,6 @@ model Item {
   updatedAt DateTime @updatedAt
   status    String   @default("active")
 
-  //relations
-  measureId   String
-  measure     Measure   @relation(fields: [measureId], references: [id])
   unitId      String //foreign key
   unit        Unit      @relation(fields: [unitId], references: [id])
   typeId      String //foreign key
@@ -158,6 +159,7 @@ model Item {
   entry Entryes[] // Relación uno a muchos con las entradas
   /// Relación uno a muchos con las salidas
   outs  Outs[] // Relación uno a muchos con las salidas
+  loan  Loans[] // Relación uno a muchos con los préstamos
 }
 
 model Entryes {
