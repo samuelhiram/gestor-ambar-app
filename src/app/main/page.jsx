@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import Sidebar from "./components/Sidebar";
-
 import DropdownButton from "./components/DropdownButton";
 import MainAppContextProvider, {
   useMainAppContext,
@@ -24,6 +23,13 @@ function Main() {
   const { state, setState } = useMainAppContext();
   const [token, setToken] = useState();
   useEffect(() => {
+    if (localStorage.getItem("activeModuleName")) {
+      setState((prev) => ({
+        ...prev,
+        activeModuleName: localStorage.getItem("activeModuleName"),
+      }));
+    }
+
     try {
       const userId = localStorage.getItem("userId");
 
@@ -48,8 +54,7 @@ function Main() {
 
         if (response.status === 200) {
           const data = await response.json();
-          console.log(data);
-
+          // console.log(data);
           setToken(localStorage.getItem("token"));
           setState((prev) => ({
             ...prev,
@@ -111,7 +116,7 @@ function Main() {
         <>
           <div className="min-h-screen gap-2 w-full flex flex-row justify-center items-center">
             <Loader />
-            <div className="text-xl">Cargando...</div>
+            <div className="text-xl">{state.loadingMainAppMessage}</div>
           </div>
         </>
       ) : state.isTokenExpired ? (

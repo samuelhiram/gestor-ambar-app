@@ -22,6 +22,7 @@ export default function Logo() {
               </div>
               <div className="w-3/5 flex justify-center">
                 <Image
+                  priority
                   src="img/logo.svg"
                   alt="TecTijuana"
                   width={175}

@@ -13,6 +13,7 @@ export default function MainAppContextProvider({ children }) {
     user: null,
     token: null,
     isLoadingMainApp: true,
+    loadingMainAppMessage: "Cargando...",
     isLoadingModule: true,
     activeModuleName: "Inicio",
     showSideBar: true,

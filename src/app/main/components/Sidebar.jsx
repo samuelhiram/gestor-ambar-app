@@ -10,6 +10,11 @@ export default function Sidebar() {
   const { state, setState } = useMainAppContext();
   var AdminModules = ["Usuarios"];
   const logOut = async () => {
+    setState((prev) => ({
+      ...prev,
+      isLoadingMainApp: true,
+      loadingMainAppMessage: "Cerrando sesión...",
+    }));
     try {
       const res = await fetch("/api/auth/logout", {
         method: "POST",
@@ -33,7 +38,7 @@ export default function Sidebar() {
     <nav
       className={`${
         !state.showSideBar ? "hidden" : "visible"
-      } fixed z-20 h-full w-1/4 max-sm:w-full flex flex-col flex-1 flex-grow-0 bg-white shadow-sm md:border-r`}
+      } fixed z-30 h-full w-1/4 max-sm:w-full flex flex-col flex-1 flex-grow-0 bg-white shadow-sm md:border-r`}
     >
       <Logo />
       <div className="w-full">
@@ -56,7 +61,7 @@ export default function Sidebar() {
           );
         }
       })}
-      <div className="flex flex-1  items-end justify-end">
+      <div className="flex flex-1 items-end justify-end">
         <div
           onClick={() => {
             logOut();

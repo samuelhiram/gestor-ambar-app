@@ -64,7 +64,7 @@ export default function CreateCategory() {
       }
 
       const data = await response.json();
-      console.log("Categories fetched successfully:", data);
+      //console.log("Categories fetched successfully:", data);
 
       setState((prevState) => ({
         ...prevState,
@@ -107,7 +107,7 @@ export default function CreateCategory() {
       }
 
       const data = await response.json();
-      console.log("Category registered successfully:", data); // Muestra los datos devueltos por el backend
+      //console.log("Category registered successfully:", data); // Muestra los datos devueltos por el backend
 
       toast({
         className:
@@ -138,7 +138,7 @@ export default function CreateCategory() {
 
       const fetchcategories = await categoriesResponse.json();
 
-      console.log("Categories fetched successfully:", fetchcategories);
+      //console.log("Categories fetched successfully:", fetchcategories);
 
       setState((prevState) => ({
         ...prevState,
@@ -266,7 +266,7 @@ export async function getCategories(state, setState) {
     }
 
     const data = await response.json();
-    console.log("Categories fetched successfully:", data);
+    //console.log("Categories fetched successfully:", data);
 
     setState((prevState) => ({
       ...prevState,
@@ -279,7 +279,7 @@ export async function getCategories(state, setState) {
 
 //delete category
 export async function deleteCategory(values, state, setState) {
-  console.log("Deleting category:", values);
+  //console.log("Deleting category:", values);
   try {
     const response = await fetch("/api/category/delete", {
       method: "DELETE",
@@ -297,7 +297,7 @@ export async function deleteCategory(values, state, setState) {
     }
 
     const data = await response.json();
-    console.log("Category deleted successfully:", data);
+    //console.log("Category deleted successfully:", data);
 
     //fetch categories
     await getCategories(state, setState);
@@ -309,7 +309,7 @@ export async function deleteCategory(values, state, setState) {
 }
 
 async function updateCategory(values, state, setState) {
-  console.log("Updating category:", values);
+  //console.log("Updating category:", values);
   try {
     const response = await fetch("/api/category/put", {
       method: "PUT",
@@ -327,7 +327,7 @@ async function updateCategory(values, state, setState) {
     }
 
     const data = await response.json();
-    console.log("Category updated successfully:", data);
+    //console.log("Category updated successfully:", data);
 
     await getCategories(state, setState);
 

@@ -4,7 +4,6 @@ import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -59,7 +58,7 @@ export default function CreateUbication() {
   }, []);
 
   async function onSubmit(values) {
-    console.log(values);
+    //console.log(values);
     setIsSubmitting(true);
     try {
       setState((prev) => ({
@@ -88,7 +87,7 @@ export default function CreateUbication() {
       }
 
       const data = await response.json();
-      console.log("Ubication registered successfully:", data);
+      //console.log("Ubication registered successfully:", data);
 
       toast({
         className:
@@ -118,11 +117,11 @@ export default function CreateUbication() {
 
       const fetchUnits = await ubicationsResponse.json();
 
-      console.log("Ubications fetched successfully:", fetchUnits);
+      //console.log("Ubications fetched successfully:", fetchUnits);
 
       setState((prevState) => ({
         ...prevState,
-        ubications: fetchUnits.ubications,
+        ubication: fetchUnits.ubication,
       }));
 
       form.reset({
@@ -277,7 +276,7 @@ export async function fetchUbications(state, setState) {
       return;
     }
     const data = await response.json();
-    console.log("Ubications fetched successfully:", data);
+    //console.log("Ubications fetched successfully:", data);
     setState((prevState) => ({
       ...prevState,
       ubication: data.ubication,
@@ -288,7 +287,7 @@ export async function fetchUbications(state, setState) {
 }
 
 export async function deleteUbication(values, state, setState) {
-  console.log("Deleting ubication:", values);
+  //console.log("Deleting ubication:", values);
   try {
     const response = await fetch("/api/ubication/delete", {
       method: "DELETE",
@@ -306,7 +305,7 @@ export async function deleteUbication(values, state, setState) {
     }
 
     const data = await response.json();
-    console.log("Ubication deleted successfully:", data);
+    //console.log("Ubication deleted successfully:", data);
 
     await fetchUbications(state, setState);
 
@@ -317,7 +316,7 @@ export async function deleteUbication(values, state, setState) {
 }
 
 async function updateUnit(values, state, setState) {
-  console.log("Updating ubication:", values);
+  //console.log("Updating ubication:", values);
   try {
     const response = await fetch("/api/ubication/put", {
       method: "PUT",
@@ -335,7 +334,7 @@ async function updateUnit(values, state, setState) {
     }
 
     const data = await response.json();
-    console.log("Ubication updated successfully:", data);
+    //console.log("Ubication updated successfully:", data);
 
     await fetchUbications(state, setState);
 
@@ -391,8 +390,6 @@ export function UnitList({ state, setState }) {
     const deletedData = {
       id: UbicationId,
     };
-
-    //try catch
 
     try {
       await deleteUbication(deletedData, state, setState);

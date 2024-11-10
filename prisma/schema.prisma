@@ -46,8 +46,8 @@ model Responsible {
 }
 
 model Loans {
-  id String @id @default(cuid())
-
+  id            String      @id @default(cuid())
+  //
   responsibleId String
   responsible   Responsible @relation(fields: [responsibleId], references: [id])
   //

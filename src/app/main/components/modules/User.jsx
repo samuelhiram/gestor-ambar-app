@@ -4,9 +4,8 @@ import { useMainAppContext } from "../MainAppContext";
 export default function User() {
   const { state, setState } = useMainAppContext();
   const [logs, setLogs] = useState([]);
-  console.log(state);
-
   useEffect(() => {
+    localStorage.setItem("activeModuleName", "Usuario");
     fetch("/api/log/get", {
       method: "POST",
       headers: {
@@ -17,11 +16,13 @@ export default function User() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         setLogs(data.logs[0]);
       });
+    setState((prev) => ({
+      ...prev,
+      isLoadingModule: false,
+    }));
   }, []);
-  // console.log(logs);
   return (
     <div className="flex flex-col flex-grow flex-1 h-full rounded-md bg-white shadow p-4 gap-4">
       <div className="flex gap-2 items-center">

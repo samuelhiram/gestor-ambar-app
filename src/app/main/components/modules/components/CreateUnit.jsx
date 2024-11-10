@@ -76,7 +76,7 @@ export default function CreateUnit() {
       }
 
       const data = await response.json();
-      console.log("Unit registered successfully:", data);
+      //console.log("Unit registered successfully:", data);
 
       toast({
         className:
@@ -106,7 +106,7 @@ export default function CreateUnit() {
 
       const fetchUnits = await unitsResponse.json();
 
-      console.log("UnitS fetched successfully:", fetchUnits);
+      //console.log("UnitS fetched successfully:", fetchUnits);
 
       setState((prevState) => ({
         ...prevState,
@@ -150,8 +150,8 @@ export default function CreateUnit() {
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <g clip-path="url(#clip0_134_3)">
-                  <g clip-path="url(#clip1_134_3)">
+                <g clipPath="url(#clip0_134_3)">
+                  <g clipPath="url(#clip1_134_3)">
                     <path
                       fill-rule="evenodd"
                       clip-rule="evenodd"
@@ -253,7 +253,7 @@ export async function fetchUnits(state, setState) {
       return;
     }
     const data = await response.json();
-    console.log("UnitS fetched successfully:", data);
+    //console.log("UnitS fetched successfully:", data);
     setState((prevState) => ({
       ...prevState,
       units: data.units,
@@ -264,7 +264,7 @@ export async function fetchUnits(state, setState) {
 }
 
 export async function deleteUnit(values, state, setState) {
-  console.log("Deleting unit:", values);
+  //console.log("Deleting unit:", values);
   try {
     const response = await fetch("/api/unit/delete", {
       method: "DELETE",
@@ -282,7 +282,7 @@ export async function deleteUnit(values, state, setState) {
     }
 
     const data = await response.json();
-    console.log("Unit deleted successfully:", data);
+    //console.log("Unit deleted successfully:", data);
 
     await fetchUnits(state, setState);
 
@@ -293,7 +293,7 @@ export async function deleteUnit(values, state, setState) {
 }
 
 async function updateUnit(values, state, setState) {
-  console.log("Updating unit:", values);
+  //console.log("Updating unit:", values);
   try {
     const response = await fetch("/api/unit/put", {
       method: "PUT",
@@ -311,7 +311,7 @@ async function updateUnit(values, state, setState) {
     }
 
     const data = await response.json();
-    console.log("Unit updated successfully:", data);
+    //console.log("Unit updated successfully:", data);
 
     await fetchUnits(state, setState);
 

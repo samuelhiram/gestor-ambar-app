@@ -1,14 +1,28 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import CreateCategory from "./components/CreateCategory";
 import CreateUnit from "./components/CreateUnit";
 import CreateUbication from "./components/CreateUbication";
 import { useMainAppContext } from "../../components/MainAppContext";
 export default function Inventory() {
-  const { state } = useMainAppContext();
+  const { state, setState } = useMainAppContext();
+
+  useEffect(() => {
+    localStorage.setItem("activeModuleName", "Inventario");
+    setState((prev) => ({
+      ...prev,
+      isLoadingModule: true,
+    }));
+
+    setState((prev) => ({
+      ...prev,
+      isLoadingModule: false,
+    }));
+  }, []);
   return (
     <div className="flex flex-col gap-3">
       {state.user.role === "admin" && (
+        //
         <div className="flex flex-row max-md:flex-col gap-2">
           <div className="w-full">
             <CreateCategory />
@@ -20,6 +34,7 @@ export default function Inventory() {
             <CreateUbication />
           </div>
         </div>
+        //
       )}
       {/* <div className="bg-red-100 w-full h-12"></div> */}
     </div>
