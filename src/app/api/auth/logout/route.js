@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../lib/prisma";
 import { withAuth } from "@/lib/withAuth";
 import { getIdByReqHeaders } from "../../getId";
 //get secret key from environment variable
 const secretKey = process.env.SECRET_KEY;
-const prisma = new PrismaClient();
+
 export const POST = withAuth(async (req) => {
   try {
     //get token from req headers

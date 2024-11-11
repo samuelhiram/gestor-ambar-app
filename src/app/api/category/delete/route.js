@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../lib/prisma";
 import { withAuth } from "@/lib/withAuth";
-
-const prisma = new PrismaClient();
 
 //delete just one category
 export const DELETE = withAuth(async (req) => {

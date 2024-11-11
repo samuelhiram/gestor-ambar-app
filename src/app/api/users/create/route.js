@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../lib/prisma";
 import bcrypt from "bcrypt";
 import { withAuth } from "@/lib/withAuth"; // Usa la ruta correcta para importar
 import { getIdByReqHeaders } from "../../getId";
 
 const secretKey = process.env.SECRET_KEY;
-const prisma = new PrismaClient();
 
 export const POST = withAuth(async (req) => {
   console.log("--api--> register");

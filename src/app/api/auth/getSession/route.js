@@ -1,10 +1,7 @@
 "use server";
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import { withAuth } from "@/lib/withAuth"; // Usa la ruta correcta para importar
-
-//get secret key from environment variable
-const prisma = new PrismaClient();
+import prisma from "../../lib/prisma";
+import { withAuth } from "@/lib/withAuth";
 
 //get session from database
 export const GET = withAuth(async (req) => {
