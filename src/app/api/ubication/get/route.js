@@ -11,8 +11,6 @@ export const GET = withAuth(async (req) => {
     },
   });
 
-  console.log(ubication);
-
   //reorder latest to oldest
   ubication.sort((a, b) => {
     return new Date(b.createdAt) - new Date(a.createdAt);

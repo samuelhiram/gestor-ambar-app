@@ -3,7 +3,10 @@ import React, { useEffect } from "react";
 import CreateCategory from "./components/CreateCategory";
 import CreateUnit from "./components/CreateUnit";
 import CreateUbication from "./components/CreateUbication";
+import CreateItem from "./components/CreateItem";
+
 import { useMainAppContext } from "../../components/MainAppContext";
+
 export default function Inventory() {
   const { state, setState } = useMainAppContext();
 
@@ -21,6 +24,8 @@ export default function Inventory() {
   }, []);
   return (
     <div className="flex flex-col gap-3">
+      <CreateItem />
+
       {state.user.role === "admin" && (
         //
         <div className="flex flex-row max-md:flex-col gap-2">
