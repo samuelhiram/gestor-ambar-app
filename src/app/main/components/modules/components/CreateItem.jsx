@@ -1,11 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Icon } from "@iconify/react";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import emailjs from "@emailjs/browser";
 
 import { Button } from "@/components/ui/button";
 import {
