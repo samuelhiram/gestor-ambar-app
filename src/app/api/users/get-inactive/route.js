@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../lib/prisma";
 import { withAuth } from "@/lib/withAuth";
-
-const prisma = new PrismaClient();
 
 //get users that are inactive
 export const GET = withAuth(async (req) => {

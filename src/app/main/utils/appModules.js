@@ -11,7 +11,7 @@ export var appModules = [
     moduleName: "Inventario",
     icon: "material-symbols-light:inventory-rounded",
     title: "Inventario",
-    description: "Ver, y gestionar materiales e insumos",
+    description: "Ver, editar y gestionar materiales e insumos",
   },
   {
     id: 3,

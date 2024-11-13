@@ -13,6 +13,7 @@ export default function MainAppContextProvider({ children }) {
     user: null,
     token: null,
     isLoadingMainApp: true,
+    loadingMainAppMessage: "Cargando...",
     isLoadingModule: true,
     activeModuleName: "Inicio",
     showSideBar: true,
@@ -32,6 +33,10 @@ export default function MainAppContextProvider({ children }) {
     locations: [],
     //categories
     categories: [],
+    //units
+    units: [],
+    //ubications
+    ubication: [],
   });
 
   const value = { state, setState };

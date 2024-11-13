@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../lib/prisma";
 import { withAuth } from "@/lib/withAuth";
 import jwt from "jsonwebtoken";
-
-const prisma = new PrismaClient();
 
 export const GET = withAuth(async (req) => {
   //return all locations in system

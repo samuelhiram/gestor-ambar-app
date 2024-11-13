@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+html,
+body {
+  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
+}
+
+html,
+body {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
 .search {
   @apply bg-white shadow-none rounded-md p-2 text-sm !important;
 }

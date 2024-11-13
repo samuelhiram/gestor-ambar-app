@@ -1,9 +1,8 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 
 //create default user with prisma
-const prisma = new PrismaClient();
 
 export async function GET() {
   //get user by env email

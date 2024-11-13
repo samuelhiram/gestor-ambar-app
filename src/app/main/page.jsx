@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import Sidebar from "./components/Sidebar";
-
 import DropdownButton from "./components/DropdownButton";
 import MainAppContextProvider, {
   useMainAppContext,
@@ -22,9 +21,15 @@ export default function page() {
 
 function Main() {
   const { state, setState } = useMainAppContext();
-  //get the userId from localStorage
   const [token, setToken] = useState();
   useEffect(() => {
+    if (localStorage.getItem("activeModuleName")) {
+      setState((prev) => ({
+        ...prev,
+        activeModuleName: localStorage.getItem("activeModuleName"),
+      }));
+    }
+
     try {
       const userId = localStorage.getItem("userId");
 
@@ -49,8 +54,7 @@ function Main() {
 
         if (response.status === 200) {
           const data = await response.json();
-          console.log(data);
-
+          // console.log(data);
           setToken(localStorage.getItem("token"));
           setState((prev) => ({
             ...prev,
@@ -112,7 +116,7 @@ function Main() {
         <>
           <div className="min-h-screen gap-2 w-full flex flex-row justify-center items-center">
             <Loader />
-            <div className="text-xl">Cargando...</div>
+            <div className="text-xl">{state.loadingMainAppMessage}</div>
           </div>
         </>
       ) : state.isTokenExpired ? (
@@ -136,7 +140,7 @@ function Main() {
             <div className={`${state.showSideBar ? "w-1/4" : ""}`}>
               <Sidebar />
             </div>
-            <div className={`${state.showSideBar ? "w-3/4" : "w-full"}`}>
+            <div className={`${state.showSideBar ? "w-3/4 " : "w-full"}`}>
               <ModuleLoaded />
             </div>
           </div>

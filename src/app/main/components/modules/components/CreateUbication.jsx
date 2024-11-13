@@ -4,7 +4,6 @@ import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,6 +14,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import {
   Accordion,
@@ -26,31 +34,45 @@ import {
 import { Input } from "@/components/ui/input";
 import { useMainAppContext } from "../../MainAppContext";
 
-export default function CreateCategory() {
+export default function CreateUbication() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { state, setState } = useMainAppContext();
   const { toast } = useToast();
   const formSchema = z.object({
-    partidaNumber: z
-      .string()
-      .regex(/^\d+$/, { message: "Debe contener solo números" }),
     name: z.string().min(2, { message: "Obligatorio" }).max(50),
+    location: z.string().min(1, { message: "Obligatorio" }),
   });
-  // 1. Define your form.
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      partidaNumber: "",
       name: "",
+      location: "",
     },
   });
 
   useEffect(() => {
-    async function fetchCategories() {
-      const response = await fetch("/api/category/get", {
+    const asyncFetch = async () => {
+      await fetchUbications(state, setState);
+    };
+    asyncFetch();
+  }, []);
+
+  async function onSubmit(values) {
+    //console.log(values);
+    setIsSubmitting(true);
+    try {
+      setState((prev) => ({
+        ...prev,
+        showDialogAlert: false,
+      }));
+
+      const response = await fetch("/api/ubication/post", {
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${state.token}`,
         },
+        body: JSON.stringify(values),
       });
 
       if (!response.ok) {
@@ -60,54 +82,12 @@ export default function CreateCategory() {
           showDialogAlert: true,
           dialogMessage: error.error || "Error desconocido",
         }));
+        setIsSubmitting(false);
         return;
       }
 
       const data = await response.json();
-      //console.log("Categories fetched successfully:", data);
-
-      setState((prevState) => ({
-        ...prevState,
-        categories: data.categories,
-      }));
-    }
-
-    fetchCategories();
-  }, []);
-
-  async function onSubmit(values) {
-    setIsSubmitting(true);
-    try {
-      // Ocultar alerta de diálogo al iniciar el proceso
-      setState((prev) => ({
-        ...prev,
-        showDialogAlert: false,
-      }));
-
-      const response = await fetch("/api/category/post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${state.token}`, // Asegúrate de que 'token' esté definido correctamente
-        },
-        body: JSON.stringify(values), // Convertir 'values' en JSON
-      });
-
-      // Verificar si la respuesta no fue exitosa
-      if (!response.ok) {
-        const error = await response.json(); // Obtener el mensaje de error del servidor
-        setState((prevState) => ({
-          ...prevState,
-          showDialogAlert: true,
-          duration: 800,
-          dialogMessage: error.error || "Error desconocido",
-        }));
-        setIsSubmitting(false);
-        return; // Salir si ocurre un error
-      }
-
-      const data = await response.json();
-      //console.log("Category registered successfully:", data); // Muestra los datos devueltos por el backend
+      //console.log("Ubication registered successfully:", data);
 
       toast({
         className:
@@ -115,18 +95,17 @@ export default function CreateCategory() {
         position: "top-right",
         variant: "success",
         duration: 800,
-        title: "Categoría creada...",
+        title: "Ubicación creada...",
       });
 
-      //obtener lista de categorias
-      const categoriesResponse = await fetch("/api/category/get", {
+      const ubicationsResponse = await fetch("/api/ubication/get", {
         headers: {
           Authorization: `Bearer ${state.token}`,
         },
       });
 
-      if (!categoriesResponse.ok) {
-        const error = await categoriesResponse.json();
+      if (!ubicationsResponse.ok) {
+        const error = await ubicationsResponse.json();
         setState((prevState) => ({
           ...prevState,
           showDialogAlert: true,
@@ -136,13 +115,13 @@ export default function CreateCategory() {
         return;
       }
 
-      const fetchcategories = await categoriesResponse.json();
+      const fetchUnits = await ubicationsResponse.json();
 
-      //console.log("Categories fetched successfully:", fetchcategories);
+      //console.log("Ubications fetched successfully:", fetchUnits);
 
       setState((prevState) => ({
         ...prevState,
-        categories: fetchcategories.categories,
+        ubication: fetchUnits.ubication,
       }));
 
       form.reset({
@@ -159,7 +138,7 @@ export default function CreateCategory() {
         position: "top-right",
         variant: "destructive",
         duration: 800,
-        title: "Error al crear categoría...",
+        title: "Error al crear ubicación...",
       });
       setIsSubmitting(false);
     }
@@ -184,12 +163,10 @@ export default function CreateCategory() {
                 <rect width="24" height="24" fill="none" />
                 <path
                   fill="#334C94"
-                  d="M6.5 11L12 2l5.5 9zm11 11q-1.875 0-3.187-1.312T13 17.5t1.313-3.187T17.5 13t3.188 1.313T22 17.5t-1.312 3.188T17.5 22M3 21.5v-8h8v8z"
+                  d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7"
                 />
-              </svg>
-              <h1 className="text-sm font-bold">
-                Crear categoria / núm. partida
-              </h1>
+              </svg>{" "}
+              <h1 className="text-sm font-bold">Crear ubicación</h1>
             </div>
           </AccordionTrigger>
           <AccordionContent className="p-2">
@@ -203,42 +180,75 @@ export default function CreateCategory() {
                   name="name"
                   render={({ field }) => (
                     <FormItem className="w-full flex-grow">
-                      <FormLabel>Nombre de la categoría</FormLabel>
+                      <FormLabel>Nombre de la ubicación...</FormLabel>
                       <FormControl>
                         <Input
                           type="text"
-                          placeholder="Mi categoría..."
+                          placeholder="Mi ubicación..."
                           {...field}
                         />
                       </FormControl>
+                      <FormDescription>
+                        Ejemplos: Almacen 1, Bodega 2, etc.
+                      </FormDescription>
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
-                  name="partidaNumber"
+                  name="location"
                   render={({ field }) => (
                     <FormItem className="w-full flex-grow">
-                      <FormLabel>Número de partida</FormLabel>
+                      <FormLabel>Lugar</FormLabel>
                       <FormControl>
-                        <Input placeholder="00000..." {...field} />
+                        <Select
+                          onValueChange={(value) => {
+                            field.onChange(value); // Actualiza el valor en el estado del formulario
+                          }}
+                          value={field.value || ""} // Asegúrate de que el valor sea un string vacío si no hay valor
+                        >
+                          <SelectTrigger className="w-full !bg-white !rounded-md !text-gray-600">
+                            <SelectValue placeholder="Seleccione plantel" />
+                          </SelectTrigger>
+                          <SelectContent className="!m-0 !p-0 !w-auto">
+                            <SelectGroup>
+                              <SelectLabel>Unidad</SelectLabel>
+                              {/* <SelectItem value="Unidad Tomas Aquino">
+                                Unidad Tomas Aquino
+                              </SelectItem>
+                              <SelectItem value="Unidad Otay">
+                                Unidad Otay
+                              </SelectItem> */}
+                              {state.locations.map((location) => (
+                                <SelectItem
+                                  key={location.id}
+                                  value={location.id}
+                                >
+                                  {location.name}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                     </FormItem>
                   )}
                 />
+
                 <Button disabled={isSubmitting} type="submit">
                   Crear
                 </Button>
               </form>
             </Form>
             <div className="w-full py-2">
-              <div className="font-semibold">Categorías existentes</div>
+              <div className="font-semibold">Ubicaciones existentes</div>
               <div
                 className={`w-full ${
-                  state.categories.length < 3 ? "h-auto" : "h-40"
-                }  overflow-auto border-gray-200 py-2  gap-1 justify-between items-center`}
+                  state.ubication.length < 2 ? "h-auto" : "h-40"
+                }  overflow-auto  border-gray-200 py-2  gap-1 justify-between items-center`}
               >
-                <CategoryList state={state} setState={setState} />
+                <UnitList state={state} setState={setState} />
               </div>
             </div>
           </AccordionContent>
@@ -248,10 +258,9 @@ export default function CreateCategory() {
   );
 }
 
-//get categories
-export async function getCategories(state, setState) {
+export async function fetchUbications(state, setState) {
   try {
-    const response = await fetch("/api/category/get", {
+    const response = await fetch("/api/ubication/get", {
       headers: {
         Authorization: `Bearer ${state.token}`,
       },
@@ -266,24 +275,21 @@ export async function getCategories(state, setState) {
       }));
       return;
     }
-
     const data = await response.json();
-    //console.log("Categories fetched successfully:", data);
-
+    //console.log("Ubications fetched successfully:", data);
     setState((prevState) => ({
       ...prevState,
-      categories: data.categories,
+      ubication: data.ubication,
     }));
   } catch (error) {
     console.error("Request error:", error);
   }
 }
 
-//delete category
-export async function deleteCategory(values, state, setState) {
-  //console.log("Deleting category:", values);
+export async function deleteUbication(values, state, setState) {
+  //console.log("Deleting ubication:", values);
   try {
-    const response = await fetch("/api/category/delete", {
+    const response = await fetch("/api/ubication/delete", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -294,15 +300,14 @@ export async function deleteCategory(values, state, setState) {
 
     if (!response.ok) {
       const error = await response.json();
-      console.error("Error deleting category:", error.error);
+      console.error("Error deleting ubication:", error.error);
       return;
     }
 
     const data = await response.json();
-    //console.log("Category deleted successfully:", data);
+    //console.log("Ubication deleted successfully:", data);
 
-    //fetch categories
-    await getCategories(state, setState);
+    await fetchUbications(state, setState);
 
     return data;
   } catch (error) {
@@ -310,28 +315,28 @@ export async function deleteCategory(values, state, setState) {
   }
 }
 
-async function updateCategory(values, state, setState) {
-  //console.log("Updating category:", values);
+async function updateUnit(values, state, setState) {
+  //console.log("Updating ubication:", values);
   try {
-    const response = await fetch("/api/category/put", {
+    const response = await fetch("/api/ubication/put", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${state.token}`,
       },
-      body: JSON.stringify(values), // Corregido a `values`
+      body: JSON.stringify(values),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      console.error("Error updating category:", error.error);
+      console.error("Error updating ubication:", error.error);
       return;
     }
 
     const data = await response.json();
-    //console.log("Category updated successfully:", data);
+    //console.log("Ubication updated successfully:", data);
 
-    await getCategories(state, setState);
+    await fetchUbications(state, setState);
 
     return data;
   } catch (error) {
@@ -339,127 +344,109 @@ async function updateCategory(values, state, setState) {
   }
 }
 
-export function CategoryList({ state, setState }) {
+export function UnitList({ state, setState }) {
   const { toast } = useToast();
-  const [editCategoryId, setEditCategoryId] = useState(null);
+  const [editUnitId, setEditUnitId] = useState(null);
   const [editedValues, setEditedValues] = useState({});
 
   const handleEditChange = (field, value) => {
-    //get input values by id
-    const name = document.getElementById("categoryName").value;
-    const partidaNumber = document.getElementById("partidaNumber").value;
+    const name = document.getElementById("ubicationName").value;
 
     setEditedValues({
       name,
-      partidaNumber,
     });
   };
 
-  const handleSave = async (categoryId) => {
+  const handleSave = async (UbicationId) => {
     const updatedData = {
-      id: categoryId,
+      id: UbicationId,
       ...editedValues,
     };
 
     try {
-      await updateCategory(updatedData, state, setState);
+      await updateUnit(updatedData, state, setState);
       toast({
         className:
           "top-0 right-0 flex fixed md:max-w-[420px] md:top-2 md:right-2",
         position: "top-right",
         variant: "success",
         duration: 800,
-        title: "Categoría actualizada...",
+        title: "Ubicación actualizada...",
       });
     } catch (error) {
-      console.error("Error updating category:", error);
       toast({
         className:
           "top-0 right-0 flex fixed md:max-w-[420px] md:top-2 md:right-2",
         position: "top-right",
         variant: "destructive",
         duration: 800,
-        title: "Error al actualizar categoría...",
+        title: "Error al eliminar ubicación...",
       });
     }
-    setEditCategoryId(null);
+    setEditUnitId(null);
   };
 
-  const handleDelete = async (categoryId) => {
+  const handleDelete = async (UbicationId) => {
     const deletedData = {
-      id: categoryId,
+      id: UbicationId,
     };
+
     try {
-      await deleteCategory(deletedData, state, setState);
+      await deleteUbication(deletedData, state, setState);
       toast({
         className:
           "top-0 right-0 flex fixed md:max-w-[420px] md:top-2 md:right-2",
         position: "top-right",
         variant: "warning",
         duration: 800,
-        title: "Categoría eliminada...",
+        title: "Ubicación eliminada...",
       });
     } catch (error) {
-      console.error("Error deleting category:", error);
       toast({
         className:
           "top-0 right-0 flex fixed md:max-w-[420px] md:top-2 md:right-2",
         position: "top-right",
         variant: "destructive",
         duration: 800,
-        title: "Error al eliminar categoría...",
+        title: "Error al eliminar ubicación...",
       });
     }
   };
 
   return (
     <>
-      {state.categories.length === 0 && (
-        <div>No hay categorías registradas</div>
+      {state.ubication.length === 0 && (
+        <div>No hay ubicaciones registradas</div>
       )}
-      {state.categories.map((category) => {
-        const isEditing = editCategoryId === category.id;
+      {state.ubication.map((ubication) => {
+        const isEditing = editUnitId === ubication.id;
         return (
           <div
-            key={category.id}
+            key={ubication.id}
             className="flex flex-row max-md:flex-col w-full gap-2 items-center bg-white border-b p-2"
           >
             {isEditing ? (
               <input
-                id="categoryName"
-                defaultValue={category.name}
+                id="ubicationName"
+                defaultValue={ubication.name}
                 className="w-full"
                 onChange={(e) => handleEditChange("name", e.target.value)}
               />
             ) : (
-              <div className="w-full">{category.name}</div>
+              <div className="w-full">{ubication.name}</div>
             )}
-            {isEditing ? (
-              <input
-                id="partidaNumber"
-                pattern="[0-9]*"
-                defaultValue={category.partidaNumber}
-                className="w-full"
-                onChange={(e) => {
-                  //filter just numbers
-                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                  handleEditChange("partidaNumber", e.target.value);
-                }}
-              />
-            ) : (
-              <div className="w-full">{category.partidaNumber}</div>
-            )}
+
+            <div className="w-full">{ubication.location.name}</div>
+
             <div className="flex justify-between max-md:w-full">
               <div
                 className="text-blue-900 cursor-pointer underline"
-                onClick={() =>
-                  setEditCategoryId(isEditing ? null : category.id)
-                }
+                onClick={() => setEditUnitId(isEditing ? null : ubication.id)}
               >
                 {isEditing ? (
                   <div className="flex gap-2 max-md:gap-6">
                     <svg
-                      onClick={() => handleSave(category.id)}
+                      onClick={() => handleSave(ubication.id)}
                       xmlns="http://www.w3.org/2000/svg"
                       width="32"
                       height="32"
@@ -472,7 +459,7 @@ export function CategoryList({ state, setState }) {
                       />
                     </svg>
                     <svg
-                      onClick={() => setEditCategoryId(null)}
+                      onClick={() => setEditUnitId(null)}
                       xmlns="http://www.w3.org/2000/svg"
                       width="32"
                       height="32"
@@ -501,10 +488,10 @@ export function CategoryList({ state, setState }) {
                   </svg>
                 )}
               </div>
-              {!category.item && (
+              {ubication.items.length === 0 && (
                 <svg
                   onClick={() => {
-                    handleDelete(category.id);
+                    handleDelete(ubication.id);
                   }}
                   className="hover:bg-gray-200 rounded-full p-1 cursor-pointer flex items-center"
                   xmlns="http://www.w3.org/2000/svg"
