@@ -239,8 +239,8 @@ export default function CreateItem() {
                             >
                               {value
                                 ? categories.find(
-                                    (category) => framework.value === value
-                                  )?.label
+                                    (category) => category.id === value
+                                  )?.name
                                 : "Select framework..."}
                               <ChevronsUpDown className="opacity-50" />
                             </Button>
