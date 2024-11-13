@@ -83,6 +83,8 @@ export default function CreateItem() {
   // console.log("STATE FROM CREATE ITEM: ", state);
 
   const categories = state.categories;
+  const locations = state.locations;
+  const units = state.units;
 
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
@@ -97,7 +99,6 @@ export default function CreateItem() {
     unitId: z.string().min(1),
     typeId: z.string(),
     categoryId: z.string().min(1),
-    locationId: z.string().min(1),
     userId: z.string().min(1),
     ubicationId: z.string().min(1),
   });
@@ -113,8 +114,7 @@ export default function CreateItem() {
       unitId: "",
       typeId: "",
       categoryId: "",
-      locationId: "",
-      userId: "",
+      userId: state.user.id,
       ubicationId: "",
     },
   });
@@ -239,9 +239,13 @@ export default function CreateItem() {
                             >
                               {value
                                 ? categories.find(
-                                    (category) => category.id === value
+                                    (category) =>
+                                      category.partidaNumber +
+                                        "-" +
+                                        category.name ===
+                                      value
                                   )?.name
-                                : "Select framework..."}
+                                : "Seleccionar categoría..."}
                               <ChevronsUpDown className="opacity-50" />
                             </Button>
                           </PopoverTrigger>
@@ -249,18 +253,24 @@ export default function CreateItem() {
                             <Command>
                               <CommandInput
                                 className="!shadow-none !border-none"
-                                placeholder="Search framework..."
+                                placeholder="Buscar categoría..."
                               />
                               <CommandList>
-                                <CommandEmpty>No framework found.</CommandEmpty>
+                                <CommandEmpty>
+                                  Categoría no encontrada.
+                                </CommandEmpty>
                                 <CommandGroup>
                                   {categories.map((category) => (
                                     <CommandItem
-                                      key={category.id}
-                                      value={category.id}
+                                      key={category.name}
+                                      value={
+                                        category.partidaNumber +
+                                        "-" +
+                                        category.name
+                                      }
                                       onSelect={(currentValue) => {
-                                        console.log(currentValue);
-                                        field.onChange(currentValue);
+                                        // console.log(currentValue);
+                                        field.onChange(category.id);
                                         setValue(
                                           currentValue === value
                                             ? ""
@@ -269,7 +279,7 @@ export default function CreateItem() {
                                         setOpen(false);
                                       }}
                                     >
-                                      {category.name}
+                                      {category.partidaNumber} - {category.name}
                                       <Check
                                         className={cn(
                                           "ml-auto",
@@ -299,8 +309,7 @@ export default function CreateItem() {
                         <FormLabel>*Cantidad</FormLabel>
                         <FormControl>
                           <Input
-                            type="number"
-                            pattern="[0-9]*"
+                            type="text"
                             placeholder="Cantidad del suministro..."
                             {...field}
                           />
@@ -311,7 +320,7 @@ export default function CreateItem() {
 
                   <FormField
                     control={form.control}
-                    name="locationId"
+                    name="unitId"
                     render={({ field }) => (
                       <FormItem className="w-full flex-grow">
                         <FormLabel>*Unidad</FormLabel>
@@ -339,7 +348,7 @@ export default function CreateItem() {
 
                   <FormField
                     control={form.control}
-                    name="unitId"
+                    name="ubicationId"
                     render={({ field }) => (
                       <FormItem className="w-full flex-grow">
                         <FormLabel>*Ubicación</FormLabel>
@@ -356,7 +365,7 @@ export default function CreateItem() {
                             <SelectContent className="!m-0 !p-0 !w-auto">
                               <SelectGroup>
                                 <SelectLabel>Unidad</SelectLabel>
-                                <SelectItem value="insumo">etc...</SelectItem>
+                                <SelectItem value="x">etc...</SelectItem>
                               </SelectGroup>
                             </SelectContent>
                           </Select>
