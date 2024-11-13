@@ -4,8 +4,10 @@ import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Check, ChevronsUpDown } from "lucide-react";
+
 import {
   Form,
   FormControl,
@@ -33,21 +35,64 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 import { Input } from "@/components/ui/input";
 import { useMainAppContext } from "../../MainAppContext";
 
+const frameworks = [
+  {
+    value: "next.js",
+    label: "Next.js",
+  },
+  {
+    value: "sveltekit",
+    label: "SvelteKit",
+  },
+  {
+    value: "nuxt.js",
+    label: "Nuxt.js",
+  },
+  {
+    value: "remix",
+    label: "Remix",
+  },
+  {
+    value: "astro",
+    label: "Astro",
+  },
+];
 /////////////////
 export default function CreateItem() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { state, setState } = useMainAppContext();
   const { toast } = useToast();
+
+  // console.log("STATE FROM CREATE ITEM: ", state);
+
+  const categories = state.categories;
+
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const formSchema = z.object({
     barCode: z.string(),
     name: z.string().min(1),
     description: z.string().min(1),
     quantity: z
-      .number()
-      .int()
+      .string()
       .min(0, { message: "La cantidad debe ser un número entero positivo" }),
     unitId: z.string().min(1),
     typeId: z.string(),
@@ -76,7 +121,7 @@ export default function CreateItem() {
 
   async function onSubmit(values) {
     setIsSubmitting(true);
-
+    console.log(values);
     setIsSubmitting(false);
   }
   return (
@@ -138,7 +183,6 @@ export default function CreateItem() {
                         <FormLabel>*Descripción</FormLabel>
                         <FormControl>
                           <Input
-                            type="email"
                             placeholder="Descripción del suministro..."
                             {...field}
                           />
@@ -150,7 +194,7 @@ export default function CreateItem() {
                     control={form.control}
                     name="typeId"
                     render={({ field }) => (
-                      <FormItem className="w-[400px] flex-grow">
+                      <FormItem className="max-xl:w-full w-[400px] flex-grow">
                         <FormLabel>Tipo</FormLabel>
                         <FormControl>
                           <Select
@@ -185,22 +229,62 @@ export default function CreateItem() {
                     <FormItem className="w-full flex-grow">
                       <FormLabel>*Categoría</FormLabel>
                       <FormControl>
-                        <Select
-                          onValueChange={(value) => {
-                            field.onChange(value); // Actualiza el valor en el estado del formulario
-                          }}
-                          value={field.value || ""} // Asegúrate de que el valor sea un string vacío si no hay valor
-                        >
-                          <SelectTrigger className="!bg-white !rounded-md !text-gray-600">
-                            <SelectValue placeholder="Seleccione tipo..." />
-                          </SelectTrigger>
-                          <SelectContent className="!m-0 !p-0 !w-auto">
-                            <SelectGroup>
-                              <SelectLabel>Categoría</SelectLabel>
-                              <SelectItem value="insumo">etc...</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
+                        <Popover open={open} onOpenChange={setOpen}>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={open}
+                              className="w-full justify-between !bg-white !rounded-md !text-gray-600"
+                            >
+                              {value
+                                ? categories.find(
+                                    (category) => framework.value === value
+                                  )?.label
+                                : "Select framework..."}
+                              <ChevronsUpDown className="opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className=" w-[100vh] p-0 ">
+                            <Command>
+                              <CommandInput
+                                className="!shadow-none !border-none"
+                                placeholder="Search framework..."
+                              />
+                              <CommandList>
+                                <CommandEmpty>No framework found.</CommandEmpty>
+                                <CommandGroup>
+                                  {categories.map((category) => (
+                                    <CommandItem
+                                      key={category.id}
+                                      value={category.id}
+                                      onSelect={(currentValue) => {
+                                        console.log(currentValue);
+                                        field.onChange(currentValue);
+                                        setValue(
+                                          currentValue === value
+                                            ? ""
+                                            : currentValue
+                                        );
+                                        setOpen(false);
+                                      }}
+                                    >
+                                      {category.name}
+                                      <Check
+                                        className={cn(
+                                          "ml-auto",
+                                          value === category.id
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
                       </FormControl>
                     </FormItem>
                   )}
@@ -215,8 +299,9 @@ export default function CreateItem() {
                         <FormLabel>*Cantidad</FormLabel>
                         <FormControl>
                           <Input
-                            type="email"
-                            placeholder="Descripción del suministro..."
+                            type="number"
+                            pattern="[0-9]*"
+                            placeholder="Cantidad del suministro..."
                             {...field}
                           />
                         </FormControl>
@@ -226,7 +311,7 @@ export default function CreateItem() {
 
                   <FormField
                     control={form.control}
-                    name="unitId"
+                    name="locationId"
                     render={({ field }) => (
                       <FormItem className="w-full flex-grow">
                         <FormLabel>*Unidad</FormLabel>
@@ -251,9 +336,53 @@ export default function CreateItem() {
                       </FormItem>
                     )}
                   />
+
+                  <FormField
+                    control={form.control}
+                    name="unitId"
+                    render={({ field }) => (
+                      <FormItem className="w-full flex-grow">
+                        <FormLabel>*Ubicación</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={(value) => {
+                              field.onChange(value); // Actualiza el valor en el estado del formulario
+                            }}
+                            value={field.value || ""} // Asegúrate de que el valor sea un string vacío si no hay valor
+                          >
+                            <SelectTrigger className="!bg-white !rounded-md !text-gray-600">
+                              <SelectValue placeholder="Seleccione tipo..." />
+                            </SelectTrigger>
+                            <SelectContent className="!m-0 !p-0 !w-auto">
+                              <SelectGroup>
+                                <SelectLabel>Unidad</SelectLabel>
+                                <SelectItem value="insumo">etc...</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="barCode"
+                    render={({ field }) => (
+                      <FormItem className="w-full flex-grow">
+                        <FormLabel>*Código de barras</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Código de barras si aplica..."
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
                 </div>
 
-                <Button disabled={isSubmitting} type="submit">
+                <Button disabled={isSubmitting} className="mt-2" type="submit">
                   Crear
                 </Button>
               </form>
