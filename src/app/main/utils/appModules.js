@@ -14,6 +14,13 @@ export var appModules = [
     description: "Ver, editar y gestionar suministros",
   },
   {
+    id: 2,
+    moduleName: "Herramientas",
+    icon: "ri:tools-fill",
+    title: "Herramientas",
+    description: "Ver, editar y gestionar suministros",
+  },
+  {
     id: 3,
     moduleName: "Usuarios",
     icon: "mdi:user",
