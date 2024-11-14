@@ -5,7 +5,7 @@ export default function User() {
   const { state, setState } = useMainAppContext();
   const [logs, setLogs] = useState([]);
   useEffect(() => {
-    localStorage.setItem("activeModuleName", "Usuario");
+    // localStorage.setItem("activeModuleName", "Usuario");
     fetch("/api/log/get", {
       method: "POST",
       headers: {

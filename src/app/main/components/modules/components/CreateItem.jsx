@@ -53,42 +53,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { useMainAppContext } from "../../MainAppContext";
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
 /////////////////
 export default function CreateItem() {
   const { state, setState } = useMainAppContext();
   const { toast } = useToast();
 
-  // console.log("STATE FROM CREATE ITEM: ", state);
-
   const categories = state.categories;
-  const locations = state.locations;
+  const ubications = state.ubication;
   const units = state.units;
 
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const formSchema = z.object({
     barCode: z.string(),
     name: z.string().min(1),
@@ -119,11 +96,35 @@ export default function CreateItem() {
     },
   });
 
+  async function createCategory(values) {
+    try {
+      const response = await fetch("/api/item/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${state.token}`, // Reemplaza con tu token si usas autenticación
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+
+      const responseData = await response.json();
+      console.log("Category created successfully:", responseData);
+      return responseData;
+    } catch (error) {
+      console.error("Error creating category:", error);
+    }
+  }
+
   async function onSubmit(values) {
     setIsSubmitting(true);
-    console.log(values);
+    createCategory(values);
     setIsSubmitting(false);
   }
+
   return (
     <div className="w-full p-2 border  rounded-xl">
       <Accordion
@@ -337,7 +338,11 @@ export default function CreateItem() {
                             <SelectContent className="!m-0 !p-0 !w-auto">
                               <SelectGroup>
                                 <SelectLabel>Unidad</SelectLabel>
-                                <SelectItem value="insumo">etc...</SelectItem>
+                                {units.map((unit) => (
+                                  <SelectItem value={unit.id}>
+                                    {unit.name}
+                                  </SelectItem>
+                                ))}
                               </SelectGroup>
                             </SelectContent>
                           </Select>
@@ -364,8 +369,12 @@ export default function CreateItem() {
                             </SelectTrigger>
                             <SelectContent className="!m-0 !p-0 !w-auto">
                               <SelectGroup>
-                                <SelectLabel>Unidad</SelectLabel>
-                                <SelectItem value="x">etc...</SelectItem>
+                                <SelectLabel>Ubicación</SelectLabel>
+                                {ubications.map((ubication) => (
+                                  <SelectItem value={ubication.id}>
+                                    {ubication.name}
+                                  </SelectItem>
+                                ))}
                               </SelectGroup>
                             </SelectContent>
                           </Select>

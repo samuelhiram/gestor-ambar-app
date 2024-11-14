@@ -9,6 +9,7 @@ export const POST = withAuth(async (req) => {
   //
   const body = await req.json();
   //
+
   try {
     const {
       barCode,
@@ -22,6 +23,9 @@ export const POST = withAuth(async (req) => {
       userId,
       ubicationId,
     } = body;
+
+    return new NextResponse(JSON.stringify({ body }));
+
     // Crear un nuevo Item en la base de datos
     const item = await prisma.item.create({
       data: {
@@ -38,9 +42,16 @@ export const POST = withAuth(async (req) => {
       },
     });
     //
-    res.status(201).json(item); // Devuelve el objeto creado
+    //
+    //
+    //
+    //
+    //
+    return new NextResponse(JSON.stringify({ item }));
   } catch (error) {
-    res.status(500).json({ error: "Error creando el Item" });
+    return new NextResponse(
+      JSON.stringify({ error: "post item - > Unknow error." }),
+      { status: 400 }
+    );
   }
-  return new NextResponse(JSON.stringify({ category }));
 });

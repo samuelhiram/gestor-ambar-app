@@ -20,4 +20,11 @@ export var appModules = [
     title: "Usuarios",
     description: "Gestionar usuarios",
   },
+  {
+    id: 4,
+    moduleName: "Catalogos",
+    icon: "material-symbols-light:stack",
+    title: "Catálogos",
+    description: "Ver, editar y crear atributos",
+  },
 ];

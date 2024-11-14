@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useMainAppContext } from "./MainAppContext";
 import { Icon } from "@iconify/react";
 //
@@ -7,7 +7,9 @@ import Inventory from "./modules/Inventory";
 import Start from "./modules/Start";
 import User from "./modules/User";
 import Users from "./modules/Users";
+import Catalogs from "./modules/Catalogs";
 import Loader from "../../components/Loader/Loader";
+
 //
 export default function ModuleLoaded() {
   const { state } = useMainAppContext();
@@ -16,6 +18,11 @@ export default function ModuleLoaded() {
   );
   const { icon, description, moduleName } = module;
   // console.log("activeModuleName-> ", state.activeModuleName);
+
+  useEffect(() => {
+    localStorage.setItem("activeModuleName", state.activeModuleName);
+    console.log(localStorage.getItem("activeModuleName"));
+  }, [state.activeModuleName]);
 
   return (
     <div
@@ -57,6 +64,7 @@ export default function ModuleLoaded() {
         {state.activeModuleName === "Inventario" && <Inventory />}
         {state.activeModuleName === "Usuario" && <User />}
         {state.activeModuleName === "Usuarios" && <Users />}
+        {state.activeModuleName === "Catalogos" && <Catalogs />}
       </div>
     </div>
   );

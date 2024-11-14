@@ -25,7 +25,7 @@ export default function Users() {
   ];
   //  const actions = ["editar", "detalles", "eliminar"]; // Acciones que deseas mostrar.
   useEffect(() => {
-    localStorage.setItem("activeModuleName", "Usuarios");
+    // localStorage.setItem("activeModuleName", "Usuarios");
     setState((prev) => ({
       ...prev,
       isLoadingModule: true,
