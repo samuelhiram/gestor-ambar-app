@@ -40,6 +40,8 @@ export default function MainAppContextProvider({ children }) {
     ubication: [],
     //types
     types: [],
+    //items
+    items: [],
   });
 
   const value = { state, setState };

@@ -6,7 +6,7 @@ import { useMainAppContext } from "../../MainAppContext";
 ////////////////// **** ACTIONS ROUTER **** //////////////////
 import InactiveUsersActions from "./InactiveUsersActions";
 import UsersActions from "./UsersActions";
-
+import InventoryItemsActions from "./InventoryItemsActions";
 export default function ActionsRouter({
   activeModule: tableName,
   action,
@@ -65,6 +65,14 @@ export default function ActionsRouter({
         )}
         {tableName === "Usuarios desactivados" && (
           <InactiveUsersActions
+            closeThisModal={closeThisModal}
+            action={action}
+            rows={rows}
+            setSelectedRows={setSelectedRows}
+          />
+        )}
+        {tableName === "Suministros" && (
+          <InventoryItemsActions
             closeThisModal={closeThisModal}
             action={action}
             rows={rows}

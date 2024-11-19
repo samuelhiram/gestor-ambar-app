@@ -115,12 +115,36 @@ export default function CreateItem() {
       if (!response.ok) {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
+      //fetch items
+      await fetch("/api/item/get", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${state.token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setState((prev) => ({
+            ...prev,
+            items: data.items,
+          }));
+        });
+      form.reset();
+
+      toast({
+        className:
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-2 md:right-2",
+        position: "top-right",
+        variant: "success",
+        title: `Suministro creado...`,
+        duration: 500,
+      });
 
       const responseData = await response.json();
-      console.log("Category created successfully:", responseData);
       return responseData;
     } catch (error) {
-      console.error("Error creating category:", error);
+      console.error("Error creating item:", error);
     }
   }
 

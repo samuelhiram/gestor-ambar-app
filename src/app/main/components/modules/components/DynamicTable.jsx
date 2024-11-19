@@ -14,6 +14,7 @@ const DynamicTable = ({
   data,
   actions,
 }) => {
+  console.log("data", data);
   const { state } = useMainAppContext();
   const tableRef = useRef(null); // Referencia para la tabla
   // Detectar clics fuera de la tabla

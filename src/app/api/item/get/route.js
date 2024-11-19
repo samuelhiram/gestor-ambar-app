@@ -5,13 +5,50 @@ import { withAuth } from "@/lib/withAuth";
 export const GET = withAuth(async (req) => {
   let items = await prisma.item.findMany({
     include: {
-      unit: true,
-      type: true,
-      category: true,
+      unit: {
+        select: {
+          name: true,
+        },
+      },
+      type: {
+        select: {
+          name: true,
+        },
+      },
+      category: {
+        select: {
+          name: true,
+          partidaNumber: true,
+        },
+      },
       user: true,
-      ubication: true,
+      ubication: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
+
+  //remove barCode field
+  items = items.map((item) => {
+    const { barCode, ...rest } = item;
+    return rest;
+  });
+
+  //make all a json of 1 level
+  items = items.map((item) => {
+    return {
+      ...item,
+      partidaNumber: item.category.partidaNumber,
+      unit: item.unit.name,
+      type: item.type.name,
+      category: item.category.name,
+      user: item.user.name,
+      ubication: item.ubication.name,
+    };
+  });
+
   //reformat createdAt date
   items = items.map((item) => {
     return {

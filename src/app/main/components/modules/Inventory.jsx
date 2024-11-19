@@ -24,36 +24,103 @@ export default function Inventory() {
         await getLocations(state, setState);
         await getUbications(state, setState);
         await getUnits(state, setState);
-        await getTypes(state, setState).finally(() => {
-          setState((prev) => ({
-            ...prev,
-            isLoadingModule: false,
-          }));
-        });
+        await getTypes(state, setState);
+
+        //fetch items
+        await fetch("/api/item/get", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${state.token}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            setState((prev) => ({
+              ...prev,
+              items: data.items,
+              isLoadingModule: false,
+            }));
+          });
       };
       fetchAll();
     } catch (e) {
       console.error(e.message);
     }
   }, []);
+  console.log(state.items);
+  const inventoryItemsActions = [
+    {
+      action: "entryes",
+      actionTitle: "Reportar entrada de suministros",
+      color: "bg-green-900",
+      textColor: "text-gray-50",
+      hoverColor: "hover:bg-green-700",
+      icon: "lets-icons:in",
+      description: "Reportar entrada",
+    },
+    {
+      action: "outs",
+      actionTitle: "Reportar entrada de suministros",
+      color: "bg-red-900",
+      textColor: "text-red-50",
+      hoverColor: "hover:bg-red-700",
+      icon: "lets-icons:out",
+      description: "Reportar salida",
+    },
+    {
+      action: "details",
+      actionTitle: "Detalles de suministros",
+      color: "bg-green-900",
+      textColor: "text-gray-50",
+      hoverColor: "hover:bg-green-700",
+      icon: "mdi:eye",
+      description: "Detalles",
+    },
+    {
+      action: "edit",
+      color: "bg-blue-900",
+      actionTitle: "Editar suminitros",
+      textColor: "text-gray-50",
+      hoverColor: "hover:bg-blue-700",
+      icon: "material-symbols:edit",
+      description: "Editar",
+    },
+    {
+      action: "delete",
+      color: "bg-orange-600",
+      actionTitle: "Desactivar suministros",
+      textColor: "text-gray-50",
+      hoverColor: "hover:bg-orange-700",
+      icon: "material-symbols-light:tab-inactive-outline",
+      description: "Desactivar",
+    },
+  ];
   return (
     <div className="flex flex-col gap-3">
       <CreateItem />
 
       <DynamicTable
         tableName="Suministros"
-        tableIcon="mdi--users-outline"
+        tableIcon="material-symbols-light--category-search-outline-rounded"
         headers={[
+          "Partida",
           "Nombre",
-          "Correo",
-          "Número_de_control",
-          "Rol",
-          "Lugar",
-          "Fecha_de_Ingreso",
+          "Descripción",
+          "Unidad",
+          "Cantidad",
+          "Ubicación",
         ]}
-        dataHeaders={[]}
-        data={[]}
-        actions={{ editar: true, detalles: true, eliminar: true }}
+        dataHeaders={[
+          "partidaNumber",
+          "name",
+          "description",
+          "unit",
+          "quantity",
+          "ubication",
+        ]}
+        data={state.items}
+        actions={inventoryItemsActions}
       />
     </div>
   );

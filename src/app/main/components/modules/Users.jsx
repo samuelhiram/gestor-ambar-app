@@ -124,7 +124,7 @@ export default function Users() {
       description: "Activar",
     },
   ];
-
+  console.log(state.usersData);
   return (
     //rename the received data
     <div className="flex flex-col gap-3">
