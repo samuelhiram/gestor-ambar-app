@@ -86,7 +86,6 @@ model Location {
   updatedAt DateTime    @updatedAt
   status    String      @default("active")
   user      User[]
-  Item      Item[]
   Ubication Ubication[]
 }
 
@@ -130,8 +129,8 @@ model ItemType {
 }
 
 model Item {
-  id          String @id @default(cuid())
-  barCode     String @unique
+  id          String  @id @default(cuid())
+  barCode     String? @unique
   name        String
   description String
   quantity    Int
@@ -146,8 +145,6 @@ model Item {
   type        ItemType  @relation(fields: [typeId], references: [id])
   categoryId  String //foreign key
   category    Category  @relation(fields: [categoryId], references: [id])
-  locationId  String //foreign key
-  location    Location  @relation(fields: [locationId], references: [id])
   userId      String //foreign key
   user        User      @relation(fields: [userId], references: [id])
   ubicationId String //foreign key

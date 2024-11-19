@@ -41,10 +41,10 @@ export default function CreateUnit() {
   });
 
   useEffect(() => {
-    const asyncFetch = async () => {
-      await fetchUnits(state, setState);
-    };
-    asyncFetch();
+    // const asyncFetch = async () => {
+    //   await getUnits(state, setState);
+    // };
+    // asyncFetch();
   }, []);
 
   async function onSubmit(values) {
@@ -106,7 +106,7 @@ export default function CreateUnit() {
 
       const fetchUnits = await unitsResponse.json();
 
-      //console.log("UnitS fetched successfully:", fetchUnits);
+      ////console.log("UnitS fetched successfully:", fetchUnits);
 
       setState((prevState) => ({
         ...prevState,
@@ -144,44 +144,16 @@ export default function CreateUnit() {
           <AccordionTrigger className="!bg-white hover:!bg-blue-50 hover:border-blue-500 !rounded-xl !border !p-2 !text-gray-600">
             <div className="flex items-center gap-1">
               <svg
-                width="45"
-                height="24"
-                viewBox="0 0 45 32"
-                fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 20 20"
               >
-                <g clipPath="url(#clip0_134_3)">
-                  <g clipPath="url(#clip1_134_3)">
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M26.0469 28.1166C25.7112 28.1166 25.3893 27.9783 25.1519 27.7322C24.9146 27.486 24.7812 27.1522 24.7812 26.8041V4.92908C24.7812 4.58098 24.9146 4.24714 25.1519 4.001C25.3893 3.75486 25.7112 3.61658 26.0469 3.61658C26.3825 3.61658 26.7045 3.75486 26.9418 4.001C27.1792 4.24714 27.3125 4.58098 27.3125 4.92908V26.8041C27.3125 27.1522 27.1792 27.486 26.9418 27.7322C26.7045 27.9783 26.3825 28.1166 26.0469 28.1166ZM20.5625 17.6166V14.1166C20.5625 13.6524 20.3847 13.2073 20.0682 12.8791C19.7518 12.551 19.3226 12.3666 18.875 12.3666H12.125C11.6774 12.3666 11.2482 12.551 10.9318 12.8791C10.6153 13.2073 10.4375 13.6524 10.4375 14.1166V17.6166C10.4375 18.0807 10.6153 18.5258 10.9318 18.854C11.2482 19.1822 11.6774 19.3666 12.125 19.3666H18.875C19.3226 19.3666 19.7518 19.1822 20.0682 18.854C20.3847 18.5258 20.5625 18.0807 20.5625 17.6166ZM23.0938 14.1166C23.0938 12.9563 22.6493 11.8435 21.8581 11.023C21.0669 10.2025 19.9939 9.74158 18.875 9.74158H12.125C11.0061 9.74158 9.93306 10.2025 9.14189 11.023C8.35072 11.8435 7.90625 12.9563 7.90625 14.1166V17.6166C7.90625 18.1911 8.01537 18.76 8.22738 19.2908C8.4394 19.8216 8.75015 20.3039 9.14189 20.7102C9.93306 21.5306 11.0061 21.9916 12.125 21.9916H18.875C19.429 21.9916 19.9776 21.8784 20.4894 21.6586C21.0013 21.4387 21.4664 21.1164 21.8581 20.7102C22.2499 20.3039 22.5606 19.8216 22.7726 19.2908C22.9846 18.76 23.0938 18.1911 23.0938 17.6166V14.1166ZM3.6875 26.8041C3.6875 27.1522 3.82084 27.486 4.05819 27.7322C4.29554 27.9783 4.61746 28.1166 4.95312 28.1166C5.28879 28.1166 5.61071 27.9783 5.84806 27.7322C6.08541 27.486 6.21875 27.1522 6.21875 26.8041V4.92908C6.21875 4.58098 6.08541 4.24714 5.84806 4.001C5.61071 3.75486 5.28879 3.61658 4.95312 3.61658C4.61746 3.61658 4.29554 3.75486 4.05819 4.001C3.82084 4.24714 3.6875 4.58098 3.6875 4.92908V26.8041Z"
-                      fill="#1E3A8A"
-                    />
-                  </g>
-                </g>
+                <rect width="20" height="20" fill="none" />
                 <path
-                  d="M44.4805 18.0779H38.7031V23.8553H36.7773V18.0779H31V16.1522H36.7773V10.3748H38.7031V16.1522H44.4805V18.0779Z"
-                  fill="#1E3A8A"
+                  fill="#1e3a8a"
+                  d="M6 4.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0m11 0a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0m-11 11a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0m11 0a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0M7 4.75A.75.75 0 0 1 7.75 4h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 7 4.75m0 10.5a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75m-3-7.5a.75.75 0 0 1 1.5 0v4.5a.75.75 0 0 1-1.5 0zm10.5 0a.75.75 0 0 1 1.5 0v4.5a.75.75 0 0 1-1.5 0z"
                 />
-                <defs>
-                  <clipPath id="clip0_134_3">
-                    <rect
-                      width="31"
-                      height="31"
-                      fill="white"
-                      transform="translate(0 0.366577)"
-                    />
-                  </clipPath>
-                  <clipPath id="clip1_134_3">
-                    <rect
-                      width="27"
-                      height="28"
-                      fill="white"
-                      transform="translate(2 1.86658)"
-                    />
-                  </clipPath>
-                </defs>
               </svg>
 
               <h1 className="text-sm font-bold">Crear unidad</h1>
@@ -235,7 +207,7 @@ export default function CreateUnit() {
   );
 }
 
-export async function fetchUnits(state, setState) {
+export async function getUnits(state, setState) {
   try {
     const response = await fetch("/api/unit/get", {
       headers: {
@@ -253,7 +225,7 @@ export async function fetchUnits(state, setState) {
       return;
     }
     const data = await response.json();
-    //console.log("UnitS fetched successfully:", data);
+    ////console.log("UnitS fetched successfully:", data);
     setState((prevState) => ({
       ...prevState,
       units: data.units,
@@ -284,7 +256,7 @@ export async function deleteUnit(values, state, setState) {
     const data = await response.json();
     //console.log("Unit deleted successfully:", data);
 
-    await fetchUnits(state, setState);
+    await getUnits(state, setState);
 
     return data;
   } catch (error) {
@@ -313,7 +285,7 @@ async function updateUnit(values, state, setState) {
     const data = await response.json();
     //console.log("Unit updated successfully:", data);
 
-    await fetchUnits(state, setState);
+    await getUnits(state, setState);
 
     return data;
   } catch (error) {

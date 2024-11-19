@@ -29,7 +29,7 @@ export default function Home() {
   return (
     <>
       {loading && (
-        <div className="w-full min-h-screen flex justify-center items-center  gap-2">
+        <div className="w-full min-h-screen flex justify-center items-center gap-2">
           <Loader />
         </div>
       )}

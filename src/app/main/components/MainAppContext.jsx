@@ -28,6 +28,7 @@ export default function MainAppContextProvider({ children }) {
     dialogMessage: "default message",
     //Users module
     usersData: [],
+    //
     inactiveUsersData: [],
     //locations
     locations: [],
@@ -37,6 +38,8 @@ export default function MainAppContextProvider({ children }) {
     units: [],
     //ubications
     ubication: [],
+    //types
+    types: [],
   });
 
   const value = { state, setState };

@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,15 +15,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import {
   Accordion,
@@ -33,32 +25,30 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { useMainAppContext } from "../../MainAppContext";
-
-export default function CreateLocation() {
+//
+import { getUbications } from "./CreateUbication";
+export default function CreateUnit() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { state, setState } = useMainAppContext();
   const { toast } = useToast();
   const formSchema = z.object({
     name: z.string().min(2, { message: "Obligatorio" }).max(50),
-    location: z.string().min(1, { message: "Obligatorio" }),
   });
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      location: "",
     },
   });
 
   useEffect(() => {
-    const asyncFetch = async () => {
-      await fetchLocations(state, setState);
-    };
-    asyncFetch();
+    // const asyncFetch = async () => {
+    //   await getLocations(state, setState);
+    // };
+    // asyncFetch();
   }, []);
 
   async function onSubmit(values) {
-    //console.log(values);
     setIsSubmitting(true);
     try {
       setState((prev) => ({
@@ -95,17 +85,17 @@ export default function CreateLocation() {
         position: "top-right",
         variant: "success",
         duration: 800,
-        title: "Locación creada...",
+        title: "Lugar creada...",
       });
 
-      const locationResponse = await fetch("/api/location/get", {
+      const locationsResponse = await fetch("/api/location/get", {
         headers: {
           Authorization: `Bearer ${state.token}`,
         },
       });
 
-      if (!locationResponse.ok) {
-        const error = await locationResponse.json();
+      if (!locationsResponse.ok) {
+        const error = await locationsResponse.json();
         setState((prevState) => ({
           ...prevState,
           showDialogAlert: true,
@@ -115,18 +105,17 @@ export default function CreateLocation() {
         return;
       }
 
-      const fetchLocations = await locationResponse.json();
+      const fetchUnits = await locationsResponse.json();
 
-      //console.log("Ubications fetched successfully:", fetchUnits);
+      ////console.log("UnitS fetched successfully:", fetchUnits);
 
       setState((prevState) => ({
         ...prevState,
-        locations: fetchLocations.location,
+        locations: fetchUnits.locations,
       }));
 
       form.reset({
         num: "",
-        fullName: "",
       });
 
       setIsSubmitting(false);
@@ -138,7 +127,7 @@ export default function CreateLocation() {
         position: "top-right",
         variant: "destructive",
         duration: 800,
-        title: "Error al crear locación...",
+        title: "Error al crear lugar...",
       });
       setIsSubmitting(false);
     }
@@ -161,12 +150,65 @@ export default function CreateLocation() {
                 viewBox="0 0 24 24"
               >
                 <rect width="24" height="24" fill="none" />
-                <path
-                  fill="#334C94"
-                  d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7"
-                />
-              </svg>{" "}
-              <h1 className="text-sm font-bold">Crear locación</h1>
+                <circle cx="12" cy="12" r="0" fill="#1e3a8a">
+                  <animate
+                    fill="freeze"
+                    attributeName="r"
+                    begin="0.49s"
+                    dur="0.14s"
+                    values="0;4"
+                  />
+                </circle>
+                <g
+                  fill="none"
+                  stroke="#1e3a8a"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-dasharray="56"
+                    stroke-dashoffset="56"
+                    d="M12 4c4.42 0 8 3.58 8 8c0 4.42 -3.58 8 -8 8c-4.42 0 -8 -3.58 -8 -8c0 -4.42 3.58 -8 8 -8Z"
+                  >
+                    <animate
+                      fill="freeze"
+                      attributeName="stroke-dashoffset"
+                      dur="0.42s"
+                      values="56;0"
+                    />
+                  </path>
+                  <path
+                    stroke-dasharray="4"
+                    stroke-dashoffset="4"
+                    d="M12 4v0M20 12h0M12 20v0M4 12h0"
+                    opacity="0"
+                  >
+                    <animate
+                      fill="freeze"
+                      attributeName="d"
+                      begin="0.7s"
+                      dur="0.14s"
+                      values="M12 4v0M20 12h0M12 20v0M4 12h0;M12 4v-2M20 12h2M12 20v2M4 12h-2"
+                    />
+                    <animate
+                      fill="freeze"
+                      attributeName="stroke-dashoffset"
+                      begin="0.7s"
+                      dur="0.14s"
+                      values="4;0"
+                    />
+                    <set
+                      fill="freeze"
+                      attributeName="opacity"
+                      begin="0.7s"
+                      to="1"
+                    />
+                  </path>
+                </g>
+              </svg>
+
+              <h1 className="text-sm font-bold">Crear lugar</h1>
             </div>
           </AccordionTrigger>
           <AccordionContent className="p-2">
@@ -180,59 +222,18 @@ export default function CreateLocation() {
                   name="name"
                   render={({ field }) => (
                     <FormItem className="w-full flex-grow">
-                      <FormLabel>Nombre de la locación...</FormLabel>
+                      <FormLabel>Nombre del lugar</FormLabel>
                       <FormControl>
                         <Input
                           type="text"
-                          placeholder="Mi locación..."
+                          placeholder="Mi lugar..."
                           {...field}
                         />
                       </FormControl>
                       <FormDescription>
-                        Ejemplos: Unidad Tomas Aquino, Unidad Otay, Extensión X,
-                        etc.
+                        Ejemplos: Unidad Tomas Aquino, Unidad Otay, otro
+                        lugar...
                       </FormDescription>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem className="w-full flex-grow">
-                      <FormLabel>Lugar</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={(value) => {
-                            field.onChange(value); // Actualiza el valor en el estado del formulario
-                          }}
-                          value={field.value || ""} // Asegúrate de que el valor sea un string vacío si no hay valor
-                        >
-                          <SelectTrigger className="w-full !bg-white !rounded-md !text-gray-600">
-                            <SelectValue placeholder="Seleccione plantel" />
-                          </SelectTrigger>
-                          <SelectContent className="!m-0 !p-0 !w-auto">
-                            <SelectGroup>
-                              <SelectLabel>Unidad</SelectLabel>
-                              {/* <SelectItem value="Unidad Tomas Aquino">
-                                Unidad Tomas Aquino
-                              </SelectItem>
-                              <SelectItem value="Unidad Otay">
-                                Unidad Otay
-                              </SelectItem> */}
-                              {state.locations.map((location) => (
-                                <SelectItem
-                                  key={location.id}
-                                  value={location.id}
-                                >
-                                  {location.name}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
                     </FormItem>
                   )}
                 />
@@ -243,13 +244,13 @@ export default function CreateLocation() {
               </form>
             </Form>
             <div className="w-full py-2">
-              <div className="font-semibold">Locaciones existentes</div>
+              <div className="font-semibold">Lugares existentes</div>
               <div
                 className={`w-full ${
-                  state.location.length < 2 ? "h-auto" : "h-40"
+                  state.locations.length < 2 ? "h-auto" : "h-40"
                 }  overflow-auto  border-gray-200 py-2  gap-1 justify-between items-center`}
               >
-                <UnitList state={state} setState={setState} />
+                <LocationList state={state} setState={setState} />
               </div>
             </div>
           </AccordionContent>
@@ -259,7 +260,7 @@ export default function CreateLocation() {
   );
 }
 
-export async function fetchLocations(state, setState) {
+export async function getLocations(state, setState) {
   try {
     const response = await fetch("/api/location/get", {
       headers: {
@@ -277,10 +278,32 @@ export async function fetchLocations(state, setState) {
       return;
     }
     const data = await response.json();
+    //console.log("UnitS fetched successfully:", data);
+    setState((prevState) => ({
+      ...prevState,
+      locations: data.locations,
+    }));
+
+    const responseU = await fetch("/api/ubication/get", {
+      headers: {
+        Authorization: `Bearer ${state.token}`,
+      },
+    });
+
+    if (!responseU.ok) {
+      const error = await response.json();
+      setState((prevState) => ({
+        ...prevState,
+        showDialogAlert: true,
+        dialogMessage: error.error || "Error desconocido",
+      }));
+      return;
+    }
+    const dataU = await responseU.json();
     //console.log("Ubications fetched successfully:", data);
     setState((prevState) => ({
       ...prevState,
-      location: data.location,
+      ubication: dataU.ubication,
     }));
   } catch (error) {
     console.error("Request error:", error);
@@ -308,7 +331,7 @@ export async function deleteLocation(values, state, setState) {
     const data = await response.json();
     //console.log("Location deleted successfully:", data);
 
-    await fetchLocations(state, setState);
+    await getLocations(state, setState);
 
     return data;
   } catch (error) {
@@ -337,7 +360,7 @@ async function updateLocation(values, state, setState) {
     const data = await response.json();
     //console.log("Location updated successfully:", data);
 
-    await fetchLocations(state, setState);
+    await getLocations(state, setState);
 
     return data;
   } catch (error) {
@@ -345,22 +368,21 @@ async function updateLocation(values, state, setState) {
   }
 }
 
-export function UnitList({ state, setState }) {
+export function LocationList({ state, setState }) {
   const { toast } = useToast();
-  const [editLocationId, setEditUnitId] = useState(null);
+  const [editLoationId, setEditLocationId] = useState(null);
   const [editedValues, setEditedValues] = useState({});
 
   const handleEditChange = (field, value) => {
-    const name = document.getElementById("locationName").value;
-
+    const name = document.getElementById("LocationName").value;
     setEditedValues({
       name,
     });
   };
 
-  const handleSave = async (LocationId) => {
+  const handleSave = async (UnitId) => {
     const updatedData = {
-      id: LocationId,
+      id: UnitId,
       ...editedValues,
     };
 
@@ -372,7 +394,7 @@ export function UnitList({ state, setState }) {
         position: "top-right",
         variant: "success",
         duration: 800,
-        title: "Locación actualizada...",
+        title: "Lugar actualizada...",
       });
     } catch (error) {
       toast({
@@ -381,16 +403,18 @@ export function UnitList({ state, setState }) {
         position: "top-right",
         variant: "destructive",
         duration: 800,
-        title: "Error al eliminar locación...",
+        title: "Error al eliminar lugar...",
       });
     }
-    setEditUnitId(null);
+    setEditLocationId(null);
   };
 
-  const handleDelete = async (UbicationId) => {
+  const handleDelete = async (UnitId) => {
     const deletedData = {
-      id: UbicationId,
+      id: UnitId,
     };
+
+    //try catch
 
     try {
       await deleteLocation(deletedData, state, setState);
@@ -400,7 +424,7 @@ export function UnitList({ state, setState }) {
         position: "top-right",
         variant: "warning",
         duration: 800,
-        title: "Locación eliminada...",
+        title: "Lugar eliminada...",
       });
     } catch (error) {
       toast({
@@ -409,16 +433,16 @@ export function UnitList({ state, setState }) {
         position: "top-right",
         variant: "destructive",
         duration: 800,
-        title: "Error al eliminar locación...",
+        title: "Error al eliminar lugar...",
       });
     }
   };
 
   return (
     <>
-      {state.location.length === 0 && <div>No hay ubicaciones registradas</div>}
-      {state.location.map((location) => {
-        const isEditing = editLocationId === location.id;
+      {state.locations.length === 0 && <div>No hay unidades registradas</div>}
+      {state.locations.map((location) => {
+        const isEditing = editLoationId === location.id;
         return (
           <div
             key={location.id}
@@ -426,19 +450,24 @@ export function UnitList({ state, setState }) {
           >
             {isEditing ? (
               <input
-                id="locationName"
+                id="LocationName"
                 defaultValue={location.name}
                 className="w-full"
                 onChange={(e) => handleEditChange("name", e.target.value)}
               />
             ) : (
-              <div className="w-full">{location.name}</div>
+              <div className="w-full flex">
+                <div className="w-full">{location.name}</div>
+                <div className="w-full">{location.createdAt}</div>
+              </div>
             )}
 
             <div className="flex justify-between max-md:w-full">
               <div
                 className="text-blue-900 cursor-pointer underline"
-                onClick={() => setEditUnitId(isEditing ? null : location.id)}
+                onClick={() =>
+                  setEditLocationId(isEditing ? null : location.id)
+                }
               >
                 {isEditing ? (
                   <div className="flex gap-2 max-md:gap-6">
@@ -456,7 +485,7 @@ export function UnitList({ state, setState }) {
                       />
                     </svg>
                     <svg
-                      onClick={() => setEditUnitId(null)}
+                      onClick={() => setEditLocationId(null)}
                       xmlns="http://www.w3.org/2000/svg"
                       width="32"
                       height="32"
@@ -485,24 +514,25 @@ export function UnitList({ state, setState }) {
                   </svg>
                 )}
               </div>
-              {location.items.length === 0 && (
-                <svg
-                  onClick={() => {
-                    handleDelete(location.id);
-                  }}
-                  className="hover:bg-gray-200 rounded-full p-1 cursor-pointer flex items-center"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                >
-                  <rect width="24" height="24" fill="none" />
-                  <path
-                    fill="#fa0a0a"
-                    d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"
-                  />
-                </svg>
-              )}
+              {location.user.length === 0 &&
+                location.Ubication.length === 0 && (
+                  <svg
+                    onClick={() => {
+                      handleDelete(location.id);
+                    }}
+                    className="hover:bg-gray-200 rounded-full p-1 cursor-pointer flex items-center"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="32"
+                    height="32"
+                    viewBox="0 0 24 24"
+                  >
+                    <rect width="24" height="24" fill="none" />
+                    <path
+                      fill="#fa0a0a"
+                      d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"
+                    />
+                  </svg>
+                )}
             </div>
           </div>
         );

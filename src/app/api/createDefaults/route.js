@@ -2,67 +2,77 @@ import prisma from "../lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 
-//create default user with prisma
-
 export async function GET() {
-  //get user by env email
   if (!process.env.DATABASE_URL) {
     return new NextResponse(
-      JSON.stringify({ message: "No DATABASE_URL env variable" })
+      JSON.stringify({ message: "No DATABASE_URL env variable" }),
+      { status: 500 }
     );
   }
-  const location = await prisma.location.findFirst();
-  if (!location) {
-    const location = await prisma.location.create({
-      data: {
-        name: process.env.DEFAULT_USER_LOCATION,
-      },
+
+  try {
+    await prisma.$transaction(async (prisma) => {
+      // Check and create default item types
+      const itemType = await prisma.itemType.findFirst();
+      if (!itemType) {
+        await prisma.itemType.createMany({
+          data: [{ name: "Herramienta" }, { name: "Insumo" }],
+        });
+        console.log("Default item types created");
+      }
+
+      // Check and create default locations
+      const location = await prisma.location.findFirst();
+      if (!location) {
+        const defaultLocation = await prisma.location.create({
+          data: {
+            name: process.env.DEFAULT_USER_LOCATION || "Default Location",
+          },
+        });
+        await prisma.location.create({
+          data: { name: "Unidad Otay" },
+        });
+        console.log("Default locations created");
+
+        // Check and create default admin user
+        const user = await prisma.user.findFirst({
+          where: {
+            email: process.env.DEFAULT_USER_EMAIL,
+          },
+        });
+        if (!user) {
+          const hashedPassword = await bcrypt.hash(
+            process.env.DEFAULT_USER_PASSWORD || "defaultpassword",
+            10
+          );
+          await prisma.user.create({
+            data: {
+              email: process.env.DEFAULT_USER_EMAIL,
+              control_number: process.env.DEFAULT_USER_CONTROL_NUMBER,
+              role: process.env.DEFAULT_USER_ROLE || "admin",
+              fullName: process.env.DEFAULT_USER_FULL_NAME || "Admin User",
+              password: hashedPassword,
+              locationId: defaultLocation.id,
+            },
+          });
+          console.log("Default user created");
+        } else {
+          console.log("Default admin user already exists: ", user.email);
+        }
+      } else {
+        console.log("Default locations already created");
+      }
     });
-    await prisma.location.create({
-      data: {
-        name: "Unidad Otay",
-      },
-    });
-    console.log("Default locations created");
-    //////////////////////////////////////
-    //////////////////////////////////////
-    const user = await prisma.user.findUnique({
-      where: {
-        email: process.env.DEFAULT_USER_EMAIL,
-      },
-      include: {
-        location: true,
-      },
-    });
-    //////////////////////////////////////
-    if (!user) {
-      const hashedpassword = await bcrypt.hash(
-        process.env.DEFAULT_USER_PASSWORD,
-        10
-      );
-      const createdUser = await prisma.user.create({
-        data: {
-          email: process.env.DEFAULT_USER_EMAIL,
-          control_number: process.env.DEFAULT_USER_CONTROL_NUMBER,
-          role: process.env.DEFAULT_USER_ROLE,
-          fullName: process.env.DEFAULT_USER_FULL_NAME,
-          password: hashedpassword,
-          locationId: location.id,
-        },
-      });
-      console.log("Default user created");
-    } else {
-      console.log(
-        "default admin user in db: ",
-        user.email,
-        "user admin location",
-        user.location.name
-      );
-    }
-  } else {
-    console.log("default location: ", location.name);
+
+    return new NextResponse(
+      JSON.stringify({ message: "Default data setup complete" }),
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error setting up default data:", error);
+    return new NextResponse(
+      JSON.stringify({ message: "Error setting up default data" }),
+      { status: 500 }
+    );
   }
-  return new NextResponse(JSON.stringify({ message: "Default user created" }), {
-    status: 200,
-  });
 }

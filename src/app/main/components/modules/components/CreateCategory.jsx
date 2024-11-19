@@ -46,33 +46,29 @@ export default function CreateCategory() {
   });
 
   useEffect(() => {
-    async function fetchCategories() {
-      const response = await fetch("/api/category/get", {
-        headers: {
-          Authorization: `Bearer ${state.token}`,
-        },
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        setState((prevState) => ({
-          ...prevState,
-          showDialogAlert: true,
-          dialogMessage: error.error || "Error desconocido",
-        }));
-        return;
-      }
-
-      const data = await response.json();
-      //console.log("Categories fetched successfully:", data);
-
-      setState((prevState) => ({
-        ...prevState,
-        categories: data.categories,
-      }));
-    }
-
-    fetchCategories();
+    // async function fetchCategories() {
+    //   const response = await fetch("/api/category/get", {
+    //     headers: {
+    //       Authorization: `Bearer ${state.token}`,
+    //     },
+    //   });
+    //   if (!response.ok) {
+    //     const error = await response.json();
+    //     setState((prevState) => ({
+    //       ...prevState,
+    //       showDialogAlert: true,
+    //       dialogMessage: error.error || "Error desconocido",
+    //     }));
+    //     return;
+    //   }
+    //   const data = await response.json();
+    //   //console.log("Categories fetched successfully:", data);
+    //   setState((prevState) => ({
+    //     ...prevState,
+    //     categories: data.categories,
+    //   }));
+    // }
+    // fetchCategories();
   }, []);
 
   async function onSubmit(values) {

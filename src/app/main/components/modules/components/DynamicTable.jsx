@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useMainAppContext } from "../../MainAppContext";
 import { Icon } from "@iconify/react";
+import Image from "next/image";
 import ActionsRouter from "./ActionsRouter";
 //
 //
@@ -80,7 +81,7 @@ const DynamicTable = ({
         />
       )}
       <div
-        className={`border p-2 min-w-full w-full max-w-full  rounded-xl flex flex-col gap-2`}
+        className={`border !bg-white p-2 min-w-full w-full max-w-full  rounded-xl flex flex-col gap-2`}
       >
         <div className="flex flex-row-reverse justify-between items-center gap-2 w-full flex-wrap">
           <div
@@ -158,6 +159,13 @@ const DynamicTable = ({
                 width="32"
                 height="32"
                 style={{ color: "#1e3a8a" }}
+              />
+              <Image
+                priority
+                src={`img/${tableIcon}.svg`}
+                width={32}
+                height={32}
+                alt="icon"
               />
               <div>{tableName}</div>
             </div>

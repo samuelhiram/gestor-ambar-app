@@ -132,7 +132,7 @@ export default function Users() {
       <div>
         <DynamicTable
           tableName="Usuarios"
-          tableIcon="mdi:users"
+          tableIcon="mdi--users-outline"
           headers={headers}
           dataHeaders={dataHeaders}
           data={state.usersData}
@@ -142,7 +142,7 @@ export default function Users() {
       <div>
         <DynamicTable
           tableName="Usuarios desactivados"
-          tableIcon="fluent:person-delete-20-filled"
+          tableIcon="mdi--users-minus-outline"
           headers={headers}
           dataHeaders={dataHeaders}
           data={state.inactiveUsersData}

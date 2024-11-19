@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
-
 import {
   Form,
   FormControl,
@@ -52,7 +51,8 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { useMainAppContext } from "../../MainAppContext";
-
+///
+import { getUnits } from "./CreateUnit";
 /////////////////
 export default function CreateItem() {
   const { state, setState } = useMainAppContext();
@@ -61,6 +61,7 @@ export default function CreateItem() {
   const categories = state.categories;
   const ubications = state.ubication;
   const units = state.units;
+  const types = state.types;
 
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
@@ -72,13 +73,16 @@ export default function CreateItem() {
     description: z.string().min(1),
     quantity: z
       .string()
-      .min(0, { message: "La cantidad debe ser un número entero positivo" }),
+      .min(1)
+      .regex(/^[0-9]+$/, "La cantidad debe ser un número"),
     unitId: z.string().min(1),
     typeId: z.string(),
     categoryId: z.string().min(1),
     userId: z.string().min(1),
     ubicationId: z.string().min(1),
   });
+
+  useEffect(() => {}, []);
 
   // 1. Define your form.
   const form = useForm({
@@ -96,7 +100,8 @@ export default function CreateItem() {
     },
   });
 
-  async function createCategory(values) {
+  async function createItem(values) {
+    console.log("Creating item with values:", values);
     try {
       const response = await fetch("/api/item/post", {
         method: "POST",
@@ -121,7 +126,7 @@ export default function CreateItem() {
 
   async function onSubmit(values) {
     setIsSubmitting(true);
-    createCategory(values);
+    createItem(values);
     setIsSubmitting(false);
   }
 
@@ -133,7 +138,7 @@ export default function CreateItem() {
         collapsible
       >
         <AccordionItem className="!border-0 !border-b-0" value="item-1">
-          <AccordionTrigger className="!bg-white hover:!bg-blue-50 hover:border-blue-500 !rounded-xl !border !p-2 !text-gray-600">
+          <AccordionTrigger className="!bg-white  hover:!bg-blue-50 hover:border-blue-500 !rounded-xl !border !p-2 !text-gray-600">
             <div className="flex items-center gap-1">
               <svg
                 width="24"
@@ -159,6 +164,88 @@ export default function CreateItem() {
                 className="flex flex-col gap-2"
                 onSubmit={form.handleSubmit(onSubmit)}
               >
+                <FormField
+                  control={form.control}
+                  name="categoryId"
+                  render={({ field }) => (
+                    <FormItem className="w-full flex-grow">
+                      <FormLabel>*Categoría</FormLabel>
+                      <FormControl>
+                        <Popover open={open} onOpenChange={setOpen}>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={open}
+                              className="w-full justify-between !bg-white !rounded-md !text-gray-600"
+                            >
+                              {value
+                                ? categories.find(
+                                    (category) =>
+                                      category.partidaNumber +
+                                        "-" +
+                                        category.name ===
+                                      value
+                                  )?.partidaNumber +
+                                  " - " +
+                                  categories.find(
+                                    (category) =>
+                                      category.partidaNumber +
+                                        "-" +
+                                        category.name ===
+                                      value
+                                  )?.name
+                                : "Seleccionar categoría..."}
+                              <ChevronsUpDown className="opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="max-md:w-[40vh] lg:w-[100vh] p-0 ">
+                            <Command>
+                              <CommandInput
+                                className="!shadow-none !border-none"
+                                placeholder="Buscar categoría..."
+                              />
+                              <CommandList>
+                                <CommandEmpty>No hay categorías.</CommandEmpty>
+                                <CommandGroup>
+                                  {categories.map((category) => (
+                                    <CommandItem
+                                      key={category.name}
+                                      value={
+                                        category.partidaNumber +
+                                        "-" +
+                                        category.name
+                                      }
+                                      onSelect={(currentValue) => {
+                                        field.onChange(category.id);
+                                        setValue(
+                                          currentValue === value
+                                            ? ""
+                                            : currentValue
+                                        );
+                                        setOpen(false);
+                                      }}
+                                    >
+                                      {category.partidaNumber} - {category.name}
+                                      <Check
+                                        className={cn(
+                                          "ml-auto",
+                                          value === category.id
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
                 <div className="w-full flex gap-2 items-end max-xl:flex-col">
                   <FormField
                     control={form.control}
@@ -210,10 +297,19 @@ export default function CreateItem() {
                             <SelectContent className="!m-0 !p-0 !w-auto">
                               <SelectGroup>
                                 <SelectLabel>Tipo</SelectLabel>
+                                {/* 
                                 <SelectItem value="insumo">Insumo</SelectItem>
                                 <SelectItem value="herramienta">
                                   Herramienta
-                                </SelectItem>
+                                </SelectItem> 
+                                */}
+                                {types.map((type) => {
+                                  return (
+                                    <SelectItem value={type.id}>
+                                      {type.name}
+                                    </SelectItem>
+                                  );
+                                })}
                               </SelectGroup>
                             </SelectContent>
                           </Select>
@@ -223,85 +319,7 @@ export default function CreateItem() {
                   />
                 </div>
 
-                <FormField
-                  control={form.control}
-                  name="categoryId"
-                  render={({ field }) => (
-                    <FormItem className="w-full flex-grow">
-                      <FormLabel>*Categoría</FormLabel>
-                      <FormControl>
-                        <Popover open={open} onOpenChange={setOpen}>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              aria-expanded={open}
-                              className="w-full justify-between !bg-white !rounded-md !text-gray-600"
-                            >
-                              {value
-                                ? categories.find(
-                                    (category) =>
-                                      category.partidaNumber +
-                                        "-" +
-                                        category.name ===
-                                      value
-                                  )?.name
-                                : "Seleccionar categoría..."}
-                              <ChevronsUpDown className="opacity-50" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className=" w-[100vh] p-0 ">
-                            <Command>
-                              <CommandInput
-                                className="!shadow-none !border-none"
-                                placeholder="Buscar categoría..."
-                              />
-                              <CommandList>
-                                <CommandEmpty>
-                                  Categoría no encontrada.
-                                </CommandEmpty>
-                                <CommandGroup>
-                                  {categories.map((category) => (
-                                    <CommandItem
-                                      key={category.name}
-                                      value={
-                                        category.partidaNumber +
-                                        "-" +
-                                        category.name
-                                      }
-                                      onSelect={(currentValue) => {
-                                        // console.log(currentValue);
-                                        field.onChange(category.id);
-                                        setValue(
-                                          currentValue === value
-                                            ? ""
-                                            : currentValue
-                                        );
-                                        setOpen(false);
-                                      }}
-                                    >
-                                      {category.partidaNumber} - {category.name}
-                                      <Check
-                                        className={cn(
-                                          "ml-auto",
-                                          value === category.id
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex gap-2">
+                <div className="flex max-md:flex-col gap-2">
                   <FormField
                     control={form.control}
                     name="quantity"
@@ -327,13 +345,16 @@ export default function CreateItem() {
                         <FormLabel>*Unidad</FormLabel>
                         <FormControl>
                           <Select
+                            onClick={async () => {
+                              await getUnits(state, setState);
+                            }}
                             onValueChange={(value) => {
                               field.onChange(value); // Actualiza el valor en el estado del formulario
                             }}
                             value={field.value || ""} // Asegúrate de que el valor sea un string vacío si no hay valor
                           >
                             <SelectTrigger className="!bg-white !rounded-md !text-gray-600">
-                              <SelectValue placeholder="Seleccione tipo..." />
+                              <SelectValue placeholder="Seleccione unidad de medida..." />
                             </SelectTrigger>
                             <SelectContent className="!m-0 !p-0 !w-auto">
                               <SelectGroup>
@@ -365,14 +386,14 @@ export default function CreateItem() {
                             value={field.value || ""} // Asegúrate de que el valor sea un string vacío si no hay valor
                           >
                             <SelectTrigger className="!bg-white !rounded-md !text-gray-600">
-                              <SelectValue placeholder="Seleccione tipo..." />
+                              <SelectValue placeholder="Seleccione ubicación..." />
                             </SelectTrigger>
                             <SelectContent className="!m-0 !p-0 !w-auto">
                               <SelectGroup>
                                 <SelectLabel>Ubicación</SelectLabel>
                                 {ubications.map((ubication) => (
                                   <SelectItem value={ubication.id}>
-                                    {ubication.name}
+                                    {ubication.name} - {ubication.location.name}
                                   </SelectItem>
                                 ))}
                               </SelectGroup>

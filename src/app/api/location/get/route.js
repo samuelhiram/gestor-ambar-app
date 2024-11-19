@@ -4,8 +4,12 @@ import { withAuth } from "@/lib/withAuth";
 import jwt from "jsonwebtoken";
 
 export const GET = withAuth(async (req) => {
-  //return all locations in system
-  let locations = await prisma.location.findMany();
+  let locations = await prisma.location.findMany({
+    include: {
+      Ubication: true,
+      user: true,
+    },
+  });
   //reformat createdAt date
   locations = locations.map((location) => {
     return {

@@ -199,12 +199,22 @@ export default function CreateUser() {
         <AccordionItem className="!border-0 !border-b-0" value="item-1">
           <AccordionTrigger className="!bg-white hover:!bg-blue-50 hover:border-blue-500 !rounded-xl !border !p-2 !text-gray-600">
             <div className="flex items-center gap-1">
-              <Icon
-                icon="iconoir:add-user"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
-                style={{ color: "#1e3a8a" }}
-              />
+                viewBox="0 0 24 24"
+              >
+                <rect width="24" height="24" fill="none" />
+                <path
+                  fill="none"
+                  stroke="#1e3a8a"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M17 10h3m3 0h-3m0 0V7m0 3v3M1 20v-1a7 7 0 0 1 7-7v0a7 7 0 0 1 7 7v1m-7-8a4 4 0 1 0 0-8a4 4 0 0 0 0 8"
+                />
+              </svg>
               <h1 className="text-sm font-bold">Crear usuario</h1>
             </div>
           </AccordionTrigger>
@@ -212,124 +222,133 @@ export default function CreateUser() {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="w-full flex gap-2 items-end max-xl:flex-col"
+                className="flex flex-col gap-3"
               >
-                <FormField
-                  control={form.control}
-                  name="fullName"
-                  render={({ field }) => (
-                    <FormItem className="w-full flex-grow">
-                      <FormLabel>Nombre completo</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          placeholder="Ana Gutierrez"
-                          {...field}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem className="w-full flex-grow">
-                      <FormLabel>Correo institucional</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="@tectijuana.edu.mx"
-                          {...field}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="control_number"
-                  render={({ field }) => (
-                    <FormItem className="w-full flex-grow">
-                      <FormLabel>Número de control</FormLabel>
-                      <FormControl>
-                        <Input type="text" placeholder="20212903" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="role"
-                  render={({ field }) => (
-                    <FormItem className="w-full flex-grow">
-                      <FormLabel>Rol</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={(value) => {
-                            field.onChange(value); // Actualiza el valor en el estado del formulario
-                          }}
-                          value={field.value || ""} // Asegúrate de que el valor sea un string vacío si no hay valor
-                        >
-                          <SelectTrigger className="!bg-white !rounded-md !text-gray-600">
-                            <SelectValue placeholder="Seleccione Rol" />
-                          </SelectTrigger>
-                          <SelectContent className="!m-0 !p-0 !w-auto">
-                            <SelectGroup>
-                              <SelectLabel>Rol</SelectLabel>
-                              <SelectItem value="admin">Admin</SelectItem>
-                              <SelectItem value="viewer">Viewer</SelectItem>
-                              <SelectItem value="mod">Mod</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem className="w-full flex-grow">
-                      <FormLabel>Lugar</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={(value) => {
-                            field.onChange(value); // Actualiza el valor en el estado del formulario
-                          }}
-                          value={field.value || ""} // Asegúrate de que el valor sea un string vacío si no hay valor
-                        >
-                          <SelectTrigger className="w-full !bg-white !rounded-md !text-gray-600">
-                            <SelectValue placeholder="Seleccione plantel" />
-                          </SelectTrigger>
-                          <SelectContent className="!m-0 !p-0 !w-auto">
-                            <SelectGroup>
-                              <SelectLabel>Unidad</SelectLabel>
-                              {/* <SelectItem value="Unidad Tomas Aquino">
+                <div className="w-full flex gap-2 items-end max-xl:flex-col">
+                  <FormField
+                    control={form.control}
+                    name="fullName"
+                    render={({ field }) => (
+                      <FormItem className="w-full flex-grow">
+                        <FormLabel>Nombre completo</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            placeholder="Ana Gutierrez"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem className="w-full flex-grow">
+                        <FormLabel>Correo institucional</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="email"
+                            placeholder="@tectijuana.edu.mx"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="control_number"
+                    render={({ field }) => (
+                      <FormItem className="w-full flex-grow">
+                        <FormLabel>Número de control</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            placeholder="20212903"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="role"
+                    render={({ field }) => (
+                      <FormItem className="w-full flex-grow">
+                        <FormLabel>Rol</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={(value) => {
+                              field.onChange(value); // Actualiza el valor en el estado del formulario
+                            }}
+                            value={field.value || ""} // Asegúrate de que el valor sea un string vacío si no hay valor
+                          >
+                            <SelectTrigger className="!bg-white !rounded-md !text-gray-600">
+                              <SelectValue placeholder="Seleccione Rol" />
+                            </SelectTrigger>
+                            <SelectContent className="!m-0 !p-0 !w-auto">
+                              <SelectGroup>
+                                <SelectLabel>Rol</SelectLabel>
+                                <SelectItem value="admin">Admin</SelectItem>
+                                <SelectItem value="viewer">Viewer</SelectItem>
+                                <SelectItem value="mod">Mod</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="location"
+                    render={({ field }) => (
+                      <FormItem className="w-full flex-grow">
+                        <FormLabel>Lugar</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={(value) => {
+                              field.onChange(value); // Actualiza el valor en el estado del formulario
+                            }}
+                            value={field.value || ""} // Asegúrate de que el valor sea un string vacío si no hay valor
+                          >
+                            <SelectTrigger className="w-full !bg-white !rounded-md !text-gray-600">
+                              <SelectValue placeholder="Seleccione plantel" />
+                            </SelectTrigger>
+                            <SelectContent className="!m-0 !p-0 !w-auto">
+                              <SelectGroup>
+                                <SelectLabel>Unidad</SelectLabel>
+                                {/* <SelectItem value="Unidad Tomas Aquino">
                                 Unidad Tomas Aquino
                               </SelectItem>
                               <SelectItem value="Unidad Otay">
                                 Unidad Otay
                               </SelectItem> */}
-                              {state.locations.map((location) => (
-                                <SelectItem
-                                  key={location.id}
-                                  value={location.id}
-                                >
-                                  {location.name}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <Button disabled={isSubmitting} type="submit">
-                  Crear
-                </Button>
+                                {state.locations.map((location) => (
+                                  <SelectItem
+                                    key={location.id}
+                                    value={location.id}
+                                  >
+                                    {location.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div>No se puede repetir el correo o número de control.</div>
+                <div className="w-full flex justify-end">
+                  <Button disabled={isSubmitting} type="submit">
+                    Crear
+                  </Button>
+                </div>
               </form>
             </Form>
           </AccordionContent>

@@ -66,7 +66,7 @@ function Main() {
               ...state.modules,
               {
                 id: 0,
-                icon: "lets-icons:user-cicrle-duotone",
+                icon: "lets-icons--user-cicrle-duotone",
                 moduleName: "Usuario",
                 title: data.user.fullName,
                 description: data.user.role,
@@ -80,7 +80,7 @@ function Main() {
       //get locations and set in mainappcontext
       const fetchLocations = async () => {
         try {
-          const response = await fetch("/api/locations/get", {
+          const response = await fetch("/api/location/get", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -102,8 +102,6 @@ function Main() {
 
       fetchLocations();
     } catch (e) {
-      // localStorage.clear();
-      // console.log("error: ", e);
       window.location.href = "/";
     }
   }, []);

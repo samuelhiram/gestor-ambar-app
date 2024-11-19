@@ -9,12 +9,14 @@ export default function Logo() {
           <div className=" bg-gray-100/90 flex flex-col w-full justify-center items-center">
             <div className="flex w-full">
               <div className="p- flex flex-wrap bg-blue-900/90 w-2/5 justify-center items-center text-white">
-                {/* <Image
+                <Image
+                  priority
                   src="img/ittlogo_.svg"
                   alt="TecTijuana"
                   width={60}
                   height={60}
-                /> */}
+                  className="p-1"
+                />
                 <div>
                   <p className="font-extralight text-sm  text-left">Sistema</p>
                   <p className="font-bold text-2xl text-left">CIMS</p>
