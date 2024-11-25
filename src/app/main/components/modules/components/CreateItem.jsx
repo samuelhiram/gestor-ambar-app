@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
@@ -101,7 +101,7 @@ export default function CreateItem() {
   });
 
   async function createItem(values) {
-    console.log("Creating item with values:", values);
+    // console.log("Creating item with values:", values);
     try {
       const response = await fetch("/api/item/post", {
         method: "POST",
@@ -141,17 +141,20 @@ export default function CreateItem() {
         duration: 500,
       });
 
+      setIsSubmitting(false);
+
       const responseData = await response.json();
+
       return responseData;
     } catch (error) {
       console.error("Error creating item:", error);
+      setIsSubmitting(false);
     }
   }
 
   async function onSubmit(values) {
     setIsSubmitting(true);
     createItem(values);
-    setIsSubmitting(false);
   }
 
   return (
@@ -433,7 +436,7 @@ export default function CreateItem() {
                     name="barCode"
                     render={({ field }) => (
                       <FormItem className="w-full flex-grow">
-                        <FormLabel>*Código de barras</FormLabel>
+                        <FormLabel>Código de barras</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Código de barras si aplica..."

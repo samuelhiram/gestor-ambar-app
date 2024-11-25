@@ -97,8 +97,6 @@ export default function CreateUser() {
 
     values.password = password;
 
-    console.log(values);
-
     try {
       // Ocultar alerta de diálogo al iniciar el proceso
       setState((prev) => ({

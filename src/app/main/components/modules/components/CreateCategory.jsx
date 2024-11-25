@@ -34,7 +34,7 @@ export default function CreateCategory() {
     partidaNumber: z
       .string()
       .regex(/^\d+$/, { message: "Debe contener solo números" }),
-    name: z.string().min(2, { message: "Obligatorio" }).max(50),
+    name: z.string().min(2, { message: "Obligatorio" }).max(80),
   });
   // 1. Define your form.
   const form = useForm({

@@ -5,6 +5,8 @@ import { withAuth } from "@/lib/withAuth";
 export const GET = withAuth(async (req) => {
   let items = await prisma.item.findMany({
     include: {
+      entry: true,
+      outs: true,
       unit: {
         select: {
           name: true,
@@ -28,6 +30,38 @@ export const GET = withAuth(async (req) => {
         },
       },
     },
+  });
+
+  //reorder entryes from latest to oldest
+  items = items.map((item) => {
+    return {
+      ...item,
+      entry: item.entry.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      ),
+    };
+  });
+
+  //reorder outs from latest to oldest
+  items = items.map((item) => {
+    return {
+      ...item,
+      outs: item.outs.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      ),
+    };
+  });
+
+  //count all the item entry
+  items = items.map((item) => {
+    const entry = item.entry.reduce((acc, entry) => acc + entry.quantity, 0);
+    return { ...item, entryes: entry };
+  });
+
+  //count all the item outs
+  items = items.map((item) => {
+    const outs = item.outs.reduce((acc, out) => acc + out.quantity, 0);
+    return { ...item, outs };
   });
 
   //remove barCode field

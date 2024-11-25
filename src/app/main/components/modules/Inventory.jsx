@@ -48,7 +48,6 @@ export default function Inventory() {
       console.error(e.message);
     }
   }, []);
-  console.log(state.items);
   const inventoryItemsActions = [
     {
       action: "entryes",
@@ -99,7 +98,6 @@ export default function Inventory() {
   return (
     <div className="flex flex-col gap-3">
       <CreateItem />
-
       <DynamicTable
         tableName="Suministros"
         tableIcon="material-symbols-light--category-search-outline-rounded"
@@ -107,19 +105,25 @@ export default function Inventory() {
           "Partida",
           "Nombre",
           "Descripción",
-          "Unidad",
           "Cantidad",
+          "Unidad",
+          "Entradas",
+          "Salidas",
           "Ubicación",
         ]}
         dataHeaders={[
           "partidaNumber",
           "name",
           "description",
-          "unit",
           "quantity",
+          "unit",
+          "entryes",
+          "outs",
           "ubication",
         ]}
         data={state.items}
+        showThisHeaderInHover="category"
+        colHoverNumber={0}
         actions={inventoryItemsActions}
       />
     </div>

@@ -6,6 +6,13 @@ import { withAuth } from "@/lib/withAuth";
 export const POST = withAuth(async (req) => {
   const body = await req.json();
 
+  //verificar item si el codigo de barras ya existe
+  const item = await prisma.item.findFirst({
+    where: {
+      barCode: body.barCode,
+    },
+  });
+
   try {
     var {
       barCode,
@@ -64,6 +71,17 @@ export const POST = withAuth(async (req) => {
           ubication: { connect: { id: ubicationId } }, // Conectar con ubicación
         },
       });
+
+      //crear un registor de entrada del item para nuevo item
+      await prisma.entryes.create({
+        data: {
+          quantity: parsedQuantity,
+          itemId: item.id,
+          userId,
+          status: "active",
+        },
+      });
+
       return new NextResponse(JSON.stringify({ item }), { status: 201 });
     } catch (error) {
       console.error("Error al crear el item", error);

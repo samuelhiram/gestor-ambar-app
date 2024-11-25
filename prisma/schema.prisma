@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -150,9 +150,7 @@ model Item {
   ubicationId String //foreign key
   ubication   Ubication @relation(fields: [ubicationId], references: [id])
 
-  /// Relación uno a muchos con las entradas
   entry Entryes[] // Relación uno a muchos con las entradas
-  /// Relación uno a muchos con las salidas
   outs  Outs[] // Relación uno a muchos con las salidas
   loan  Loans[] // Relación uno a muchos con los préstamos
 }

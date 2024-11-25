@@ -5,7 +5,6 @@ import { Icon } from "@iconify/react";
 import Image from "next/image";
 import ActionsRouter from "./ActionsRouter";
 //
-//
 const DynamicTable = ({
   tableIcon = "fluent:table-48-filled",
   tableName = "table",
@@ -13,8 +12,9 @@ const DynamicTable = ({
   dataHeaders,
   data,
   actions,
+  showThisHeaderInHover = null,
+  colHoverNumber = 0,
 }) => {
-  console.log("data", data);
   const { state } = useMainAppContext();
   const tableRef = useRef(null); // Referencia para la tabla
   // Detectar clics fuera de la tabla
@@ -88,13 +88,13 @@ const DynamicTable = ({
           <div
             className={` ${
               selectedRows.length === 0 ? "hidden" : "visible"
-            } select-none fixed bottom-0 bg-white border  flex flex-col flex-grow flex-wrap justify-start max-md:justify-center rounded-t-lg overflow-hidden text-sm  !m-0`}
+            } select-none z-30  fixed bottom-0 bg-white border  flex flex-col flex-grow flex-wrap justify-start max-md:justify-center rounded-t-lg overflow-hidden text-sm  !m-0`}
           >
             <div
               onClick={() => {
                 setHideActions(!hideActions);
               }}
-              className="p-2 font-semibold cursor-pointer min-w-36 flex justify-between items-center hover:bg-gray-100"
+              className="p-2  font-semibold cursor-pointer min-w-36 flex justify-between items-center hover:bg-gray-100"
             >
               <div className="flex items-center gap-2">
                 <div className="text-xs border border-1 border-blue-200 rounded-md bg-blue-50 text-blue-500 p-1">
@@ -126,12 +126,14 @@ const DynamicTable = ({
               </div>
             </div>
             <div
-              className={`${!hideActions ? "p-2 gap-2 flex flex-col" : ""} `}
+              className={`${
+                !hideActions ? "p-2 gap-2 flex flex-row max-md:flex-col" : ""
+              } `}
             >
               {selectedRows.length && !hideActions
                 ? actions.map((action, actionIndex) => (
                     <div
-                      className={`${action.color} ${action.textColor} flex items-center gap-1 p-1 rounded-md cursor-pointer ${action.hoverColor}`}
+                      className={`${action.color} ${action.textColor}  flex items-center gap-1 p-1 rounded-md cursor-pointer ${action.hoverColor}`}
                       key={actionIndex}
                       onClick={() => {
                         setActionSelected(action.action);
@@ -226,21 +228,30 @@ const DynamicTable = ({
               <tbody>
                 {filteredData.map((row, rowIndex) => (
                   <tr
-                    className={`cursor-pointer bg-white  hover:bg-green-50 border-2`}
+                    className={`cursor-pointer bg-white hover:border-green-500  hover:bg-blue-50 border-outline border-b-2`}
                     key={rowIndex}
                     onClick={() => handleRowClick(row)}
                   >
+                    {/* Texto que aparece al hover */}
+
                     {dataHeaders.map((dataHeader, colIndex) => (
                       <td
                         className={`${
-                          //if the row is selected, change the background color
                           selectedRows.some((r) => r.id === row.id)
                             ? "bg-green-100 text-green-600"
                             : ""
-                        } text-sm p-2 max-sm:p-1 max-sm:flex max-sm:flex-col max-sm:first:bg-blue-900 max-sm:first:text-gray-50 max-sm: text-center border`}
+                        } text-sm p-2 max-sm:p-1 max-sm:flex max-sm:flex-col max-sm:first:bg-blue-900 max-sm:first:text-gray-50 text-center relative group border`}
                         key={colIndex}
                       >
-                        <div className="break-all">{row[dataHeader]}</div>
+                        <div>{row[dataHeader]}</div>
+                        {/* {colIndex === colHoverNumber &&
+                          showThisHeaderInHover !== null &&
+                          !showActions &&
+                          !state.isLoadingModule && (
+                            <div className="absolute left-0 top-full z-50 p-2 w-full bg-gray-700 text-white text-xs opacity-0 group-hover:opacity-100 ">
+                              {`${row[showThisHeaderInHover]}`}
+                            </div>
+                          )} */}
                       </td>
                     ))}
                   </tr>

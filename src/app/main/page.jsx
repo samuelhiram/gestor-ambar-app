@@ -76,31 +76,6 @@ function Main() {
         }
       };
       getSession();
-
-      //get locations and set in mainappcontext
-      const fetchLocations = async () => {
-        try {
-          const response = await fetch("/api/location/get", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          });
-          if (!response.ok) {
-            throw new Error("Failed to fetch locations");
-          }
-          const data = await response.json();
-          setState((prev) => ({
-            ...prev,
-            locations: data.locations,
-          }));
-        } catch (err) {
-          console.error("Error fetching locations:", err.message);
-        }
-      };
-
-      fetchLocations();
     } catch (e) {
       window.location.href = "/";
     }

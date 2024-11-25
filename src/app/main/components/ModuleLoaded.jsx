@@ -67,7 +67,7 @@ export default function ModuleLoaded() {
         </div>
       ) : null}
 
-      <div className={`p-4 max-md:mb-32`}>
+      <div className={`p-4 max-md:mb-32 lg:mb-24`}>
         {state.activeModuleName === "Inicio" && <Start />}
         {state.activeModuleName === "Inventario" && <Inventory />}
         {state.activeModuleName === "Usuario" && <User />}
