@@ -5,7 +5,11 @@ import { withAuth } from "@/lib/withAuth";
 export const GET = withAuth(async (req) => {
   let items = await prisma.item.findMany({
     include: {
-      entry: true,
+      entry: {
+        include: {
+          user: true,
+        },
+      },
       outs: true,
       unit: {
         select: {

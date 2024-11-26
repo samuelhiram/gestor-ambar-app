@@ -28,9 +28,6 @@ export default function InventoryReportEntry({
       value: parseInt(formData.get(`item-${item.id}`), 10) || 0, // Obtener valores por id dinámico
     }));
 
-    //actualizar las filas seleccionadas
-    setSelectedRows(entries);
-
     //si todas las entradas === 0
     if (entries.every((entry) => entry.value === 0)) {
       toast({
@@ -59,7 +56,10 @@ export default function InventoryReportEntry({
       });
 
       const updatedEntryesResponse = await response.json();
-      console.log(updatedEntryesResponse);
+      console.log(
+        "THIS IS THE RESPONSE: ",
+        updatedEntryesResponse.updatedEntryeItems
+      );
       if (response.ok) {
         toast({
           className:
@@ -68,6 +68,8 @@ export default function InventoryReportEntry({
           variant: "success",
           title: "Entradas reportadas...",
         });
+
+        setSelectedRows(updatedEntryesResponse.updatedEntryeItems);
 
         await fetch("/api/item/get", {
           method: "GET",

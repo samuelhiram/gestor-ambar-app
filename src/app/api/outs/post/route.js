@@ -5,7 +5,7 @@ export const POST = withAuth(async (req) => {
   try {
     const body = await req.json();
     const { outs, userId } = body;
-    const createdEntries = await prisma.outs.createMany({
+    const createdOuts = await prisma.outs.createMany({
       data: outs.map((out) => ({
         quantity: out.value,
         itemId: out.id,
@@ -34,7 +34,7 @@ export const POST = withAuth(async (req) => {
     return new NextResponse(
       JSON.stringify({
         message: "Outs created successfully",
-        createdEntries,
+        createdEntries: createdOuts,
       }),
       { status: 201 }
     );

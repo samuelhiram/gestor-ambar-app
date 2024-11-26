@@ -5,6 +5,7 @@ export const POST = withAuth(async (req) => {
   try {
     const body = await req.json();
     const { entries, userId } = body;
+
     const createdEntries = await prisma.entryes.createMany({
       data: entries.map((entry) => ({
         quantity: entry.value,
@@ -12,6 +13,18 @@ export const POST = withAuth(async (req) => {
         userId,
         status: "active",
       })),
+    });
+
+    //get the item that was updated in them entryes
+    const updatedEntryeItems = await prisma.item.findMany({
+      include: {
+        entry: true,
+      },
+      where: {
+        id: {
+          in: entries.map((entry) => entry.id),
+        },
+      },
     });
 
     //update quantityes in items
@@ -35,7 +48,7 @@ export const POST = withAuth(async (req) => {
     return new NextResponse(
       JSON.stringify({
         message: "Entries created successfully",
-        updatedItems,
+        updatedEntryeItems,
       }),
       { status: 201 }
     );
