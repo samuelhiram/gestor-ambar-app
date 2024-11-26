@@ -31,6 +31,7 @@ export const GET = withAuth(async (req) => {
       ubication: {
         select: {
           name: true,
+          location: true,
         },
       },
     },
@@ -82,8 +83,9 @@ export const GET = withAuth(async (req) => {
       unit: item.unit.name,
       type: item.type.name,
       category: item.category.name,
-      user: item.user.name,
+      user: item.user.fullName,
       ubication: item.ubication.name,
+      location: item.ubication.location.name,
     };
   });
 

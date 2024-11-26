@@ -28,16 +28,39 @@ export default function InventoryItemDetails({ closeThisModal, items }) {
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                <div className="p-2 border-b border-black">
-                  <p>
-                    <strong>Categoría:</strong> {item.category}
-                  </p>
+                <div className="p-2 border-b border-black flex justify-between gap-1">
+                  <div>
+                    <p>
+                      <strong>Categoría:</strong> {item.category}
+                    </p>
+                    <p>
+                      <strong>Partida:</strong> {item.partidaNumber}
+                    </p>
+                  </div>
+                  <div>
+                    <p>
+                      <strong>Locación:</strong> {item.location}
+                    </p>
+                    <p>
+                      <strong>Ubicación:</strong> {item.ubication}
+                    </p>
+                  </div>
+                  <div>
+                    <p>
+                      <strong>Creado por:</strong> {item.user}
+                    </p>
+
+                    <p>
+                      <strong>Fecha de creación:</strong>{" "}
+                      {new Date(item.createdAt).toLocaleString()}
+                    </p>
+                  </div>
                 </div>
                 <Accordion type="single" collapsible>
                   {item.entry.map((entry) => (
                     <AccordionItem key={entry.id} value={entry.id}>
                       <AccordionTrigger className="!bg-gray-100 !border-none !p-1 !shadow-none text-sm">
-                        <div className="grid grid-cols-3 gap-4 items-center w-full">
+                        <div className="grid grid-cols-4 gap-4 items-center w-full">
                           <span className="text-green-700 text-left flex items-center gap-1 ">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -57,6 +80,16 @@ export default function InventoryItemDetails({ closeThisModal, items }) {
                             </svg>
                             {`Entrada`}
                           </span>
+                          <span className="text-gray-700 text-center">
+                            {" "}
+                            <span className="font-light">
+                              reportado por
+                            </span>{" "}
+                            {`${entry.user.fullName.split(" ")[0]} ${
+                              entry.user.fullName.split(" ")[1] || ""
+                            } `}
+                          </span>
+
                           <span className="text-gray-700 text-center">{`+ ${entry.quantity}`}</span>
                           <span className="text-gray-700 text-center">
                             {new Date(entry.createdAt).toLocaleString()}
@@ -64,7 +97,7 @@ export default function InventoryItemDetails({ closeThisModal, items }) {
                         </div>
                       </AccordionTrigger>
                       <AccordionContent>
-                        <div className="grid grid-cols-2 py-3">
+                        {/* <div className="grid grid-cols-2 py-3">
                           <p>
                             <strong>Se ingresó el valor:</strong>{" "}
                             {entry.quantity}
@@ -72,7 +105,7 @@ export default function InventoryItemDetails({ closeThisModal, items }) {
                           <p>
                             <strong>Reportado por:</strong> {entry.userId}
                           </p>
-                        </div>
+                        </div> */}
                       </AccordionContent>
                     </AccordionItem>
                   ))}

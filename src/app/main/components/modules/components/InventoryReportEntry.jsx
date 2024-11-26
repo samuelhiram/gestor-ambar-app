@@ -110,7 +110,7 @@ export default function InventoryReportEntry({
     <form ref={formRef} onSubmit={handleSubmit}>
       <div className="flex  p-2 flex-col gap-2 h-[40vh] overflow-auto">
         <div className="w-full flex justify-between font-semibold">
-          <div className="w-2/4">Partida</div>
+          <div className="w-2/4">Suministro</div>
           <div className="w-1/4">Cantidad</div>
         </div>
         {items.map((item) => (
