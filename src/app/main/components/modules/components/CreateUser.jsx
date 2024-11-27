@@ -70,6 +70,7 @@ export default function CreateUser() {
       location: "",
     },
   });
+
   const sendPasswordEmail = async (email, password) => {
     // Inicializar EmailJS con tu clave pública
     emailjs.init({
@@ -132,7 +133,6 @@ export default function CreateUser() {
 
       // Obtener datos del usuario si la solicitud fue exitosa
       const data = await response.json();
-      console.log("User registered successfully:", data); // Muestra los datos devueltos por el backend
 
       sendPasswordEmail(values.email, password);
 

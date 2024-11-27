@@ -60,7 +60,7 @@ export default function Inventory() {
     },
     {
       action: "outs",
-      actionTitle: "Reportar entrada de suministros",
+      actionTitle: "Reportar salida de suministros",
       color: "bg-red-900",
       textColor: "text-red-50",
       hoverColor: "hover:bg-red-700",

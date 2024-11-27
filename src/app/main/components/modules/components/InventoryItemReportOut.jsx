@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useMainAppContext } from "../../MainAppContext";
 import { useToast } from "@/hooks/use-toast";
 
-export default function InventoryReportOut({
+export default function InventoryItemReportOut({
   closeThisModal,
   items,
   setSelectedRows,
@@ -22,13 +22,28 @@ export default function InventoryReportOut({
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevenir recarga de la página
     const formData = new FormData(formRef.current);
-    const entries = items.map((item) => ({
+
+    const outs = items.map((item) => ({
       id: item.id,
       value: parseInt(formData.get(`item-${item.id}`), 10) || 0, // Obtener valores por id dinámico
     }));
 
+    //si todas las entradas === 0
+    if (outs.every((out) => out.value === 0)) {
+      toast({
+        className:
+          "top-0 right-0 flex fixed md:max-w-[420px] md:top-2 md:right-2",
+        position: "top-right",
+        variant: "warning",
+        title: "No hay entradas reportadas...",
+        duration: 900,
+      });
+      return;
+    }
+
     try {
       setLoading(true);
+
       const response = await fetch("/api/outs/post", {
         method: "POST",
         headers: {
@@ -36,13 +51,18 @@ export default function InventoryReportOut({
           Authorization: `Bearer ${state.token}`,
         },
         body: JSON.stringify({
-          entries,
+          outs: outs,
           userId: state.user.id, // Reemplaza con el ID del usuario autenticado
         }),
       });
 
-      const result = await response.json();
-      console.log(result);
+      const inventoryOutsResponse = await response.json();
+
+      console.log(
+        "THIS IS THE RESPONSE: ",
+        inventoryOutsResponse.updatedOutsItems
+      );
+
       if (response.ok) {
         toast({
           className:
@@ -51,6 +71,9 @@ export default function InventoryReportOut({
           variant: "success",
           title: "Entradas reportadas...",
         });
+
+        setSelectedRows(inventoryOutsResponse.updatedOutsItems);
+
         await fetch("/api/item/get", {
           method: "GET",
           headers: {
@@ -65,9 +88,10 @@ export default function InventoryReportOut({
               items: data.items,
             }));
           });
+
         closeThisModal();
       } else {
-        alert(`Error: ${result.message}`);
+        alert(`Error: ${inventoryOutsResponse.message}`);
       }
 
       setLoading(false);
@@ -79,6 +103,7 @@ export default function InventoryReportOut({
         position: "top-right",
         variant: "destructive",
         title: "Entradas reportadas...",
+        duration: 900,
       });
       setLoading(false);
     }
@@ -88,7 +113,7 @@ export default function InventoryReportOut({
     <form ref={formRef} onSubmit={handleSubmit}>
       <div className="flex  p-2 flex-col gap-2 h-[40vh] overflow-auto">
         <div className="w-full flex justify-between font-semibold">
-          <div className="w-2/4">Partida</div>
+          <div className="w-2/4">Suministro</div>
           <div className="w-1/4">Cantidad</div>
         </div>
         {items.map((item) => (

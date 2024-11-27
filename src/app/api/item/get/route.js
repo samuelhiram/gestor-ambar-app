@@ -10,7 +10,11 @@ export const GET = withAuth(async (req) => {
           user: true,
         },
       },
-      outs: true,
+      outs: {
+        include: {
+          user: true,
+        },
+      },
       unit: {
         select: {
           name: true,
@@ -35,6 +39,14 @@ export const GET = withAuth(async (req) => {
         },
       },
     },
+  });
+
+  //modify the item object save all outs in a object called "listedouts"
+  items = items.map((item) => {
+    return {
+      ...item,
+      out: item.outs,
+    };
   });
 
   //reorder entryes from latest to oldest

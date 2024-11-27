@@ -23,7 +23,11 @@ export const POST = withAuth(async (req) => {
             user: true,
           },
         },
-        outs: true,
+        outs: {
+          include: {
+            user: true,
+          },
+        },
         unit: {
           select: {
             name: true,
@@ -44,8 +48,6 @@ export const POST = withAuth(async (req) => {
         ubication: {
           select: {
             name: true,
-          },
-          include: {
             location: true,
           },
         },
@@ -55,6 +57,14 @@ export const POST = withAuth(async (req) => {
           in: entries.map((entry) => entry.id),
         },
       },
+    });
+
+    //modify the item object save all outs in a object called "listedouts"
+    updatedEntryeItems = updatedEntryeItems.map((item) => {
+      return {
+        ...item,
+        out: item.outs,
+      };
     });
 
     //reorder entryes from latest to oldest

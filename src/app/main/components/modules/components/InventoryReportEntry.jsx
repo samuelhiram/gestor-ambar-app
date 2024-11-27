@@ -15,7 +15,6 @@ export default function InventoryReportEntry({
 
   const handleInput = (event) => {
     const value = event.target.value;
-    // Permitir solo dígitos
     event.target.value = value.replace(/[^0-9]/g, "");
   };
 
