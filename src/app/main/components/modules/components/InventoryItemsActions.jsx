@@ -3,6 +3,7 @@ import InventoryItemReportOut from "./InventoryItemReportOut";
 import InventoryReportEntry from "./InventoryReportEntry";
 import InventoryItemDetails from "./InventoryItemDetails";
 import InventoryItemsEdit from "./InventoryItemsEdit";
+import InventoryItemDelete from "./InventoryItemDelete";
 export default function InventoryItemsActions({
   closeThisModal,
   action,
@@ -10,6 +11,10 @@ export default function InventoryItemsActions({
   setSelectedRows,
 }) {
   switch (action) {
+    case "delete":
+      return (
+        <InventoryItemDelete closeThisModal={closeThisModal} items={rows} />
+      );
     case "outs":
       return (
         <InventoryItemReportOut

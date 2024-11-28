@@ -27,20 +27,19 @@ export default function InventoryItemDetails({ closeThisModal, items }) {
             return (
               <AccordionItem key={item.id || index} value={`item-${index}`}>
                 <AccordionTrigger className="!bg-white !text-gray-500 !shadow-none !border-none  !p-1">
-                  <div>
+                  <div className="text-lg capitalize">
                     {item.partidaNumber} - {item.name}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="p-2 border-b border-black flex flex-col justify-between gap-1">
+                  <div className="p-2 border-b border-black flex flex-col justify-between gap-2">
                     <div className="flex justify-between">
                       <p>
                         <strong>Categoría:</strong> {item.category}
                       </p>
                     </div>
-
                     <div className="flex justify-between">
-                      <div>
+                      <div className=" flex flex-col gap-2">
                         <p>
                           <strong>Locación:</strong> {item.location}
                         </p>
@@ -51,7 +50,7 @@ export default function InventoryItemDetails({ closeThisModal, items }) {
                       <p>
                         <strong>Partida:</strong> {item.partidaNumber}
                       </p>
-                      <div>
+                      <div className=" flex flex-col gap-2">
                         <p>
                           <strong>Creado por:</strong> {item.user}
                         </p>

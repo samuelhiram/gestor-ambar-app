@@ -87,12 +87,12 @@ export default function Inventory() {
     },
     {
       action: "delete",
-      color: "bg-orange-600",
-      actionTitle: "Desactivar suministros",
+      color: "bg-red-500",
+      actionTitle: "Eliminar suministros",
       textColor: "text-gray-50",
-      hoverColor: "hover:bg-orange-700",
+      hoverColor: "hover:bg-red-700",
       icon: "material-symbols-light:tab-inactive-outline",
-      description: "Desactivar",
+      description: "Eliminar",
     },
   ];
   return (
