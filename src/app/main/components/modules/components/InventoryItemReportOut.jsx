@@ -102,7 +102,7 @@ export default function InventoryItemReportOut({
           "top-0 right-0 flex fixed md:max-w-[420px] md:top-2 md:right-2",
         position: "top-right",
         variant: "destructive",
-        title: "Entradas reportadas...",
+        title: "Salidas reportadas...",
         duration: 900,
       });
       setLoading(false);

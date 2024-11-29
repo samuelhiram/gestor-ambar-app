@@ -21,6 +21,21 @@ export default function InventoryItemDelete({ items, closeThisModal }) {
       .then((res) => res.json())
       .then((data) => {
         console.log("Respuesta del servidor:", data);
+        //fetch items
+        fetch("/api/item/get", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${state.token}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("Respuesta del servidor:", data);
+            setState({ ...state, items: data.items });
+          })
+          .catch((error) => {
+            console.error("Error al obtener los elementos:", error);
+          });
         closeThisModal(); // Cerrar el modal
       })
       .catch((error) => {

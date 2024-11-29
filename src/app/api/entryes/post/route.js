@@ -89,13 +89,13 @@ export const POST = withAuth(async (req) => {
 
     //count all the item entry
     updatedEntryeItems = updatedEntryeItems.map((item) => {
-      const entry = item.entry.reduce((acc, entry) => acc + entry.quantity, 0);
+      const entry = item.entry.reduce((acc, entry) => acc + 1, 0);
       return { ...item, entryes: entry };
     });
 
     //count all the item outs
     updatedEntryeItems = updatedEntryeItems.map((item) => {
-      const outs = item.outs.reduce((acc, out) => acc + out.quantity, 0);
+      const outs = item.outs.reduce((acc, out) => acc + 1, 0);
       return { ...item, outs };
     });
 
