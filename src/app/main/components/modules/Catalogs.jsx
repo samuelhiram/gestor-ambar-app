@@ -5,6 +5,7 @@ import CreateUnit from "./components/CreateUnit";
 import CreateUbication from "./components/CreateUbication";
 import CreateLocation from "./components/CreateLocation";
 import CreateType from "./components/CreateType";
+import CreateResponsible from "./components/CreateResponsible";
 import { useMainAppContext } from "../../components/MainAppContext";
 //
 import { getCategories } from "./components/CreateCategory";
@@ -50,6 +51,7 @@ export default function Catalogs() {
       <div className="flex flex-col gap-2 w-1/2 max-md:w-full">
         <CreateUnit />
         <CreateUbication />
+        <CreateResponsible />
       </div>
     </div>
   );

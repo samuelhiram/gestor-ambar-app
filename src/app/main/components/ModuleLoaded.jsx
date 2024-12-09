@@ -11,6 +11,7 @@ import User from "./modules/User";
 import Users from "./modules/Users";
 import Catalogs from "./modules/Catalogs";
 import Loader from "../../components/Loader/Loader";
+import Loans from "./modules/Loans";
 //
 export default function ModuleLoaded() {
   const { state } = useMainAppContext();
@@ -73,6 +74,7 @@ export default function ModuleLoaded() {
         {state.activeModuleName === "Usuario" && <User />}
         {state.activeModuleName === "Usuarios" && <Users />}
         {state.activeModuleName === "Catalogos" && <Catalogs />}
+        {state.activeModuleName === "Prestamos" && <Loans />}
       </div>
     </div>
   );

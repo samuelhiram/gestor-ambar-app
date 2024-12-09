@@ -23,7 +23,6 @@ import Logo from "../main/components/Logo";
 import { use } from "bcrypt/promises";
 export default function Login() {
   useEffect(() => {
-    //preven default
     localStorage.removeItem("userId");
     localStorage.removeItem("token");
   }, []);

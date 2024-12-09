@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 import { useInactivityHandler } from "../hooks/useInactivityHandler";
 import Loader from "../components/Loader/Loader";
 import DialogAlert from "./components/DialogAlert";
+//
+//
 
 export default function page() {
   return (

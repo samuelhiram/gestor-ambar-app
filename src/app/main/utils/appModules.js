@@ -15,10 +15,10 @@ export var appModules = [
   },
   {
     id: 2,
-    moduleName: "Herramientas",
-    icon: "ri--tools-fill",
-    title: "Herramientas",
-    description: "Ver y gestionar herramientas",
+    moduleName: "Prestamos",
+    icon: "ph--hand-arrow-down-light",
+    title: "Prestamos",
+    description: "Ver y gestionar solicitudes prestamos",
   },
   {
     id: 3,

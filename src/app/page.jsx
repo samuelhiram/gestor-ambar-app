@@ -9,6 +9,7 @@ export default function Home() {
   var token;
   var userId;
   useEffect(() => {
+    localStorage.clear();
     setLoading(true);
     // fetch create defaultUser
     const fetchDefaults = async () => {
@@ -27,14 +28,10 @@ export default function Home() {
     setLoading(false);
   }, []);
   return (
-    <>
-      {loading && (
-        <div className="w-full min-h-screen flex justify-center items-center gap-2">
-          <Loader />
-        </div>
-      )}
+    <div className="w-full min-h-screen flex justify-center items-center gap-2">
+      {loading && <Loader />}
       {!hasSession && !loading && <Login />}
       <DialogMessage />
-    </>
+    </div>
   );
 }
