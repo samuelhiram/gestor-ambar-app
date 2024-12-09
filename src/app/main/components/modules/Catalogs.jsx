@@ -13,6 +13,7 @@ import { getLocations } from "./components/CreateLocation";
 import { getUbications } from "./components/CreateUbication";
 import { getUnits } from "./components/CreateUnit";
 import { getTypes } from "./components/CreateType";
+import { getResponsibles } from "./components/CreateResponsible";
 export default function Catalogs() {
   const { state, setState } = useMainAppContext();
 
@@ -28,6 +29,7 @@ export default function Catalogs() {
         await getLocations(state, setState);
         await getUbications(state, setState);
         await getUnits(state, setState);
+        await getResponsibles(state, setState);
         await getTypes(state, setState).finally(() => {
           setState((prev) => ({
             ...prev,

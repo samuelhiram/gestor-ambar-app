@@ -40,12 +40,7 @@ export default function CreateResponsible() {
     },
   });
 
-  useEffect(() => {
-    // const asyncFetch = async () => {
-    //   await getTypes(state, setState);
-    // };
-    // asyncFetch();
-  }, []);
+  useEffect(() => {}, []);
 
   async function onSubmit(values) {
     setIsSubmitting(true);
@@ -55,7 +50,7 @@ export default function CreateResponsible() {
         showDialogAlert: false,
       }));
 
-      const response = await fetch("/api/type/post", {
+      const response = await fetch("/api/responsible/post", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,17 +79,17 @@ export default function CreateResponsible() {
         position: "top-right",
         variant: "success",
         duration: 800,
-        title: "Tipo creada...",
+        title: "Responsable creado...",
       });
 
-      const unitsResponse = await fetch("/api/type/get", {
+      const responsibleResponse = await fetch("/api/responsible/get", {
         headers: {
           Authorization: `Bearer ${state.token}`,
         },
       });
 
-      if (!unitsResponse.ok) {
-        const error = await unitsResponse.json();
+      if (!responsibleResponse.ok) {
+        const error = await responsibleResponse.json();
         setState((prevState) => ({
           ...prevState,
           showDialogAlert: true,
@@ -104,11 +99,11 @@ export default function CreateResponsible() {
         return;
       }
 
-      const fetchUnits = await unitsResponse.json();
+      const fetchResponsibles = await responsibleResponse.json();
 
       setState((prevState) => ({
         ...prevState,
-        types: fetchUnits.types,
+        responsibles: fetchResponsibles.responsibles,
       }));
 
       form.reset({
@@ -125,7 +120,7 @@ export default function CreateResponsible() {
         position: "top-right",
         variant: "destructive",
         duration: 800,
-        title: "Error al crear tipo...",
+        title: "Error al crear responsable...",
       });
       setIsSubmitting(false);
     }
@@ -135,7 +130,7 @@ export default function CreateResponsible() {
     <div className="w-full p-2 border rounded-xl">
       <Accordion
         className="w-full !border-0 !border-b-0 "
-        type="single"
+        responsible="single"
         collapsible
       >
         <AccordionItem className="!border-0 !border-b-0" value="item-1">
@@ -167,7 +162,7 @@ export default function CreateResponsible() {
                       <FormLabel>Nombre del responsable</FormLabel>
                       <FormControl>
                         <Input
-                          type="text"
+                          responsible="text"
                           placeholder="Nombre completo"
                           {...field}
                         />
@@ -179,7 +174,7 @@ export default function CreateResponsible() {
                   )}
                 />
 
-                <Button disabled={isSubmitting} type="submit">
+                <Button disabled={isSubmitting} responsible="submit">
                   Crear
                 </Button>
               </form>
@@ -188,7 +183,7 @@ export default function CreateResponsible() {
               <div className="font-semibold">Responsables existentes</div>
               <div
                 className={`w-full ${
-                  state.types.length < 2 ? "h-auto" : "h-40"
+                  state.responsibles.length < 2 ? "h-auto" : "h-40"
                 }  overflow-auto  border-gray-200 py-2 gap-1 justify-between items-center`}
               >
                 <TypeList state={state} setState={setState} />
@@ -201,9 +196,9 @@ export default function CreateResponsible() {
   );
 }
 
-export async function getTypes(state, setState) {
+export async function getResponsibles(state, setState) {
   try {
-    const response = await fetch("/api/type/get", {
+    const response = await fetch("/api/responsible/get", {
       headers: {
         Authorization: `Bearer ${state.token}`,
       },
@@ -222,7 +217,7 @@ export async function getTypes(state, setState) {
     ////console.log("UnitS fetched successfully:", data);
     setState((prevState) => ({
       ...prevState,
-      types: data.types,
+      responsibles: data.responsibles,
     }));
   } catch (error) {
     console.error("Request error:", error);
@@ -230,9 +225,9 @@ export async function getTypes(state, setState) {
 }
 
 export async function deleteType(values, state, setState) {
-  //console.log("Deleting type:", values);
+  //console.log("Deleting responsible:", values);
   try {
-    const response = await fetch("/api/type/delete", {
+    const response = await fetch("/api/responsible/delete", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -243,14 +238,14 @@ export async function deleteType(values, state, setState) {
 
     if (!response.ok) {
       const error = await response.json();
-      console.error("Error deleting type:", error.error);
+      console.error("Error deleting responsible:", error.error);
       return;
     }
 
     const data = await response.json();
     //console.log("Type deleted successfully:", data);
 
-    await getTypes(state, setState);
+    await getResponsibles(state, setState);
 
     return data;
   } catch (error) {
@@ -259,9 +254,9 @@ export async function deleteType(values, state, setState) {
 }
 
 async function updateType(values, state, setState) {
-  //console.log("Updating type:", values);
+  //console.log("Updating responsible:", values);
   try {
-    const response = await fetch("/api/type/put", {
+    const response = await fetch("/api/responsible/put", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -272,14 +267,14 @@ async function updateType(values, state, setState) {
 
     if (!response.ok) {
       const error = await response.json();
-      console.error("Error updating type:", error.error);
+      console.error("Error updating responsible:", error.error);
       return;
     }
 
     const data = await response.json();
     //console.log("Type updated successfully:", data);
 
-    await getTypes(state, setState);
+    await getResponsibles(state, setState);
 
     return data;
   } catch (error) {
@@ -314,7 +309,7 @@ export function TypeList({ state, setState }) {
         position: "top-right",
         variant: "success",
         duration: 800,
-        title: "Tipo actualizada...",
+        title: "Responsable actualizada...",
       });
     } catch (error) {
       toast({
@@ -323,7 +318,7 @@ export function TypeList({ state, setState }) {
         position: "top-right",
         variant: "destructive",
         duration: 800,
-        title: "Error al eliminar tipo...",
+        title: "Error al eliminar responsable...",
       });
     }
     setEditTypeId(null);
@@ -341,7 +336,7 @@ export function TypeList({ state, setState }) {
         position: "top-right",
         variant: "warning",
         duration: 800,
-        title: "Tipo eliminado...",
+        title: "Responsable eliminado...",
       });
     } catch (error) {
       toast({
@@ -350,41 +345,43 @@ export function TypeList({ state, setState }) {
         position: "top-right",
         variant: "destructive",
         duration: 800,
-        title: "Error al eliminar tipo...",
+        title: "Error al eliminar responsable...",
       });
     }
   };
 
   return (
     <>
-      {state.types.length === 0 && <div>No hay tipos registradas</div>}
-      {state.types.map((type) => {
-        const isEditing = editTypeId === type.id;
+      {state.responsibles.length === 0 && (
+        <div>No hay responsables registrados</div>
+      )}
+      {state.responsibles.map((responsible) => {
+        const isEditing = editTypeId === responsible.id;
         return (
           <div
-            key={type.id}
+            key={responsible.id}
             className="flex flex-row max-md:flex-col w-full gap-2 items-center bg-white border-b p-2"
           >
             {isEditing ? (
               <input
                 id="TypeName"
-                defaultValue={type.name}
+                defaultValue={responsible.fullName}
                 className="w-full"
                 onChange={(e) => handleEditChange("name", e.target.value)}
               />
             ) : (
-              <div className="w-full">{type.name}</div>
+              <div className="w-full">{responsible.fullName}</div>
             )}
 
             <div className="flex justify-between max-md:w-full">
               <div
                 className="text-blue-900 cursor-pointer underline"
-                onClick={() => setEditTypeId(isEditing ? null : type.id)}
+                onClick={() => setEditTypeId(isEditing ? null : responsible.id)}
               >
                 {isEditing ? (
                   <div className="flex gap-2 max-md:gap-6">
                     <svg
-                      onClick={() => handleSave(type.id)}
+                      onClick={() => handleSave(responsible.id)}
                       xmlns="http://www.w3.org/2000/svg"
                       width="32"
                       height="32"
@@ -426,10 +423,10 @@ export function TypeList({ state, setState }) {
                   </svg>
                 )}
               </div>
-              {type.item.length === 0 && (
+              {responsible.Loans.length === 0 && (
                 <svg
                   onClick={() => {
-                    handleDelete(type.id);
+                    handleDelete(responsible.id);
                   }}
                   className="hover:bg-gray-200 rounded-full p-1 cursor-pointer flex items-center"
                   xmlns="http://www.w3.org/2000/svg"

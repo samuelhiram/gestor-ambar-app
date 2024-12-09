@@ -1,17 +1,23 @@
-import React, { useState } from "react";
-
+"use client";
+import React, { useState, useEffect } from "react";
+import { useMainAppContext } from "../../MainAppContext";
+import { get } from "react-hook-form";
+import { getResponsibles } from "./CreateResponsible";
 export default function LoansAsignLoanAction({
   items,
   closeThisModal,
   setSelectedRows,
 }) {
+  const { state, setState } = useMainAppContext();
   const [selectedResponsable, setSelectedResponsable] = useState("");
   const [customResponsable, setCustomResponsable] = useState("");
   const [itemQuantities, setItemQuantities] = useState(
     items.map((item) => ({ id: item.id, quantity: 0 }))
   );
+  const [someItemIsEmpty, setSomeItemIsEmpty] = useState(false);
   const [noValid, setNoValid] = useState(false);
   const [newResponsible, setNewResponsible] = useState(false);
+  const [fetching, setFetching] = useState(false);
 
   const handleQuantityChange = (id, delta) => {
     setItemQuantities((prevQuantities) =>
@@ -23,31 +29,43 @@ export default function LoansAsignLoanAction({
     );
   };
 
-  const handleLoanSubmit = () => {
+  const handleLoanSubmit = async () => {
+    var responsibleId = "";
     if (!selectedResponsable && !customResponsable.trim()) {
       setNoValid(true);
       return;
     }
-
+    if (selectedResponsable) {
+      responsibleId = selectedResponsable;
+    } else {
+      //create new responsible fetching the post
+      await fetch("/api/responsible/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${state.token}`,
+        },
+        body: JSON.stringify({ name: customResponsable }),
+      })
+        .then((res) => res.json())
+        .then(async (data) => {
+          responsibleId = data.responsible.id;
+          await getResponsibles(state, setState);
+        });
+    }
     const selectedItems = itemQuantities.filter((item) => item.quantity > 0);
-
     if (selectedItems.length === 0) {
-      alert("Debe asignar al menos un ítem.");
+      setSomeItemIsEmpty(true);
       return;
     }
-
-    setSelectedRows({
-      responsable: selectedResponsable || customResponsable,
-      items: selectedItems,
-    });
-    closeThisModal();
+    console.log(selectedItems, responsibleId);
   };
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
       <div className="w-full h-full flex gap-4 max-md:flex-col-reverse">
         <div className="md:w-9/12 border rounded-md flex flex-col h-[50vh] overflow-auto">
-          <div className="w-full border-b flex items-center p-3 justify-between">
+          <div className="w-full border-b flex items-center p-3 justify-between  max-md:hidden">
             <div className="w-1/3">Ítem</div>
             <div className="w-1/3">Unidad</div>
             <div className="flex w-1/3 gap-1 items-center">
@@ -59,11 +77,11 @@ export default function LoansAsignLoanAction({
           {items.map((item) => (
             <div
               key={item.id}
-              className="w-full border-b flex items-center p-3 justify-between"
+              className="w-full border-b flex max-md:flex-col items-center p-3 justify-between"
             >
-              <div className="w-1/3">{item.name}</div>
-              <div className="w-1/3">{item.unit}</div>
-              <div className="flex w-1/3 max-md:flex-col gap-1 items-center">
+              <div className="w-1/3 max-md:w-full">{item.name}</div>
+              <div className="w-1/3 max-md:w-full">{item.unit}</div>
+              <div className="flex md:w-1/3 max-md:flex-col gap-1 items-center">
                 <input
                   value={
                     itemQuantities.find((q) => q.id === item.id)?.quantity || 0
@@ -71,15 +89,21 @@ export default function LoansAsignLoanAction({
                   readOnly
                   className="max-md:w-5/6 md:w-2/4 border rounded-md text-center"
                 />
-                <div className="max-md:flex max-md:w-full w-2/4">
+                <div className="max-md:flex  max-md:justify-between max-md:w-full md:w-2/4">
                   <button
-                    onClick={() => handleQuantityChange(item.id, 1)}
+                    onClick={() => {
+                      handleQuantityChange(item.id, 1);
+                      setSomeItemIsEmpty(false);
+                    }}
                     className="p-1 rounded-md max-md:w-full md:w-1/2 font-bold text-xl"
                   >
                     +
                   </button>
                   <button
-                    onClick={() => handleQuantityChange(item.id, -1)}
+                    onClick={() => {
+                      handleQuantityChange(item.id, -1);
+                      setSomeItemIsEmpty(false);
+                    }}
                     className="p-1 rounded-md max-md:w-full md:w-1/2 font-bold text-xl"
                   >
                     -
@@ -104,9 +128,17 @@ export default function LoansAsignLoanAction({
             className="border p-1 rounded-md w-full"
           >
             <option value="">Seleccione</option>
-            <option value="Juan Hernandez Manzera">
+            {/* <option value="Juan Hernandez Manzera">
               Juan Hernandez Manzera
-            </option>
+            </option> */}
+            {
+              //map state.responsibles
+              state.responsibles.map((responsible) => (
+                <option key={responsible.id} value={responsible.id}>
+                  {responsible.fullName}
+                </option>
+              ))
+            }
           </select>
           <div className="text-gray-900 w-full flex justify-center">o</div>
           {!newResponsible && (
@@ -128,7 +160,10 @@ export default function LoansAsignLoanAction({
               </label>
               <input
                 value={customResponsable}
-                onChange={(e) => setCustomResponsable(e.target.value)}
+                onChange={(e) => {
+                  setCustomResponsable(e.target.value);
+                  setNoValid(false);
+                }}
                 placeholder="Nombre del responsable"
                 className="border p-1 rounded-md w-full"
               />
@@ -146,6 +181,12 @@ export default function LoansAsignLoanAction({
           {noValid && (
             <div className="text-red-500">
               Es obligatorio seleccionar un responsable o crear uno nuevo.
+            </div>
+          )}
+
+          {someItemIsEmpty && (
+            <div className="text-red-500">
+              Debe asignar al menos un suministro.
             </div>
           )}
         </div>

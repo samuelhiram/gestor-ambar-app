@@ -3,11 +3,8 @@ import React, { useEffect } from "react";
 import CreateItem from "./components/CreateItem";
 import { useMainAppContext } from "../../components/MainAppContext";
 //
-import { getCategories } from "./components/CreateCategory";
-import { getLocations } from "./components/CreateLocation";
-import { getUbications } from "./components/CreateUbication";
-import { getUnits } from "./components/CreateUnit";
-import { getTypes } from "./components/CreateType";
+
+import { getResponsibles } from "./components/CreateResponsible";
 //
 import DynamicTable from "./components/DynamicTable";
 export default function Loans() {
@@ -19,6 +16,7 @@ export default function Loans() {
     }));
     try {
       const fetchAll = async () => {
+        await getResponsibles(state, setState);
         await fetch("/api/item/get", {
           method: "GET",
           headers: {

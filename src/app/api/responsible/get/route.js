@@ -3,7 +3,12 @@ import prisma from "../../lib/prisma";
 import { withAuth } from "@/lib/withAuth";
 
 export const GET = withAuth(async (req) => {
-  let responsibles = await prisma.responsible.findMany({});
+  let responsibles = await prisma.responsible.findMany({
+    include: {
+      Loans: true,
+    },
+  });
+  console.log(responsibles);
   responsibles = responsibles.map((responsible) => {
     return {
       ...responsible,

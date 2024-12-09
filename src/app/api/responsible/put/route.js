@@ -17,7 +17,7 @@ export const PUT = withAuth(async (req) => {
     const updatedLocation = await prisma.responsible.update({
       where: { id },
       data: {
-        name,
+        fullName: name,
       },
     });
     return new NextResponse(JSON.stringify({ updatedLocation }), {
