@@ -58,7 +58,26 @@ export default function LoansAsignLoanAction({
       setSomeItemIsEmpty(true);
       return;
     }
-    console.log(selectedItems, responsibleId);
+    // console.log(selectedItems, responsibleId);
+    //fetch the create loan
+    await fetch("/api/loans/post", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${state.token}`,
+      },
+      body: JSON.stringify({
+        responsibleId: responsibleId,
+        items: selectedItems,
+        userId: state.user.id,
+      }),
+    })
+      .then((res) => res.json())
+      .then(async (data) => {
+        // console.log(data);
+        setSelectedRows([]);
+        closeThisModal();
+      });
   };
 
   return (
@@ -83,13 +102,14 @@ export default function LoansAsignLoanAction({
               <div className="w-1/3 max-md:w-full">{item.unit}</div>
               <div className="flex md:w-1/3 max-md:flex-col gap-1 items-center">
                 <input
+                  defaultValue={0}
                   value={
                     itemQuantities.find((q) => q.id === item.id)?.quantity || 0
                   }
                   readOnly
                   className="max-md:w-5/6 md:w-2/4 border rounded-md text-center"
                 />
-                <div className="max-md:flex  max-md:justify-between max-md:w-full md:w-2/4">
+                <div className="flex gap-1 max-md:justify-between max-md:w-full md:w-2/4">
                   <button
                     onClick={() => {
                       handleQuantityChange(item.id, 1);

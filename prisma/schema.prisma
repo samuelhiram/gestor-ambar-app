@@ -47,15 +47,25 @@ model Responsible {
 
 model Loans {
   id            String      @id @default(cuid())
-  //
   responsibleId String
   responsible   Responsible @relation(fields: [responsibleId], references: [id])
-  //
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
-  status        String      @default("active") //for soft delete
+  status        String      @default("active") // for soft delete
 
-  item Item[]
+  loanItems LoanItem[]
+}
+
+model LoanItem {
+  id       String @id @default(cuid())
+  loanId   String
+  loan     Loans  @relation(fields: [loanId], references: [id])
+  itemId   String
+  item     Item   @relation(fields: [itemId], references: [id])
+  quantity Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 //session of user
@@ -150,9 +160,10 @@ model Item {
   ubicationId String //foreign key
   ubication   Ubication @relation(fields: [ubicationId], references: [id])
 
-  entry Entryes[] // Relación uno a muchos con las entradas
-  outs  Outs[] // Relación uno a muchos con las salidas
-  loan  Loans[] // Relación uno a muchos con los préstamos
+  entry     Entryes[] // Relación uno a muchos con las entradas
+  outs      Outs[] // Relación uno a muchos con las salidas
+  // Relación uno a muchos con los préstamos
+  loanItems LoanItem[]
 }
 
 model Entryes {
