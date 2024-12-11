@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { getResponsibles } from "./CreateResponsible";
 import { useMainAppContext } from "../../MainAppContext";
 
-export default function LoansEditLoan({ loanId, closeThisModal }) {
+export default function Unused({ loanId, closeThisModal }) {
   console.log("--LoansEditLoan--> Editando préstamo:", loanId);
 
   const [items, setItems] = React.useState([]);
@@ -60,6 +60,7 @@ export default function LoansEditLoan({ loanId, closeThisModal }) {
           <div className="md:w-9/12 border rounded-md flex flex-col h-[50vh] overflow-auto">
             <div className="w-full border-b flex items-center p-3 justify-between  max-md:hidden">
               <div className="w-1/3">Ítem</div>
+              <div className="w-1/3">Unidad</div>
               <div className="flex w-1/3 gap-1 items-center">
                 <div className="w-2/4 text-center">Cantidad</div>
                 <div className="w-1/4"></div>
@@ -84,7 +85,7 @@ export default function LoansEditLoan({ loanId, closeThisModal }) {
                       className="max-md:w-5/6 md:w-2/4 border rounded-md text-center"
                     />
                     <div className="flex gap-1 max-md:justify-between max-md:w-full md:w-2/4">
-                      {/* <button
+                      <button
                         onClick={() => {
                           if (
                             itemQuantities.find((q) => q.id === item.id)
@@ -107,25 +108,48 @@ export default function LoansEditLoan({ loanId, closeThisModal }) {
                         className="p-1 rounded-md max-md:w-full md:w-1/2 font-bold text-xl"
                       >
                         -
-                      </button> */}
+                      </button>
                     </div>
                   </div>
                 </div>
               ))}
           </div>
           <div className="md:w-4/12 flex flex-col gap-3">
-            <span className="font-semibold text-lg">Préstamo</span>
+            <span className="font-semibold text-lg">Editar préstamo</span>
             <label className="text-gray-800 font-semibold w-full">
-              Responsable
+              Cambiar responsable
             </label>
 
-            {
-              //search in responsibles by id and get the name
-              state.responsibles.find(
-                (responsible) => responsible.id === loan?.responsibleId
-              )?.fullName
-            }
-
+            <select
+              value={selectedResponsable}
+              onChange={(e) => {
+                setCustomResponsable("");
+                setSelectedResponsable(e.target.value);
+                setNoValid(false);
+                newResponsible && setNewResponsible(false);
+              }}
+              className="border p-1 rounded-md w-full"
+            >
+              <option value="">Seleccione</option>
+              {state.responsibles.map((responsible) => (
+                <option key={responsible.id} value={responsible.id}>
+                  {responsible.fullName}
+                </option>
+              ))}
+            </select>
+            <div className="text-gray-900 w-full flex justify-center">o</div>
+            {!newResponsible && (
+              <button
+                onClick={() => {
+                  setSelectedResponsable("");
+                  setNewResponsible(true);
+                  setNoValid(false);
+                }}
+                className="rounded-md flex items-center text-sm   justify-center  p-2"
+              >
+                Añadir responsable +
+              </button>
+            )}
             {newResponsible && (
               <>
                 <label className="text-gray-800 font-semibold w-full">
@@ -170,10 +194,10 @@ export default function LoansEditLoan({ loanId, closeThisModal }) {
             }}
             className="rounded-md p-1"
           >
-            Aceptar
+            Cancelar
           </button>
 
-          {/* <button className="rounded-md p-1">Editar préstamo</button> */}
+          <button className="rounded-md p-1">Editar préstamo</button>
         </div>
       </div>
     </div>

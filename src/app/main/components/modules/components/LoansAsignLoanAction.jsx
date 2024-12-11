@@ -17,6 +17,7 @@ export default function LoansAsignLoanAction({
   const [noValid, setNoValid] = useState(false);
   const [newResponsible, setNewResponsible] = useState(false);
   const [fetching, setFetching] = useState(false);
+  const [canotDoOperation, setCanotDoOperation] = useState(false);
 
   const handleQuantityChange = (id, delta) => {
     setItemQuantities((prevQuantities) =>
@@ -28,6 +29,12 @@ export default function LoansAsignLoanAction({
     );
   };
 
+  useEffect(() => {
+    const someItemIsEmpty = items.some((item) => item.quantity === 0);
+    if (someItemIsEmpty) {
+      setCanotDoOperation(true);
+    }
+  }, []);
   const handleLoanSubmit = async () => {
     var responsibleId = "";
     if (!selectedResponsable && !customResponsable.trim()) {
@@ -73,8 +80,34 @@ export default function LoansAsignLoanAction({
     })
       .then((res) => res.json())
       .then(async (data) => {
-        // console.log(data);
         setSelectedRows([]);
+
+        //fetch items
+        await fetch("/api/item/get", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${state.token}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            setState((prev) => ({ ...prev, items: data.items }));
+          });
+
+        //fetch loans
+        await fetch("/api/loans/get", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${state.token}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            setState((prev) => ({ ...prev, loans: data.formattedLoans }));
+          });
+
         closeThisModal();
       });
   };
@@ -95,7 +128,10 @@ export default function LoansAsignLoanAction({
           {items.map((item) => (
             <div
               key={item.id}
-              className="w-full border-b flex max-md:flex-col items-center p-3 justify-between"
+              className={
+                "w-full border-b flex max-md:flex-col items-center p-3 justify-between" +
+                (item.quantity === 0 ? " bg-red-200" : "")
+              }
             >
               <div className="w-1/3 max-md:w-full">{item.name}</div>
               <div className="w-1/3 max-md:w-full">{item.unit}</div>
@@ -210,17 +246,28 @@ export default function LoansAsignLoanAction({
           )}
         </div>
       </div>
-      <div className="w-full flex justify-between">
+      <div className="w-full flex max-md:flex-col justify-between">
         <button
           onClick={() => {
             closeThisModal();
           }}
-          className="rounded-md p-1"
+          className={"rounded-md p-1 " + (canotDoOperation && "hidden")}
         >
           Cancelar
         </button>
 
-        <button onClick={handleLoanSubmit} className="rounded-md p-1">
+        {canotDoOperation && (
+          <div className="text-red-500 w-full justify-center text-center font-semibold text-lg">
+            No se puede realizar la operación, los suministros en rojo no tienen
+            cantidad disponible.
+          </div>
+        )}
+
+        <button
+          disabled={canotDoOperation}
+          onClick={handleLoanSubmit}
+          className={"rounded-md p-1 " + (canotDoOperation && "hidden")}
+        >
           Realizar préstamo
         </button>
       </div>

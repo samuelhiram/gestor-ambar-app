@@ -7,6 +7,9 @@ export const GET = withAuth(async () => {
   try {
     // Obtener todos los préstamos con datos básicos
     const loans = await prisma.loans.findMany({
+      where: {
+        status: "active", // Filtro para obtener solo préstamos activos
+      },
       select: {
         id: true,
         responsibleId: true,
@@ -18,23 +21,37 @@ export const GET = withAuth(async () => {
             id: true,
           },
         },
+        responsible: {
+          select: {
+            fullName: true, // Incluir solo el nombre completo del responsable
+          },
+        },
       },
-      include: {
-        responsible: { select: { name: true } },
-      },
+    });
+
+    //format date to locale
+    loans.forEach((loan) => {
+      loan.createdAt = new Date(loan.createdAt).toLocaleString();
+      loan.updatedAt = new Date(loan.updatedAt).toLocaleString();
     });
 
     // Formatear para devolver un conteo de ítems por préstamo
     const formattedLoans = loans.map((loan) => ({
       id: loan.id,
       responsibleId: loan.responsibleId,
+      responsibleName: loan.responsible.fullName || "Sin nombre",
       createdAt: loan.createdAt,
       updatedAt: loan.updatedAt,
       status: loan.status,
       itemsCount: loan.loanItems.length, // Conteo de ítems asociados
     }));
 
-    return new NextResponse(JSON.stringify({ loans: formattedLoans }), {
+    //reordenar por mar reciente a menos reciente
+    formattedLoans.sort((a, b) => {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
+    return new NextResponse(JSON.stringify({ formattedLoans }), {
       status: 200,
     });
   } catch (error) {

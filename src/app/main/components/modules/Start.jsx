@@ -2,10 +2,10 @@
 import React from "react";
 import { useEffect } from "react";
 import { useMainAppContext } from "../MainAppContext";
+import DynamicTable from "./components/DynamicTable";
 export default function Start() {
   const { state, setState } = useMainAppContext();
   useEffect(() => {
-    // localStorage.setItem("activeModuleName", "Inicio");
     setState((prev) => ({
       ...prev,
       isLoadingModule: false,
