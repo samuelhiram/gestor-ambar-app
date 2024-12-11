@@ -1,11 +1,11 @@
 export var appModules = [
-  {
-    id: 1,
-    moduleName: "Inicio",
-    icon: "material-symbols--team-dashboard",
-    title: "Inicio",
-    description: "Resumen general",
-  },
+  // {
+  //   id: 1,
+  //   moduleName: "Inicio",
+  //   icon: "material-symbols--team-dashboard",
+  //   title: "Inicio",
+  //   description: "Resumen general",
+  // },
   {
     id: 2,
     moduleName: "Inventario",
