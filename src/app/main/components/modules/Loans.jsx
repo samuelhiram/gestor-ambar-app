@@ -38,6 +38,29 @@ export default function Loans() {
     }
   };
 
+  const fetchFinishedLoans = async () => {
+    try {
+      const response = await fetch("/api/loans/get-finished", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${state.token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al obtener los préstamos");
+      }
+
+      const data = await response.json();
+      console.log("Préstamos obtenidos:", data.formattedLoans);
+      return data.formattedLoans;
+    } catch (error) {
+      console.error("Error durante el fetch:", error);
+      return [];
+    }
+  };
+
   useEffect(() => {
     setState((prev) => ({
       ...prev,
@@ -62,10 +85,13 @@ export default function Loans() {
                 loans: loans,
               }));
 
-              loans.forEach((loan) => {
-                console.log(
-                  `Préstamo ID: ${loan.id}, Items asociados: ${loan.itemsCount}`
-                );
+              fetchFinishedLoans().then((finishedloans) => {
+                //set in state loans
+                setState((prev) => ({
+                  ...prev,
+                  finishedloans: finishedloans,
+                  isLoadingModule: false,
+                }));
               });
             });
 
@@ -87,18 +113,6 @@ export default function Loans() {
       action: "asignloan",
       actionTitle: "Asignar suministros",
       color: "bg-green-900",
-      textColor: "text-gray-50",
-      hoverColor: "hover:bg-green-700",
-      icon: "ri:user-received-fill",
-      description: "Asignar suministro",
-    },
-  ];
-
-  const loansItemsActions = [
-    {
-      action: "loanDeails",
-      actionTitle: "Gestionar",
-      color: "bg-purple-800",
       textColor: "text-gray-50",
       hoverColor: "hover:bg-green-700",
       icon: "ri:user-received-fill",
@@ -200,6 +214,39 @@ export default function Loans() {
             </AccordionTrigger>
             <AccordionContent>
               <LoansActiveLoans loans={state.loans} />
+            </AccordionContent>
+          </AccordionItem>
+        </div>
+      </Accordion>
+
+      <Accordion
+        className="w-full !border-0 !border-b-0 "
+        collapsible
+        type="single"
+      >
+        <div className="w-full p-2 border rounded-xl">
+          <AccordionItem
+            className="!border-0 !border-b-0 flex flex-col  gap-3"
+            value="item-1"
+          >
+            <AccordionTrigger className="!bg-white hover:!bg-blue-50 hover:border-blue-500 !rounded-xl !border !p-2 !text-gray-600">
+              <div className="flex items-center gap-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="#334C94"
+                    d="m9.55 18l-5.7-5.7l1.425-1.425L9.55 15.15l9.175-9.175L20.15 7.4z"
+                  />
+                </svg>
+                <h1 className="text-sm font-bold">Historial de prestamos</h1>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <LoansActiveLoans loans={state.finishedloans} />
             </AccordionContent>
           </AccordionItem>
         </div>

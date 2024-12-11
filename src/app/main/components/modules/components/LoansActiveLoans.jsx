@@ -74,6 +74,19 @@ export default function LoansActiveLoans({ loans }) {
           setState((prev) => ({ ...prev, items: data.items }));
         });
 
+      //obtener los préstamos finalizados
+      await fetch("/api/loans/get-finished", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${state.token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setState((prev) => ({ ...prev, finishedloans: data.formattedLoans }));
+        });
+
       // Opcional: Recargar la lista de préstamos o eliminar el préstamo finalizado de la UI.
     } catch (err) {
       setError(err.message);
@@ -185,10 +198,13 @@ export default function LoansActiveLoans({ loans }) {
                 <h1 className="text-sm font-bold">Estado:</h1>
                 <h1 className="capitalize">{loan.status}</h1>
               </div>
-              <div className="flex gap-1">
+              <div className="flex gap-1 justify-between">
                 <button
                   onClick={() => finalizeLoan(loan.id)}
-                  className="rounded-md p-1 bg-green-500 text-white hover:bg-green-600"
+                  className={
+                    "rounded-md p-1 bg-green-500 text-white hover:bg-green-600" +
+                    (loan.status === "finished" ? " hidden" : "")
+                  }
                   disabled={selectedId === loan.id && loading}
                 >
                   {selectedId === loan.id && loading

@@ -126,6 +126,8 @@ export default function LoansEditLoan({ loanId, closeThisModal }) {
               )?.fullName
             }
 
+            {loan?.createdAt}
+
             {newResponsible && (
               <>
                 <label className="text-gray-800 font-semibold w-full">

@@ -46,6 +46,8 @@ export default function MainAppContextProvider({ children }) {
     responsibles: [],
     //loans
     loans: [],
+    //finished loans
+    finishedloans: [],
   });
 
   const value = { state, setState };
