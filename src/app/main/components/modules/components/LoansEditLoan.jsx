@@ -1,12 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useMainAppContext } from "../../MainAppContext";
 import { getResponsibles } from "./CreateResponsible";
-export default function LoansAsignLoanAction({
-  items,
-  closeThisModal,
-  setSelectedRows,
-}) {
+import { useMainAppContext } from "../../MainAppContext";
+
+export default function LoansEditLoan({ loanId, closeThisModal }) {
+  console.log("--LoansEditLoan--> Editando préstamo:", loanId);
+
+  const [items, setItems] = React.useState([]);
   const { state, setState } = useMainAppContext();
   const [selectedResponsable, setSelectedResponsable] = useState("");
   const [customResponsable, setCustomResponsable] = useState("");
@@ -18,66 +18,29 @@ export default function LoansAsignLoanAction({
   const [newResponsible, setNewResponsible] = useState(false);
   const [fetching, setFetching] = useState(false);
 
-  const handleQuantityChange = (id, delta) => {
-    setItemQuantities((prevQuantities) =>
-      prevQuantities.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(0, item.quantity + delta) }
-          : item
-      )
-    );
-  };
-
-  const handleLoanSubmit = async () => {
-    var responsibleId = "";
-    if (!selectedResponsable && !customResponsable.trim()) {
-      setNoValid(true);
-      return;
-    }
-    if (selectedResponsable) {
-      responsibleId = selectedResponsable;
-    } else {
-      //create new responsible fetching the post
-      await fetch("/api/responsible/post", {
+  //use effect where fetch the responsibles
+  useEffect(() => {
+    const fetchSome = async () => {
+      //obtnerr los items del préstamo
+      await fetch("/api/loans/get-all-loan-items", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${state.token}`,
         },
-        body: JSON.stringify({ name: customResponsable }),
+        body: JSON.stringify(loanId),
       })
         .then((res) => res.json())
-        .then(async (data) => {
-          responsibleId = data.responsible.id;
-          await getResponsibles(state, setState);
+        .then((data) => {
+          console.log("Items del préstamo:", data.formattedItems);
+          // setItems(data.formattedItems);
+          // setItemQuantities(
+          //   data.formattedItems.map((item) => ({ id: item.id, quantity: 0 }))
+          // );
         });
-    }
-    const selectedItems = itemQuantities.filter((item) => item.quantity > 0);
-    if (selectedItems.length === 0) {
-      setSomeItemIsEmpty(true);
-      return;
-    }
-    // console.log(selectedItems, responsibleId);
-    //fetch the create loan
-    await fetch("/api/loans/post", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${state.token}`,
-      },
-      body: JSON.stringify({
-        responsibleId: responsibleId,
-        items: selectedItems,
-        userId: state.user.id,
-      }),
-    })
-      .then((res) => res.json())
-      .then(async (data) => {
-        // console.log(data);
-        setSelectedRows([]);
-        closeThisModal();
-      });
-  };
+    };
+    fetchSome();
+  }, []);
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
@@ -92,7 +55,7 @@ export default function LoansAsignLoanAction({
               <div className="w-1/4"></div>
             </div>
           </div>
-          {items.map((item) => (
+          {/* {items.map((item) => (
             <div
               key={item.id}
               className="w-full border-b flex max-md:flex-col items-center p-3 justify-between"
@@ -130,7 +93,7 @@ export default function LoansAsignLoanAction({
                 </div>
               </div>
             </div>
-          ))}
+          ))} */}
         </div>
         <div className="md:w-4/12 flex flex-col gap-3">
           <label className="text-gray-800 font-semibold w-full">
@@ -148,8 +111,8 @@ export default function LoansAsignLoanAction({
           >
             <option value="">Seleccione</option>
             {/* <option value="Juan Hernandez Manzera">
-              Juan Hernandez Manzera
-            </option> */}
+          Juan Hernandez Manzera
+        </option> */}
             {
               //map state.responsibles
               state.responsibles.map((responsible) => (
@@ -220,9 +183,7 @@ export default function LoansAsignLoanAction({
           Cancelar
         </button>
 
-        <button onClick={handleLoanSubmit} className="rounded-md p-1">
-          Realizar préstamo
-        </button>
+        <button className="rounded-md p-1">Realizar préstamo</button>
       </div>
     </div>
   );
