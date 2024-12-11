@@ -15,7 +15,7 @@ export default function MainAppContextProvider({ children }) {
     isLoadingMainApp: true,
     loadingMainAppMessage: "Cargando...",
     isLoadingModule: true,
-    activeModuleName: "Inicio",
+    activeModuleName: "Inventario",
     showSideBar: true,
     showModule: true,
     modules: appModules,
