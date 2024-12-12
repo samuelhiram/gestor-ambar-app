@@ -9,7 +9,6 @@ export default function Home() {
   var token;
   var userId;
   useEffect(() => {
-    localStorage.clear();
     setLoading(true);
     // fetch create defaultUser
     const fetchDefaults = async () => {
