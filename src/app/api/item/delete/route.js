@@ -8,26 +8,21 @@ export const POST = withAuth(async (req) => {
     const body = await req.json();
     const { selectedItems } = body;
 
-    //delte all entries for each item
-    const deletedEntries = await Promise.all(
-      selectedItems.map(async (item) => {
-        const { id } = item;
-        return prisma.entryes.deleteMany({ where: { itemId: id } });
-      })
-    );
+    console.log(selectedItems);
 
-    // delete all out
-    const deletedOuts = await Promise.all(
-      selectedItems.map(async (item) => {
-        const { id } = item;
-        return prisma.outs.deleteMany({ where: { itemId: id } });
-      })
-    );
+    //update all status to inactive
+    for (let i = 0; i < selectedItems.length; i++) {
+      await prisma.item.update({
+        where: {
+          id: selectedItems[i],
+        },
+        data: {
+          status: "inactive",
+        },
+      });
+    }
 
-    const deletedItems = await prisma.item.deleteMany({
-      where: { id: { in: selectedItems.map((item) => item) } },
-    });
-    return new NextResponse(JSON.stringify({ deletedItems }), { status: 200 });
+    return new NextResponse(JSON.stringify({ message: "ok" }), { status: 200 });
   } catch (error) {
     return new NextResponse(JSON.stringify({ error: error.message }), {
       status: 400,

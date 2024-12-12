@@ -39,6 +39,10 @@ export const GET = withAuth(async (req) => {
         },
       },
     },
+    //where is active
+    where: {
+      status: "active",
+    },
   });
 
   //modify the item object save all outs in a object called "listedouts"

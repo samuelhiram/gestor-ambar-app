@@ -13,7 +13,11 @@ export default function InventoryItemsActions({
   switch (action) {
     case "delete":
       return (
-        <InventoryItemDelete closeThisModal={closeThisModal} items={rows} />
+        <InventoryItemDelete
+          closeThisModal={closeThisModal}
+          items={rows}
+          setSelectedRows={setSelectedRows}
+        />
       );
     case "outs":
       return (

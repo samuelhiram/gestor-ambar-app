@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { useMainAppContext } from "../../MainAppContext";
 
-export default function InventoryItemDelete({ items, closeThisModal }) {
+export default function InventoryItemDelete({
+  items,
+  closeThisModal,
+  setSelectedRows,
+}) {
   const { state, setState } = useMainAppContext();
   const [selectedItems, setSelectedItems] = useState(
     items.map((item) => item.id)
@@ -20,6 +24,8 @@ export default function InventoryItemDelete({ items, closeThisModal }) {
     })
       .then((res) => res.json())
       .then((data) => {
+        //unselect all
+        setSelectedRows([]);
         console.log("Respuesta del servidor:", data);
         //fetch items
         fetch("/api/item/get", {
@@ -36,6 +42,7 @@ export default function InventoryItemDelete({ items, closeThisModal }) {
           .catch((error) => {
             console.error("Error al obtener los elementos:", error);
           });
+
         closeThisModal(); // Cerrar el modal
       })
       .catch((error) => {
