@@ -102,14 +102,14 @@ export async function GET() {
         if (!user) {
           const hashedPassword = await bcrypt.hash(
             process.env.DEFAULT_USER_PASSWORD || "defaultpassword",
-            10
+            12
           );
           await prisma.user.create({
             data: {
               email: process.env.DEFAULT_USER_EMAIL,
               control_number: process.env.DEFAULT_USER_CONTROL_NUMBER,
-              role: process.env.DEFAULT_USER_ROLE || "admin",
-              fullName: process.env.DEFAULT_USER_FULL_NAME || "Admin User",
+              role: process.env.DEFAULT_USER_ROLE,
+              fullName: process.env.DEFAULT_USER_FULL_NAME,
               password: hashedPassword,
               locationId: defaultLocation.id,
             },

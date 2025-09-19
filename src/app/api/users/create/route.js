@@ -35,7 +35,7 @@ export const POST = withAuth(async (req) => {
     email = email.toLowerCase();
 
     // Hashear la contraseña
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 12);
     // Buscar si el email o el número de control ya existen
     const [emailRepeated, controlNumberRepeated] = await Promise.all([
       prisma.user.findUnique({ where: { email } }),
