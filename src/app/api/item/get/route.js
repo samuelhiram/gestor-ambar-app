@@ -2,99 +2,58 @@ import prisma from "../../lib/prisma";
 import { NextResponse } from "next/server";
 import { withAuth } from "@/lib/withAuth";
 
-export const GET = withAuth(async (req) => {
-  let items = await prisma.item.findMany({
-    include: {
-      entry: {
-        include: {
-          user: true,
-        },
-      },
-      outs: {
-        include: {
-          user: true,
-        },
-      },
-      unit: {
-        select: {
-          name: true,
-        },
-      },
-      type: {
-        select: {
-          name: true,
-        },
-      },
-      category: {
-        select: {
-          name: true,
-          partidaNumber: true,
-        },
-      },
-      user: true,
+export const GET = withAuth(async () => {
+  const items = await prisma.item.findMany({
+    where: { status: "active" },
+    orderBy: { createdAt: "desc" }, // evita .reverse()
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      quantity: true,
+      createdAt: true,
+      updatedAt: true,
+      status: true,
+      // barCode NO se selecciona (equivalente a “remover”)
+      unit: { select: { name: true } },
+      type: { select: { name: true } },
+      category: { select: { name: true, partidaNumber: true } },
+      user: { select: { fullName: true } }, // solo lo necesario para aplanar
       ubication: {
         select: {
           name: true,
-          location: true,
+          location: { select: { name: true } },
         },
       },
+      // necesitamos los usuarios completos dentro de entry/outs para mantener compat
+      entry: {
+        include: { user: true },
+        orderBy: { createdAt: "desc" }, // ya vienen ordenados (latest→oldest)
+      },
+      outs: {
+        include: { user: true },
+        orderBy: { createdAt: "desc" }, // ya vienen ordenados
+      },
+      _count: {
+        select: { entry: true, outs: true }, // conteos en DB
+      },
     },
-    //where is active
-    where: {
-      status: "active",
-    },
   });
 
-  //modify the item object save all outs in a object called "listedouts"
-  items = items.map((item) => {
+  const result = items.map((item) => {
+    // mismo formateo que usabas (toString().split("GMT")[0])
+    const createdAtStr = new Date(item.createdAt).toString().split("GMT")[0];
+
     return {
-      ...item,
-      out: item.outs,
-    };
-  });
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      quantity: item.quantity,
+      status: item.status,
+      updatedAt: item.updatedAt,
+      createdAt: createdAtStr,
 
-  //reorder entryes from latest to oldest
-  items = items.map((item) => {
-    return {
-      ...item,
-      entry: item.entry.sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      ),
-    };
-  });
-
-  //reorder outs from latest to oldest
-  items = items.map((item) => {
-    return {
-      ...item,
-      outs: item.outs.sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      ),
-    };
-  });
-
-  //count all the item entry
-  items = items.map((item) => {
-    const entry = item.entry.reduce((acc, entry) => acc + 1, 0);
-    return { ...item, entryes: entry };
-  });
-
-  //count all the item outs
-  items = items.map((item) => {
-    const outs = item.outs.reduce((acc, out) => acc + 1, 0);
-    return { ...item, outs };
-  });
-
-  //remove barCode field
-  items = items.map((item) => {
-    const { barCode, ...rest } = item;
-    return rest;
-  });
-
-  //make all a json of 1 level
-  items = items.map((item) => {
-    return {
-      ...item,
+      // aplanados
       partidaNumber: item.category.partidaNumber,
       unit: item.unit.name,
       type: item.type.name,
@@ -102,17 +61,16 @@ export const GET = withAuth(async (req) => {
       user: item.user.fullName,
       ubication: item.ubication.name,
       location: item.ubication.location.name,
+
+      // colecciones (ya ordenadas desde la DB)
+      entry: item.entry,
+      out: item.outs, // alias que conservas para el arreglo de outs
+
+      // conteos (mismo naming que tenías)
+      entryes: item._count.entry,
+      outs: item._count.outs,
     };
   });
 
-  //reformat createdAt date
-  items = items.map((item) => {
-    return {
-      ...item,
-      createdAt: new Date(item.createdAt).toString().split("GMT")[0],
-    };
-  });
-  //reorder from newest to oldest
-  items = items.reverse();
-  return new NextResponse(JSON.stringify({ items }));
+  return NextResponse.json({ items: result });
 });
